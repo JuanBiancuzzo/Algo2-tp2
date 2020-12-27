@@ -1,6 +1,9 @@
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "lista.h"
+#include "heap.h"
+#include "batallas.h"
 
 #define MAX_NOMBRE 50
 #define MAX_POKE_COMBATE 6
@@ -20,11 +23,20 @@
 
 typedef int (* funcion_batalla)(void*, void *);
 
+typedef int (* liberar_gimnasio)(void*, void *);
+
+typedef int (* liberar_entrenador)(void*, void *);
+
 typedef struct pokemon{
 	int velocidad;
 	int defensa;
 	int ataque;
 } pokemon_t;
+
+typedef struct mapa {
+	heap_t* gimnasios;
+	int cant_gimnasios;
+} mapa_t;
 
 typedef struct gimnasio {
 	char nombre[MAX_NOMBRE];
