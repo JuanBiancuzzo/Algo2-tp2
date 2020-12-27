@@ -15,6 +15,11 @@ void destructor_prueba (void* arbol) {
     arbol = arbol;
 }
 
+typedef struct estructura_contador {
+    int key;
+    int contador;
+} contador_t;
+
 void probar_heap_crear_valores_invalidos () {
     heap_comparador comparador = comparador_prueba;
     heap_liberar_elemento destructor = destructor_prueba;
@@ -93,7 +98,7 @@ void probar_heap_insertar_varios_elementos () {
                  "Mensaje de exito al insertar el tercer elemento");
 
     pa2m_afirmar(elemento_uno == *(int*)heap->elementos[0] ,
-                 "\nSe inserta correctamente el primer elemenento en el heap");
+                 "Se inserta correctamente el primer elemenento en el heap");
 
     pa2m_afirmar(elemento_tres == *(int*)heap->elementos[1] ,
                  "Se inserta correctamente el segundo elemenento en el heap");
@@ -160,8 +165,50 @@ void probar_heap_raiz () {
     probar_heap_raiz_con_varios_elementos();
 }
 
-void probar_heap_destruir () {
+int comparador_contador (void* elemento_uno, void* elemento_dos) {
 
+    if (((contador_t*)elemento_uno)->key > ((contador_t*)elemento_dos)->key)
+        return 1;
+    else if (((contador_t*)elemento_uno)->key < ((contador_t*)elemento_dos)->key)
+        return -1;
+    return 0;
+}
+
+void destructor_contador (void* dato) {
+    ((contador_t*)dato)->contador++;
+}
+
+void probar_heap_destruir_varios_elementos () {
+    heap_comparador comparador = comparador_contador;
+    heap_liberar_elemento destructor = destructor_contador;
+    heap_t* heap = heap_crear(comparador, destructor);
+
+    contador_t datos[3];
+    datos[0].key = 11;
+    datos[0].contador = 0;
+    datos[1].key = 22;
+    datos[1].contador = 0;
+    datos[2].key = 33;
+    datos[2].contador = 0;
+
+    for (int i = 0; i < 3; i++)
+        heap_insertar(heap, datos+i);
+
+    heap_destruir(heap);
+
+    pa2m_afirmar(datos[0].contador == 1,
+                  "Pasa por el primer elemento una unica vez");
+
+    pa2m_afirmar(datos[1].contador == 1,
+                  "Pasa por el segundo elemento una unica vez");
+
+    pa2m_afirmar(datos[2].contador == 1,
+                  "Pasa por el tercer elemento una unica vez");
+
+}
+
+void probar_heap_destruir () {
+    probar_heap_destruir_varios_elementos();
 }
 
 int main () {
