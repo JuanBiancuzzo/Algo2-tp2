@@ -94,9 +94,9 @@ void heap_bajar(heap_t* heap, int padre) {
 
     int hijo = hijo_izq, comparacion;
 
-    if (hijo_izq >= heap->cant_elementos) return;
+    if (hijo_izq > heap->cant_elementos) return;
 
-    if (hijo_der < heap->cant_elementos) {
+    if (hijo_der <= heap->cant_elementos) {
         comparacion = heap->comparador(heap->elementos[hijo_izq], heap->elementos[hijo_der]);
         hijo = (comparacion > 0) ? hijo_der : hijo_izq;
     }
