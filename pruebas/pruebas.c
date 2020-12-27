@@ -148,6 +148,9 @@ void probar_heap_raiz_con_varios_elementos () {
     pa2m_afirmar(heap->cant_elementos == 2,
                  "Vuelve el contador a 2 despues de eliminar con el heap de 3 elementos");
 
+    pa2m_afirmar(elemento_dos == *(int*)heap->elementos[0],
+                 "Actualiza correctamente la estructura despues de sacar la raiz\n");
+
     heap_destruir(heap);
 }
 
