@@ -35,7 +35,7 @@ void sift_up (heap_t* heap, int posicion) {
     heap->elementos[padre] = aux;
 }
 
-void reordenar_heap(heap_t* heap, int posicion) {
+void heap_subir(heap_t* heap, int posicion) {
 
     int padre = posicion_padre(posicion);
 
@@ -45,7 +45,7 @@ void reordenar_heap(heap_t* heap, int posicion) {
 
     if (comparacion > 0) {
         sift_up(heap, posicion);
-        reordenar_heap(heap, padre);
+        heap_subir(heap, padre);
     }
 }
 
@@ -56,15 +56,53 @@ int heap_insertar(heap_t* heap, void* elemento) {
     heap->elementos[heap->cant_elementos] = elemento;
     (heap->cant_elementos)++;
 
-    reordenar_heap(heap, (heap->cant_elementos) - 1);
+    heap_subir(heap, (heap->cant_elementos) - 1);
     return EXITO;
+}
+
+void sift_down (heap_t* heap, int hijo) {
+
+    int padre = posicion_padre(hijo);
+
+    void* aux = heap->elementos[hijo];
+    heap->elementos[hijo] = heap->elementos[padre];
+    heap->elementos[padre] = aux;
+}
+
+void heap_bajar(heap_t* heap, int padre) {
+
+    int hijo_izq = (2*padre)+1;
+    int hijo_der = (2*padre)+2;
+
+    int hijo = hijo_izq, comparacion;
+
+    if (hijo_izq >= heap->cant_elementos) return;
+
+    if (hijo_der < heap->cant_elementos) {
+        comparacion = heap->comparador(heap->elementos[hijo_izq], heap->elementos[hijo_der]);
+        hijo = (comparacion > 0) ? hijo_der : hijo_izq;
+    }
+
+    comparacion = heap->comparador(heap->elementos[padre], heap->elementos[hijo]);
+
+    if (comparacion > 0) {
+        sift_down(heap, hijo);
+        heap_bajar(heap, hijo);
+    }
 }
 
 void* heap_raiz(heap_t* heap) {
 
     if (!heap) return NULL;
 
-    return NULL;
+    void* primer_elemento = heap->elementos[0];
+
+    heap->elementos[0] = heap->elementos[heap->cant_elementos-1];
+    (heap->cant_elementos)--;
+
+    heap_bajar(heap, 0);
+
+    return primer_elemento;
 }
 
 void heap_destruir(heap_t* heap) {
