@@ -110,8 +110,51 @@ void probar_heap_insertar () {
     probar_heap_insertar_varios_elementos();
 }
 
-void probar_heap_raiz () {
+void probar_heap_raiz_valores_invalidos () {
+    pa2m_afirmar(heap_raiz(NULL) == NULL,
+                 "Detecta correctamente que el heap es invalido\n");
+}
 
+void probar_heap_raiz_con_un_elemento () {
+    heap_comparador comparador = comparador_prueba;
+    heap_liberar_elemento destructor = destructor_prueba;
+    heap_t* heap = heap_crear(comparador, destructor);
+
+    int elemento = 11;
+    heap_insertar(heap, &elemento);
+
+    pa2m_afirmar(elemento == *(int*)heap_raiz(heap),
+                 "Devuelve el valor correcto al eliminar con el heap de un elemento");
+
+    pa2m_afirmar(heap->cant_elementos == 0,
+                 "Vuelve el contador a 0 despues de eliminar con el heap de un elemento\n");
+
+    heap_destruir(heap);
+}
+
+void probar_heap_raiz_con_varios_elementos () {
+    heap_comparador comparador = comparador_prueba;
+    heap_liberar_elemento destructor = destructor_prueba;
+    heap_t* heap = heap_crear(comparador, destructor);
+
+    int elemento_uno = 11, elemento_dos = 22, elemento_tres = 33;
+    heap_insertar(heap, &elemento_dos);
+    heap_insertar(heap, &elemento_tres);
+    heap_insertar(heap, &elemento_uno);
+
+    pa2m_afirmar(elemento_uno == *(int*)heap_raiz(heap),
+                 "Devuelve el valor correcto al eliminar con el heap de 3 elementos");
+
+    pa2m_afirmar(heap->cant_elementos == 2,
+                 "Vuelve el contador a 2 despues de eliminar con el heap de 3 elementos");
+
+    heap_destruir(heap);
+}
+
+void probar_heap_raiz () {
+    probar_heap_raiz_valores_invalidos();
+    probar_heap_raiz_con_un_elemento();
+    probar_heap_raiz_con_varios_elementos();
 }
 
 void probar_heap_destruir () {
