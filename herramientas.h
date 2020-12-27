@@ -66,4 +66,37 @@ typedef struct personaje {
 	int cant_pokemones;
 } personaje_t;
 
+/*
+ * Apartir del ruta del archivo y un personaje vacio, carga al personaje
+ * con los datos del archivo y devuelve EXITO si los cargo correctamente,
+ * y ERROR si no lo logra
+ */
+int archivo_2_personaje_principal (char ruta_archivo[], personaje_t* principal);
+
+/*
+ * Apartir del ruta del archivo y un gimnasio vacio, carga el gimnasio
+ * con los datos del archivo y devuelve EXITO si los cargo correctamente,
+ * y ERROR si no lo logra
+ */
+int archivo_2_gimnasio (char ruta_archivo[], gimnasio_t* gimnasio);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #endif /* __HERRAMIENTAS_H__ */
