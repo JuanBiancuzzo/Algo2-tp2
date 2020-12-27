@@ -52,7 +52,7 @@ void heap_subir(heap_t* heap, int posicion) {
 
     int comparacion = heap->comparador(heap->elementos[posicion], heap->elementos[padre]);
 
-    if (comparacion > 0) {
+    if (comparacion < 0) {
         sift_up(heap, posicion);
         heap_subir(heap, padre);
     }
@@ -103,7 +103,7 @@ void heap_bajar(heap_t* heap, int padre) {
 
     comparacion = heap->comparador(heap->elementos[padre], heap->elementos[hijo]);
 
-    if (comparacion > 0) {
+    if (comparacion < 0) {
         sift_down(heap, hijo);
         heap_bajar(heap, hijo);
     }
