@@ -1,5 +1,6 @@
 #ifndef __HEAP_H__
 #define __HEAP_H__
+
 #define MAX_ELEMENTOS 50
 
 /*
@@ -37,14 +38,15 @@ heap_t* heap_crear(heap_comparador comparador, heap_liberar_elemento destructor)
  * Inserta un el elemento en el heap, al ser un heap
  * minimal si el elemento tiene una clave baja este
  * subira en el heap
+ * Devuelve 0 si lo logra, -1 si no
  */
-int heap_insertar(void* elemento);
+int heap_insertar(heap_t* heap, void* elemento);
 
 /*
  * Devuelve el elemento que esta en la raiz del heap
  * y al mismo tiempo lo elimina del heap
  */
-void* heap_raiz();
+void* heap_raiz(heap_t* heap);
 
 /*
  * Destruye el heap liberando la memoria que se reservo
