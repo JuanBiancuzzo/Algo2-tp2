@@ -22,12 +22,41 @@ heap_t* heap_crear(heap_comparador comparador, heap_liberar_elemento destructor)
     return heap;
 }
 
+int posicion_padre(int posicion) {
+    return (posicion-1)/2;
+}
+
+void sift_up (heap_t* heap, int posicion) {
+
+    int padre = posicion_padre(posicion);
+
+    void* aux = heap->elementos[posicion];
+    heap->elementos[posicion] = heap->elementos[padre];
+    heap->elementos[padre] = aux;
+}
+
+void reordenar_heap(heap_t* heap, int posicion) {
+
+    int padre = posicion_padre(posicion);
+
+    if (padre < 0) return;
+
+    int comparacion = heap->comparador(heap->elementos[posicion], heap->elementos[padre]);
+
+    if (comparacion > 0) {
+        sift_up(heap, posicion);
+        reordenar_heap(heap, padre);
+    }
+}
+
 int heap_insertar(heap_t* heap, void* elemento) {
 
     if (!heap) return ERROR;
 
+    heap->elementos[heap->cant_elementos] = elemento;
+    (heap->cant_elementos)++;
 
-
+    reordenar_heap(heap, (heap->cant_elementos) - 1);
     return EXITO;
 }
 
