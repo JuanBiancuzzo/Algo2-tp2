@@ -54,8 +54,60 @@ void probar_heap_crear () {
     probar_heap_crear_inicializacion();
 }
 
-void probar_heap_insertar () {
+void probar_heap_insertar_valores_invalidos () {
+    int elemento = 11;
 
+    pa2m_afirmar(heap_insertar(NULL, &elemento) == ERROR,
+                 "Detecta correctamente que el heap es invalido\n");
+
+}
+
+void probar_heap_insertar_un_elemento () {
+    heap_comparador comparador = comparador_prueba;
+    heap_liberar_elemento destructor = destructor_prueba;
+    heap_t* heap = heap_crear(comparador, destructor);
+    int elemento = 11;
+
+    pa2m_afirmar(heap_insertar(heap, &elemento) == EXITO,
+                 "Mensaje de exito al insertar el elemento");
+
+    pa2m_afirmar(elemento == *(int*)heap->elementos[0] ,
+                 "Se inserta correctamente el elemenento en el heap\n");
+
+    heap_destruir(heap);
+}
+
+void probar_heap_insertar_varios_elementos () {
+    heap_comparador comparador = comparador_prueba;
+    heap_liberar_elemento destructor = destructor_prueba;
+    heap_t* heap = heap_crear(comparador, destructor);
+    int elemento_uno = 11, elemento_dos = 22, elemento_tres = 33;
+
+    pa2m_afirmar(heap_insertar(heap, &elemento_uno) == EXITO,
+                 "Mensaje de exito al insertar el primer elemento");
+
+    pa2m_afirmar(heap_insertar(heap, &elemento_dos) == EXITO,
+                 "Mensaje de exito al insertar el segunfo elemento");
+
+    pa2m_afirmar(heap_insertar(heap, &elemento_tres) == EXITO,
+                 "Mensaje de exito al insertar el tercer elemento");
+
+    pa2m_afirmar(elemento_uno == *(int*)heap->elementos[0] ,
+                 "\nSe inserta correctamente el primer elemenento en el heap");
+
+    pa2m_afirmar(elemento_dos == *(int*)heap->elementos[1] ,
+                 "Se inserta correctamente el segundo elemenento en el heap");
+
+    pa2m_afirmar(elemento_tres == *(int*)heap->elementos[2] ,
+                 "Se inserta correctamente el tercer elemenento en el heap");
+
+    heap_destruir(heap);
+}
+
+void probar_heap_insertar () {
+    probar_heap_insertar_valores_invalidos();
+    probar_heap_insertar_un_elemento();
+    probar_heap_insertar_varios_elementos();
 }
 
 void probar_heap_raiz () {
