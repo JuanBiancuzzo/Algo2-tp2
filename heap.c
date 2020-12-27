@@ -26,6 +26,10 @@ int posicion_padre(int posicion) {
     return (posicion-1)/2;
 }
 
+/*
+ * Intercambia el padre con el hijo, haciendo que le
+ * padre suba en el heap
+ */
 void sift_up (heap_t* heap, int posicion) {
 
     int padre = posicion_padre(posicion);
@@ -35,6 +39,11 @@ void sift_up (heap_t* heap, int posicion) {
     heap->elementos[padre] = aux;
 }
 
+/*
+ * Dado una posicion va reorganizando el heap para que
+ * vaya subiendo la posicion siempre que al hacerlo cumpla
+ * las condiciones de heap
+ */
 void heap_subir(heap_t* heap, int posicion) {
 
     int padre = posicion_padre(posicion);
@@ -60,6 +69,10 @@ int heap_insertar(heap_t* heap, void* elemento) {
     return EXITO;
 }
 
+/*
+ * Intercambia el hijo con el padre, haciendo que le
+ * padre baje en el heap
+ */
 void sift_down (heap_t* heap, int hijo) {
 
     int padre = posicion_padre(hijo);
@@ -69,6 +82,11 @@ void sift_down (heap_t* heap, int hijo) {
     heap->elementos[padre] = aux;
 }
 
+/*
+ * Dado una posicion va reorganizando el heap para que
+ * vaya bajando la posicion siempre que al hacerlo cumpla
+ * las condiciones de heap
+ */
 void heap_bajar(heap_t* heap, int padre) {
 
     int hijo_izq = (2*padre)+1;
