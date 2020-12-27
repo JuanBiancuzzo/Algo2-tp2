@@ -37,9 +37,6 @@ void probar_heap_crear_inicializacion () {
     pa2m_afirmar((heap = heap_crear(comparador, destructor)) != NULL,
                  "Mensaje de creacion correcta al crear el arbol");
 
-    pa2m_afirmar(!heap->elementos,
-                 "Los elementos se inicializan correctamente");
-
     pa2m_afirmar(heap->cant_elementos == 0,
                  "La cantidad de elementos se inicializan correctamente");
 
