@@ -83,22 +83,22 @@ void probar_heap_insertar_varios_elementos () {
     heap_t* heap = heap_crear(comparador, destructor);
     int elemento_uno = 11, elemento_dos = 22, elemento_tres = 33;
 
-    pa2m_afirmar(heap_insertar(heap, &elemento_uno) == EXITO,
+    pa2m_afirmar(heap_insertar(heap, &elemento_tres) == EXITO,
                  "Mensaje de exito al insertar el primer elemento");
 
     pa2m_afirmar(heap_insertar(heap, &elemento_dos) == EXITO,
                  "Mensaje de exito al insertar el segunfo elemento");
 
-    pa2m_afirmar(heap_insertar(heap, &elemento_tres) == EXITO,
+    pa2m_afirmar(heap_insertar(heap, &elemento_uno) == EXITO,
                  "Mensaje de exito al insertar el tercer elemento");
 
     pa2m_afirmar(elemento_uno == *(int*)heap->elementos[0] ,
                  "\nSe inserta correctamente el primer elemenento en el heap");
 
-    pa2m_afirmar(elemento_dos == *(int*)heap->elementos[1] ,
+    pa2m_afirmar(elemento_tres == *(int*)heap->elementos[1] ,
                  "Se inserta correctamente el segundo elemenento en el heap");
 
-    pa2m_afirmar(elemento_tres == *(int*)heap->elementos[2] ,
+    pa2m_afirmar(elemento_dos == *(int*)heap->elementos[2] ,
                  "Se inserta correctamente el tercer elemenento en el heap");
 
     heap_destruir(heap);
