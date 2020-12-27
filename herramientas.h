@@ -4,26 +4,29 @@
 #include "lista.h"
 #include "heap.h"
 
-#define MAX_NOMBRE 50
+#define MAX_NOMBRE 100
 #define MAX_POKE_COMBATE 6
-#define GIMNASIO "G"
-#define LIDER "L"
-#define POKEMON "P"
-#define ENTRENADOR "E"
-#define INGRESAR_ARCHIVO "E"
-#define AGREGAR_GIMNASIO "A"
-#define COMENZAR_PARTIDA "I"
-#define SIMULAR_PARTIDA "S"
-#define MOSTRAR_ENTRENADOR "E"
-#define MOSTRAR_GIMNASIO "G"
-#define CAMBIAR_POKEMON "C"
-#define PROXIMA_BATALLA "B"
-#define PROXIMO_COMBATE "N"
-#define TOMAR_PRESTADO "T"
-#define CAMBIAR_POKEMONES "C"
-#define PROXIMO_GIMNASIO "N"
-#define REINTENTAR "R"
-#define FINALIZAR "F"
+#define EXITO 0
+#define ERROR -1
+
+#define GIMNASIO 'G'
+#define LIDER 'L'
+#define POKEMON 'P'
+#define ENTRENADOR 'E'
+#define INGRESAR_ARCHIVO 'E'
+#define AGREGAR_GIMNASIO 'A'
+#define COMENZAR_PARTIDA 'I'
+#define SIMULAR_PARTIDA 'S'
+#define MOSTRAR_ENTRENADOR 'E'
+#define MOSTRAR_GIMNASIO 'G'
+#define CAMBIAR_POKEMON 'C'
+#define PROXIMA_BATALLA 'B'
+#define PROXIMO_COMBATE 'N'
+#define TOMAR_PRESTADO 'T'
+#define CAMBIAR_POKEMONES 'C'
+#define PROXIMO_GIMNASIO 'N'
+#define REINTENTAR 'R'
+#define FINALIZAR 'F'
 
 typedef int (* funcion_batalla)(void*, void *);
 
@@ -32,6 +35,7 @@ typedef int (* liberar_gimnasio)(void*, void *);
 typedef int (* liberar_entrenador)(void*, void *);
 
 typedef struct pokemon{
+	char nombre[MAX_NOMBRE];
 	int velocidad;
 	int defensa;
 	int ataque;
