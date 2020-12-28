@@ -30,6 +30,9 @@ int leer_id (FILE* archivo, char* id) {
     return fscanf(archivo, LEER_ID, id);
 }
 
+/*
+ * Va leyendo un archivo y va guardandolos en la cola
+ */
 int guardar_pokemones(FILE* archivo, lista_t* pokemones) {
     int cant_pokemones = 0, resultado;
     pokemon_t* p_pokemon;
@@ -47,7 +50,7 @@ int guardar_pokemones(FILE* archivo, lista_t* pokemones) {
             return cant_pokemones;
         }
 
-        resultado = lista_insertar(pokemones, p_pokemon);
+        resultado = lista_encolar(pokemones, p_pokemon);
         if (resultado == ERROR)  {
             free(p_pokemon);
             return cant_pokemones;
