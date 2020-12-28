@@ -1,8 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "pa2mm.h"
 #include "../heap.h"
+#include "../herramientas.h"
 
 #define ERROR -1
 #define EXITO 0
@@ -211,6 +213,90 @@ void probar_heap_destruir () {
     probar_heap_destruir_varios_elementos();
 }
 
+void probar_archivo_2_personaje_principal_valores_invalidos () {
+
+    char ruta_archivo[MAX_NOMBRE];
+    personaje_t personaje;
+
+    pa2m_afirmar(archivo_2_personaje_principal(NULL, &personaje) == ERROR,
+                 "Detecta correctamente que la ruta del archivo es invalido");
+
+    pa2m_afirmar(archivo_2_personaje_principal(ruta_archivo, NULL) == ERROR,
+                 "Detecta correctamente que la direccion del personaje es invalido");
+
+    pa2m_afirmar(archivo_2_personaje_principal("algo_random.txt", &personaje) == ERROR,
+                 "Detecta correctamente que la ruta del archivo no lleva a ningun lado\n");
+
+}
+
+void probar_archivo_2_personaje_principal_formato_invalidos_sin_entrenado () {
+
+    personaje_t* personaje = crear_personaje_principal();
+
+    pa2m_afirmar(archivo_2_personaje_principal("pruebas/per_principal_formato_invalido_sin_entrenador.txt", personaje) == ERROR,
+                 "Reconoce que no hay entrenador y manda un error\n");
+
+    destruir_personaje_principal(personaje);
+}
+
+void probar_archivo_2_personaje_principal_formato_invalidos_sin_pokemones () {
+
+    personaje_t* personaje = crear_personaje_principal();
+
+    pa2m_afirmar(archivo_2_personaje_principal("pruebas/per_principal_formato_invalido_sin_pokemones.txt", personaje) == ERROR,
+                 "Reconoce que no hay pokemones y manda un error\n");
+
+    destruir_personaje_principal(personaje);
+}
+
+void probar_archivo_2_personaje_principal_formato_invalidos_corrupto () {
+
+    personaje_t* personaje = crear_personaje_principal();
+
+    pa2m_afirmar(archivo_2_personaje_principal("pruebas/per_principal_formato_invalido_corrupto.txt", personaje) == EXITO,
+                 "Mensaje de exito en un archivo donde en el medio de los pokemones hay un error");
+
+    pa2m_afirmar(personaje->cant_pokemones == 2,
+                 "La cantidad de pokemones es 2 al encontrar el tercer pokemon con un error\n");
+
+    destruir_personaje_principal(personaje);
+}
+
+void probar_archivo_2_personaje_principal_formato_validos () {
+
+    personaje_t* personaje = crear_personaje_principal();
+    int cant_pokemones = 11;
+
+    pa2m_afirmar(archivo_2_personaje_principal("pruebas/per_principal_formato_valido.txt", personaje) == EXITO,
+                 "Mensaje de exito al convertir el archivo a personaje");
+
+    pa2m_afirmar(strcmp(personaje->nombre, "Ash") == 0,
+                 "Reconoce correctamente el nombre del personaje principal");
+
+    pa2m_afirmar(personaje->cant_pokemones == cant_pokemones,
+                 "Reconoce la cantidad correcta de pokemones");
+
+    pa2m_afirmar(personaje->pokemones,
+                 "Crea una lista con los personajes");
+
+    pa2m_afirmar((int)lista_elementos(personaje->pokemones) == cant_pokemones,
+                 "La lista tiene la cantidad correcta de pokemones\n");
+
+    destruir_personaje_principal(personaje);
+}
+
+void probar_archivo_2_personaje_principal () {
+    probar_archivo_2_personaje_principal_valores_invalidos();
+    printf("  · Archivo invalido, sin el entrenador:\n");
+    probar_archivo_2_personaje_principal_formato_invalidos_sin_entrenado();
+    printf("  · Archivo invalido, sin pokemones:\n");
+    probar_archivo_2_personaje_principal_formato_invalidos_sin_pokemones();
+    printf("  · Archivo invalido, error en el tercer pokemon:\n");
+    probar_archivo_2_personaje_principal_formato_invalidos_corrupto();
+    printf("  · Archivo valido:\n");
+    probar_archivo_2_personaje_principal_formato_validos();
+}
+
 int main () {
 
     pa2m_nuevo_grupo("Pruebas de heap");
@@ -224,7 +310,8 @@ int main () {
     probar_heap_destruir();
 
     pa2m_nuevo_grupo("Pruebas de herramientas");
-    printf(" * algo:\n");
+    printf(" * De archivo a personaje principal:\n");
+    probar_archivo_2_personaje_principal();
 
     pa2m_mostrar_reporte();
 
