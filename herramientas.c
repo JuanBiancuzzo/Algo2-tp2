@@ -93,3 +93,35 @@ int archivo_2_gimnasio (char ruta_archivo[], gimnasio_t* gimnasio) {
 
     return EXITO;
 }
+
+personaje_t* crear_personaje_principal () {
+    return calloc(1, sizeof(personaje_t));
+}
+
+/*
+ * Funcion que se encarga de liberar el puntero en el heap
+ * de cada pokemon
+ */
+bool liberar_pokemones(void* pokemon, void* contexto) {
+    contexto = contexto;
+    free(pokemon);
+    return true;
+}
+
+/*
+ * Se encarga de liberar todos los pokemones en la lista
+ */
+void destruir_lista_pokemones(lista_t* pokemones) {
+    bool (*funcion) (void*, void*) = liberar_pokemones;
+    lista_con_cada_elemento(pokemones, funcion, NULL);
+}
+
+void destruir_personaje_principal(personaje_t* principal) {
+
+    if (!principal) return;
+    if (!principal->pokemones) return;
+
+    destruir_lista_pokemones(principal->pokemones);
+    lista_destruir(principal->pokemones);
+    free(principal);
+}
