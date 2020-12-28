@@ -86,6 +86,11 @@ int archivo_2_gimnasio (char ruta_archivo[], gimnasio_t* gimnasio);
  */
 personaje_t* crear_personaje_principal();
 
+/*
+ * Se encarga de reservar memoria en el heap para el gimnasio y devuelve
+ * esa direccion, en caso de que no lo logre devuelve NULL
+ */
+gimnasio_t* crear_gimnasio();
 
 /*
  * Se encanrga de liberar toda la memoria necesaria que se utilizo al
@@ -93,5 +98,11 @@ personaje_t* crear_personaje_principal();
  */
 void destruir_personaje_principal(personaje_t* principal);
 
+/*
+ * Se encanrga de liberar toda la memoria necesaria que se utilizo al
+ * crear el gimnasio, esto incluye todos sus entrenadores que a su vez
+ * tiene todos sus pokemones
+ */
+void destruir_gimnasio(gimnasio_t* gimnasio);
 
 #endif /* __HERRAMIENTAS_H__ */
