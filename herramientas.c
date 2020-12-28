@@ -13,6 +13,10 @@
 #define LEER_ID "%c;"
 #define CANT_ID 1
 
+int leer_id (FILE* archivo, char* id) {
+    return fscanf(archivo, LEER_ID, id);
+}
+
 int leer_pokemon(FILE* archivo, pokemon_t* pokemon) {
     return fscanf(archivo, LEER_POKEMON, pokemon->nombre, &(pokemon->velocidad), &(pokemon->defensa), &(pokemon->ataque));
 }
@@ -22,11 +26,15 @@ int leer_gimnasio (FILE* archivo, gimnasio_t* gimnasio) {
 }
 
 int leer_entrenador (FILE* archivo, char nombre[]) {
-    return fscanf(archivo, LEER_ENTRENADOR, nombre);
-}
 
-int leer_id (FILE* archivo, char* id) {
-    return fscanf(archivo, LEER_ID, id);
+    char id;
+    int leido = leer_id(archivo, &id);
+    if (leido != CANT_ID || id != ENTRENADOR) return ERROR;
+
+    leido = fscanf(archivo, LEER_ENTRENADOR, nombre);
+    if (leido != CANT_ENTRENADOR) return ERROR;
+
+    return EXITO;
 }
 
 pokemon_t* pokemon_crear() {
@@ -69,14 +77,8 @@ int archivo_2_personaje_principal (char ruta_archivo[], personaje_t* principal) 
     FILE* archivo = fopen(ruta_archivo, "r");
     if (!archivo) return ERROR;
 
-    int leido, resultado;
-    char id;
-
-    leido = leer_id(archivo, &id);
-    if (leido != CANT_ID || id != ENTRENADOR) return ERROR;
-
-    leido = leer_entrenador(archivo, principal->nombre);
-    if (leido != CANT_ENTRENADOR) return ERROR;
+    int resultado = leer_entrenador(archivo, principal->nombre);
+    if (resultado == ERROR) return ERROR;
 
     principal->pokemones = lista_crear();
     resultado = guardar_pokemones(archivo, principal->pokemones);
