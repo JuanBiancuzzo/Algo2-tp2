@@ -102,7 +102,12 @@ int archivo_2_gimnasio (char ruta_archivo[], gimnasio_t* gimnasio) {
 }
 
 personaje_t* crear_personaje_principal () {
-    return calloc(1, sizeof(personaje_t));
+    personaje_t* personaje = calloc(1, sizeof(personaje_t));
+
+    if (!personaje) return NULL;
+
+    personaje->cant_pokemones = 0;
+    return personaje;
 }
 
 /*
@@ -126,9 +131,10 @@ void destruir_lista_pokemones(lista_t* pokemones) {
 void destruir_personaje_principal(personaje_t* principal) {
 
     if (!principal) return;
-    if (!principal->pokemones) return;
 
-    destruir_lista_pokemones(principal->pokemones);
-    lista_destruir(principal->pokemones);
+    if (principal->cant_pokemones > 0) {
+        destruir_lista_pokemones(principal->pokemones);
+        lista_destruir(principal->pokemones);
+    }
     free(principal);
 }
