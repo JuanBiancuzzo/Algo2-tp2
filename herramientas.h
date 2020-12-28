@@ -80,23 +80,18 @@ int archivo_2_personaje_principal (char ruta_archivo[], personaje_t* principal);
  */
 int archivo_2_gimnasio (char ruta_archivo[], gimnasio_t* gimnasio);
 
+/*
+ * Se encarga de reservar memoria en el heap para el personaje principal
+ * y devolver esa direccion, en caso de que no lo logre devuelve NULL
+ */
+personaje_t* crear_personaje_principal();
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/*
+ * Se encanrga de liberar toda la memoria necesaria que se utilizo al
+ * crear el personaje, esto incluye todos sus pokemones
+ */
+void destruir_personaje_principal(personaje_t* principal);
 
 
 #endif /* __HERRAMIENTAS_H__ */
