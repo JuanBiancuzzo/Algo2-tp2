@@ -277,10 +277,10 @@ void probar_archivo_2_personaje_principal_formato_validos () {
                  "Reconoce la cantidad correcta de pokemones");
 
     pa2m_afirmar(personaje->pokemones,
-                 "Crea una lista con los personajes");
+                 "Crea una cola con los pokemones");
 
     pa2m_afirmar((int)lista_elementos(personaje->pokemones) == cant_pokemones,
-                 "La lista tiene la cantidad correcta de pokemones\n");
+                 "La cola tiene la cantidad correcta de pokemones\n");
 
     destruir_personaje_principal(personaje);
 }
