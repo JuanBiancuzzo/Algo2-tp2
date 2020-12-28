@@ -91,3 +91,10 @@ int archivo_2_personaje_principal (char ruta_archivo[], personaje_t* principal) 
     principal->cant_pokemones = resultado;
     return EXITO;
 }
+
+int archivo_2_gimnasio (char ruta_archivo[], gimnasio_t* gimnasio) {
+    if (!ruta_archivo || !gimnasio)
+        return ERROR;
+
+    return EXITO;
+}
