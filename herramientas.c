@@ -123,18 +123,18 @@ bool liberar_pokemones(void* pokemon, void* contexto) {
 /*
  * Se encarga de liberar todos los pokemones en la lista
  */
-void destruir_lista_pokemones(lista_t* pokemones) {
+void destruir_cola_pokemones(lista_t* pokemones) {
     bool (*funcion) (void*, void*) = liberar_pokemones;
     lista_con_cada_elemento(pokemones, funcion, NULL);
+    lista_destruir(pokemones);
 }
 
 void destruir_personaje_principal(personaje_t* principal) {
 
     if (!principal) return;
 
-    if (principal->cant_pokemones > 0) {
-        destruir_lista_pokemones(principal->pokemones);
-        lista_destruir(principal->pokemones);
-    }
+    if (principal->cant_pokemones > 0)
+        destruir_cola_pokemones(principal->pokemones);
+
     free(principal);
 }
