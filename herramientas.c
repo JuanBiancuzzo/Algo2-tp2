@@ -97,10 +97,93 @@ int archivo_2_personaje_principal (char ruta_archivo[], personaje_t* principal) 
     return EXITO;
 }
 
+/*
+ * Guarda el tipo de entrenador (ya sea lider o entrenador) en una
+ * pila, y guarda sus pokemones
+ */
+int guardar_entrenador(FILE* archivo, char id, lista_t* entrenadores, int* cantidad) {
+    entrenador_t* p_entrenador;
+    char id_resultado;
+    int resultado;
+
+    int leido = leer_id(archivo, &id_resultado);
+    if (leido != CANT_ID || id_resultado != id)
+        return ERROR;
+
+    p_entrenador = calloc(1, sizeof(entrenador_t));
+    if (!p_entrenador) return ERROR;
+
+    p_entrenador->cant_pokemones = 0;
+    leido = leer_entrenador(archivo, p_entrenador->nombre);
+    if (leido != CANT_ENTRENADOR) {
+        free(p_entrenador);
+        return ERROR;
+    }
+
+    p_entrenador->pokemones = lista_crear();
+    resultado = guardar_pokemones(archivo, p_entrenador->pokemones);
+
+    if (resultado == 0) {
+        lista_destruir(p_entrenador->pokemones);
+        return ERROR;
+    }
+    p_entrenador->cant_pokemones = resultado;
+
+    resultado = lista_apilar(entrenadores, p_entrenador);
+    if (resultado == ERROR)  {
+        free(p_entrenador);
+        return ERROR;
+    }
+
+    (*cantidad)++;
+    return EXITO;
+}
+
+/*
+ * Va leyendo un archivo y va guardandolos en la pila
+ */
+int guardar_entrenadores(FILE* archivo, lista_t* entrenadores) {
+    int cant_entrenadores = 0;
+
+    int resultado = guardar_entrenador(archivo, LIDER, entrenadores, &cant_entrenadores);
+
+    while (resultado == EXITO)
+        resultado = guardar_entrenador(archivo, ENTRENADOR, entrenadores, &cant_entrenadores);
+
+    return cant_entrenadores;
+}
+
 int archivo_2_gimnasio (char ruta_archivo[], gimnasio_t* gimnasio) {
     if (!ruta_archivo || !gimnasio)
         return ERROR;
 
+    FILE* archivo = fopen(ruta_archivo, "r");
+    if (!archivo) return ERROR;
+
+    char id;
+    int leido = leer_id(archivo, &id), resultado;
+
+    if (leido != CANT_ID || id != GIMNASIO) {
+        fclose(archivo);
+        return ERROR;
+    }
+
+    leido = leer_gimnasio(archivo, gimnasio);
+    if (leido != CANT_GIMNASIO) {
+        fclose(archivo);
+        return ERROR;
+    }
+
+    gimnasio->entrenadores = lista_crear();
+    resultado = guardar_entrenadores(archivo, gimnasio->entrenadores);
+
+    if (resultado == 0) {
+        lista_destruir(gimnasio->entrenadores);
+        fclose(archivo);
+        return ERROR;
+    }
+
+    fclose(archivo);
     return EXITO;
 }
 
