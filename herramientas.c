@@ -152,12 +152,13 @@ void destruir_personaje_principal(personaje_t* principal) {
  * Funcion que se encarga de liberar a todos los pokemones que tengan
  * y despues libere al entrenador
  */
-bool liberar_entrenadores(void* entrenadores, void* contexto) {
+bool liberar_entrenadores(void* entrenador, void* contexto) {
     contexto = contexto;
-    if (((entrenador_t*)entrenadores)->cant_pokemones > 0) {
-        destruir_cola_pokemones(((entrenador_t*)entrenadores)->pokemones);
-        lista_destruir(((entrenador_t*)entrenadores)->pokemones);
+    if (((entrenador_t*)entrenador)->cant_pokemones > 0) {
+        destruir_cola_pokemones(((entrenador_t*)entrenador)->pokemones);
+        lista_destruir(((entrenador_t*)entrenador)->pokemones);
     }
+    free(entrenador);
     return true;
 }
 
