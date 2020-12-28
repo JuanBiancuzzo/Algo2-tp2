@@ -39,18 +39,18 @@ int guardar_pokemones(FILE* archivo, lista_t* pokemones) {
     while (leido == CANT_ID && id == POKEMON) {
 
         p_pokemon = calloc(1, sizeof(pokemon_t));
-        if (!p_pokemon) return ERROR;
+        if (!p_pokemon) return cant_pokemones;
 
         leido = leer_pokemon(archivo, p_pokemon);
         if (leido != CANT_POKEMON) {
             free(p_pokemon);
-            return ERROR;
+            return cant_pokemones;
         }
 
         resultado = lista_insertar(pokemones, p_pokemon);
         if (resultado == ERROR)  {
             free(p_pokemon);
-            return ERROR;
+            return cant_pokemones;
         }
 
         cant_pokemones++;
@@ -69,16 +69,23 @@ int archivo_2_personaje_principal (char ruta_archivo[], personaje_t* principal) 
     char id;
     int leido = leer_id(archivo, &id), resultado;
 
-    if (leido != CANT_ID || id != ENTRENADOR) return ERROR;
+    if (leido != CANT_ID || id != ENTRENADOR) {
+        fclose(archivo);
+        return ERROR;
+    }
 
     leido = leer_entrenador(archivo, principal->nombre);
-    if (leido != CANT_ENTRENADOR) return ERROR;
+    if (leido != CANT_ENTRENADOR) {
+        fclose(archivo);
+        return ERROR;
+    }
 
     principal->pokemones = lista_crear();
     resultado = guardar_pokemones(archivo, principal->pokemones);
 
-    if (resultado == ERROR) {
+    if (resultado == 0) {
         lista_destruir(principal->pokemones);
+        fclose(archivo);
         return ERROR;
     }
 
