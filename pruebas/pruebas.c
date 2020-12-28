@@ -223,6 +223,8 @@ int main () {
     printf("\n * Heap destruir:\n");
     probar_heap_destruir();
 
+    pa2m_nuevo_grupo("Pruebas de herramientas");
+    printf(" * algo:\n");
 
     pa2m_mostrar_reporte();
 
