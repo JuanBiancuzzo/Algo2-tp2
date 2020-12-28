@@ -110,6 +110,15 @@ personaje_t* crear_personaje_principal () {
     return personaje;
 }
 
+gimnasio_t* crear_gimnasio () {
+    gimnasio_t* gimnasio = calloc(1, sizeof(gimnasio_t));
+
+    if (!gimnasio) return NULL;
+
+    gimnasio->cant_entrenadores = 0;
+    return gimnasio;
+}
+
 /*
  * Funcion que se encarga de liberar el puntero en el heap
  * de cada pokemon
@@ -137,4 +146,36 @@ void destruir_personaje_principal(personaje_t* principal) {
         destruir_cola_pokemones(principal->pokemones);
 
     free(principal);
+}
+
+/*
+ * Funcion que se encarga de liberar el puntero en el heap
+ * de cada pokemon
+ */
+bool liberar_entrenadores(void* entrenadores, void* contexto) {
+    contexto = contexto;
+    if (((entrenador_t*)entrenadores)->cant_pokemones > 0) {
+        destruir_cola_pokemones(((entrenador_t*)entrenadores)->pokemones);
+        lista_destruir(((entrenador_t*)entrenadores)->pokemones);
+    }
+    return true;
+}
+
+/*
+ * Se encarga de liberar todos los pokemones en la lista
+ */
+void destruir_pila_entrenadores(lista_t* entrenadores) {
+    bool (*funcion) (void*, void*) = liberar_entrenadores;
+    lista_con_cada_elemento(entrenadores, funcion, NULL);
+    lista_destruir(entrenadores);
+}
+
+void destruir_gimnasio(gimnasio_t* gimnasio) {
+
+    if (!gimnasio) return;
+
+    if (gimnasio->cant_entrenadores > 0)
+        destruir_pila_entrenadores(gimnasio->entrenadores);
+
+    free(gimnasio);
 }
