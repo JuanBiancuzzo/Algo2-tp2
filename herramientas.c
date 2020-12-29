@@ -32,7 +32,7 @@ int leer_id (FILE* archivo, char* id) {
 }
 
 /*
- * Va leyendo un archivo y va guardandolos en la cola
+ * Va leyendo un archivo y va guardandolos en la lista
  */
 int guardar_pokemon (FILE* archivo, lista_t* pokemones, bool per_prin, int* cantidad, char* ultima_leida) {
 
@@ -58,7 +58,7 @@ int guardar_pokemon (FILE* archivo, lista_t* pokemones, bool per_prin, int* cant
 
     (*p_pokemon) = pokemon;
 
-    int resultado = lista_encolar(pokemones, p_pokemon);
+    int resultado = lista_insertar(pokemones, p_pokemon);
     if (resultado == ERROR)  {
         free(p_pokemon);
         return ERROR;
@@ -69,7 +69,7 @@ int guardar_pokemon (FILE* archivo, lista_t* pokemones, bool per_prin, int* cant
 }
 
 /*
- * Va leyendo un archivo y va guardandolos en la cola
+ * Va leyendo un archivo y va guardandolos en la lista
  */
 int guardar_pokemones(FILE* archivo, lista_t* pokemones, bool per_prin, char* ultima_leida) {
     int cant_pokemones = 0;
@@ -286,9 +286,9 @@ bool liberar_pokemones(void* pokemon, void* contexto) {
 }
 
 /*
- * Se encarga de liberar todos los pokemones en la cola
+ * Se encarga de liberar todos los pokemones en la lista
  */
-void destruir_cola_pokemones(lista_t* pokemones) {
+void destruir_lista_pokemones(lista_t* pokemones) {
     bool (*funcion) (void*, void*) = liberar_pokemones;
     lista_con_cada_elemento(pokemones, funcion, NULL);
     lista_destruir(pokemones);
@@ -299,7 +299,7 @@ void destruir_personaje_principal(personaje_t* principal) {
     if (!principal) return;
 
     if (principal->cant_pokemones > 0)
-        destruir_cola_pokemones(principal->pokemones);
+        destruir_lista_pokemones(principal->pokemones);
 
     free(principal);
 }
@@ -311,7 +311,7 @@ void destruir_personaje_principal(personaje_t* principal) {
 bool liberar_entrenadores(void* entrenador, void* contexto) {
     contexto = contexto;
     if (((entrenador_t*)entrenador)->cant_pokemones > 0)
-        destruir_cola_pokemones(((entrenador_t*)entrenador)->pokemones);
+        destruir_lista_pokemones(((entrenador_t*)entrenador)->pokemones);
 
     free(entrenador);
     return true;
