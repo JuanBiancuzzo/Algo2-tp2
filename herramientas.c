@@ -111,7 +111,7 @@ int guardar_entrenador(FILE* archivo, char id, lista_t* entrenadores, int* canti
 
     if (resultado == 0) {
         lista_destruir(entrenador.pokemones);
-        return ERROR;
+        return (id == LIDER) ? ERROR : IGNORAR;
     }
     entrenador.cant_pokemones = resultado;
 
@@ -138,7 +138,7 @@ int guardar_entrenadores(FILE* archivo, lista_t* entrenadores, char* ultima_leid
 
     int resultado = guardar_entrenador(archivo, LIDER, entrenadores, &cant_entrenadores, ultima_leida);
 
-    while (resultado == EXITO)
+    while (resultado == EXITO || resultado == IGNORAR)
         resultado = guardar_entrenador(archivo, ENTRENADOR, entrenadores, &cant_entrenadores, ultima_leida);
 
     return cant_entrenadores;
