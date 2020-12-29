@@ -493,6 +493,54 @@ void probar_gimnasio_2_mapa () {
     probar_gimnasio_2_mapa_varios_gimnasios_validos();
 }
 
+
+void probar_level_up_valor_invalido () {
+    pokemon_t pokemon;
+
+    pokemon.velocidad = MAX_LEVEL_UP;
+    pokemon.defensa = MAX_LEVEL_UP;
+    pokemon.ataque = MAX_LEVEL_UP;
+
+    pa2m_afirmar(level_up(NULL) == ERROR,
+                 "Reconoce correctamente que el pokemon es invalido");
+
+    pa2m_afirmar(pokemon.velocidad == MAX_LEVEL_UP,
+                 "Detecta que la velocidad llego a su maximo");
+
+    pa2m_afirmar(pokemon.defensa == MAX_LEVEL_UP,
+                 "Detecta que la defensa llego a su maximo");
+
+    pa2m_afirmar(pokemon.ataque == MAX_LEVEL_UP,
+                 "Detecta que el ataque llego a su maximo\n");
+
+}
+
+void probar_level_up_valor_valido () {
+    pokemon_t pokemon;
+
+    pokemon.velocidad = 11;
+    pokemon.defensa = 13;
+    pokemon.ataque = 15;
+
+    pa2m_afirmar(level_up(&pokemon) == EXITO,
+                 "Mensaje de exito al level up el pokemon");
+
+    pa2m_afirmar(pokemon.velocidad == 12,
+                 "Aumenta correctamente la velocidad");
+
+    pa2m_afirmar(pokemon.defensa == 14,
+                 "Aumenta correctamente la defensa");
+
+    pa2m_afirmar(pokemon.ataque == 16,
+                 "Aumenta correctamente el ataque\n");
+
+}
+
+void probar_level_up () {
+    probar_level_up_valor_invalido();
+    probar_level_up_valor_valido();
+}
+
 int main () {
 
     pa2m_nuevo_grupo("Pruebas de heap");
@@ -512,6 +560,10 @@ int main () {
     probar_archivo_2_gimnasio();
     printf("\n * Agregar gimnasio al mapa:\n");
     probar_gimnasio_2_mapa();
+
+    pa2m_nuevo_grupo("Pruebas de batallas");
+    printf("\n * Level up:\n");
+    probar_level_up();
 
     pa2m_mostrar_reporte();
 
