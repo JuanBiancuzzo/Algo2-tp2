@@ -327,7 +327,7 @@ void destruir_mapa(mapa_t* mapa) {
     free(mapa);
 }
 
-int gimnasio_2_heap(mapa_t* mapa, gimnasio_t* gimnasio) {
+int gimnasio_2_mapa(mapa_t* mapa, gimnasio_t* gimnasio) {
 
     if (!mapa || !gimnasio) return ERROR;
 
