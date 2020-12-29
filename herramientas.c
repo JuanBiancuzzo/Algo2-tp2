@@ -247,12 +247,15 @@ mapa_t* crear_mapa () {
     heap_liberar_elemento destructor = destructor_gimnasios;
     mapa_t mapa;
 
+    mapa.cant_gimnasios = 0;
     mapa.gimnasios = heap_crear(comparador, destructor);
     if (!mapa.gimnasios) return NULL;
-    mapa.cant_gimnasios = 0;
 
     mapa_t* p_mapa = calloc(1, sizeof(mapa_t));
-    if (!p_mapa) return NULL;
+    if (!p_mapa) {
+        heap_destruir(mapa.gimnasios);
+        return NULL;
+    }
     (*p_mapa) = mapa;
 
     return p_mapa;
@@ -320,9 +323,7 @@ void destruir_gimnasio(gimnasio_t* gimnasio) {
 }
 
 void destruir_mapa(mapa_t* mapa) {
-
     if (!mapa) return;
-
     heap_destruir(mapa->gimnasios);
     free(mapa);
 }
