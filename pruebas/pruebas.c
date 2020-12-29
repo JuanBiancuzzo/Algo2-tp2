@@ -13,8 +13,8 @@ int comparador_prueba (void* elemento_uno, void* elemento_dos) {
     return *(int*) elemento_uno > *(int*) elemento_dos ? 1 : *(int*) elemento_uno < *(int*) elemento_dos ? -1 : 0;
 }
 
-void destructor_prueba (void* arbol) {
-    arbol = arbol;
+void destructor_prueba (void* heap) {
+    heap = heap;
 }
 
 typedef struct estructura_contador {
