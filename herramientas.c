@@ -341,3 +341,14 @@ int gimnasio_2_mapa(mapa_t* mapa, gimnasio_t* gimnasio) {
 
     return EXITO;
 }
+
+int level_up(pokemon_t* pokemon) {
+    if (!pokemon)
+        return ERROR;
+
+    (pokemon->velocidad) += ((pokemon->velocidad) <= MAX_LEVEL_UP) ? 1 : 0;
+    (pokemon->defensa) += ((pokemon->defensa) <= MAX_LEVEL_UP) ? 1 : 0;
+    (pokemon->ataque) += ((pokemon->ataque) <= MAX_LEVEL_UP) ? 1 : 0;
+
+    return EXITO;
+}

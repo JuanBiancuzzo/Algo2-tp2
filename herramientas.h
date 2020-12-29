@@ -6,6 +6,7 @@
 
 #define MAX_NOMBRE 100
 #define MAX_POKE_COMBATE 6
+#define MAX_LEVEL_UP 63
 #define IGNORAR 1
 #define EXITO 0
 #define ERROR -1
@@ -115,8 +116,15 @@ void destruir_gimnasio(gimnasio_t* gimnasio);
 void destruir_mapa(mapa_t* mapa);
 
 /*
- * Agrega el gimnasio al heap
+ * Agrega el gimnasio al mapa, que va a posicionarse de menor
+ * dificultad a mayor
  */
 int gimnasio_2_mapa(mapa_t* mapa, gimnasio_t* gimnasio);
+
+/*
+ * Aumenta las caracteristicas del pokemon +1 en cada caracteristica
+ * hasta llegar a 63
+ */
+int level_up(pokemon_t* pokemon);
 
 #endif /* __HERRAMIENTAS_H__ */
