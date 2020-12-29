@@ -14,6 +14,8 @@
 #define LEER_ID "%c;"
 #define CANT_ID 1
 #define NADA 'N'
+#define GANO_PRINCIPAL 1
+#define GANO_ENEMIGO -1
 
 int leer_pokemon(FILE* archivo, pokemon_t* pokemon) {
     return fscanf(archivo, LEER_POKEMON, pokemon->nombre, &(pokemon->velocidad), &(pokemon->defensa), &(pokemon->ataque));
@@ -342,8 +344,41 @@ void destruir_mapa(mapa_t* mapa) {
     free(mapa);
 }
 
+/*
+ * Dados dos pokemones y un tipo de pelea, devuelve 1 si gana
+ * el primero, -1 si gana el segundo
+ */
 int pelea_pokemon(pokemon_t* pokemon_uno, pokemon_t* pokemon_dos, funcion_batalla estilo) {
     return estilo(pokemon_uno, pokemon_dos);
+}
+
+/*
+ * Como solo pueden tener 6 pokemones para la pelea, si perdio mas
+ * de 6 pokemones ya no puede pelear, pero si desde el principio
+ * tenia menos pokemones, si llega a esa cantidad ya no puede pelear
+ */
+bool condicion_pelea (int pokemones_derrotados, int pokemones_para_pelea) {
+    return (pokemones_derrotados < MAX_POKE_COMBATE || pokemones_derrotados < pokemones_para_pelea);
+}
+
+int batalla_pokemon(personaje_t* principal, entrenador_t* enemigo, funcion_batalla estilo) {
+
+    int contador_principal = 0, contador_enemigo = 0;
+
+    while (condicion_pelea(contador_principal, principal->cant_pokemones) \
+           && condicion_pelea(contador_enemigo, enemigo->cant_pokemones)) {
+
+        int resultado = pelea_pokemon(lista_elemento_en_posicion(principal->pokemones, (size_t) contador_principal), \
+        lista_elemento_en_posicion(enemigo->pokemones, (size_t) contador_enemigo), estilo);
+
+        if (resultado == GANO_PRINCIPAL)
+            contador_enemigo++;
+        else
+            contador_principal++;
+
+    }
+
+    return condicion_pelea(contador_principal, principal->cant_pokemones) ? GANO_PRINCIPAL : GANO_ENEMIGO;
 }
 
 int level_up(pokemon_t* pokemon) {

@@ -54,7 +54,7 @@ typedef struct gimnasio {
 
 typedef struct entrenador {
 	char nombre[MAX_NOMBRE];
-	lista_t* pokemones; // es una cola
+	lista_t* pokemones; // es una lista
 	int cant_pokemones;
 } entrenador_t;
 
@@ -122,10 +122,11 @@ void destruir_mapa(mapa_t* mapa);
 int gimnasio_2_mapa(mapa_t* mapa, gimnasio_t* gimnasio);
 
 /*
- * Dados dos pokemones y un tipo de pelea, devuelve 1 si gana
- * el primero, -1 si gana el segundo
+ * Dados el personaje principal y entrenador o lider, se hace la
+ * batalla, devolviendo 1 si el personaje principal gana o -1 si
+ * gano el entrenador o lider
  */
-int pelea_pokemon(pokemon_t* pokemon_uno, pokemon_t* pokemon_dos, funcion_batalla estilo);
+int batalla_pokemon(personaje_t* principal, entrenador_t* enemigo, funcion_batalla estilo);
 
 /*
  * Aumenta las caracteristicas del pokemon +1 en cada caracteristica
