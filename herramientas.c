@@ -212,6 +212,20 @@ int archivo_2_gimnasio (char ruta_archivo[], gimnasio_t* gimnasio) {
     return EXITO;
 }
 
+int gimnasio_2_mapa(mapa_t* mapa, gimnasio_t* gimnasio) {
+
+    if (!mapa || !gimnasio) return ERROR;
+
+    if (!mapa->gimnasios) return ERROR;
+
+    int resultado = heap_insertar(mapa->gimnasios, gimnasio);
+
+    if (resultado == ERROR) return ERROR;
+    (mapa->cant_gimnasios)++;
+
+    return EXITO;
+}
+
 personaje_t* crear_personaje_principal () {
     personaje_t* personaje = calloc(1, sizeof(personaje_t));
 
@@ -328,18 +342,6 @@ void destruir_mapa(mapa_t* mapa) {
     free(mapa);
 }
 
-int gimnasio_2_mapa(mapa_t* mapa, gimnasio_t* gimnasio) {
-
-    if (!mapa || !gimnasio) return ERROR;
-
-    if (!mapa->gimnasios) return ERROR;
-
-    int resultado = heap_insertar(mapa->gimnasios, gimnasio);
-
-    if (resultado == ERROR) return ERROR;
-    (mapa->cant_gimnasios)++;
-
-    return EXITO;
 }
 
 int level_up(pokemon_t* pokemon) {
