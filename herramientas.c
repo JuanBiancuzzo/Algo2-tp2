@@ -358,24 +358,27 @@ int pelea_pokemon(pokemon_t* pokemon_uno, pokemon_t* pokemon_dos, funcion_batall
  * tenia menos pokemones, si llega a esa cantidad ya no puede pelear
  */
 bool condicion_pelea (int pokemones_derrotados, int pokemones_para_pelea) {
-    return (pokemones_derrotados < MAX_POKE_COMBATE || pokemones_derrotados < pokemones_para_pelea);
+    return (pokemones_derrotados < MAX_POKE_COMBATE && pokemones_derrotados < pokemones_para_pelea);
 }
 
 int batalla_pokemon(personaje_t* principal, entrenador_t* enemigo, funcion_batalla estilo) {
+
+    if (!principal || !enemigo || !estilo) return 0;
 
     int contador_principal = 0, contador_enemigo = 0;
 
     while (condicion_pelea(contador_principal, principal->cant_pokemones) \
            && condicion_pelea(contador_enemigo, enemigo->cant_pokemones)) {
 
-        int resultado = pelea_pokemon(lista_elemento_en_posicion(principal->pokemones, (size_t) contador_principal), \
-        lista_elemento_en_posicion(enemigo->pokemones, (size_t) contador_enemigo), estilo);
+        int resultado = pelea_pokemon(                                  \
+            (pokemon_t*)lista_elemento_en_posicion(principal->pokemones, (size_t) contador_principal), \
+            (pokemon_t*)lista_elemento_en_posicion(enemigo->pokemones, (size_t) contador_enemigo), \
+            estilo);
 
         if (resultado == GANO_PRINCIPAL)
             contador_enemigo++;
         else
             contador_principal++;
-
     }
 
     return condicion_pelea(contador_principal, principal->cant_pokemones) ? GANO_PRINCIPAL : GANO_ENEMIGO;
