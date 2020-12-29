@@ -125,7 +125,7 @@ int gimnasio_2_mapa(mapa_t* mapa, gimnasio_t* gimnasio);
  * Dados dos pokemones y un tipo de pelea, devuelve 1 si gana
  * el primero, -1 si gana el segundo
  */
-int batalla_pokemon(pokemon_t* pokemon_uno, pokemon_t* pokemon_dos, funcion_batalla estilo);
+int pelea_pokemon(pokemon_t* pokemon_uno, pokemon_t* pokemon_dos, funcion_batalla estilo);
 
 /*
  * Aumenta las caracteristicas del pokemon +1 en cada caracteristica

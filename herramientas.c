@@ -342,7 +342,7 @@ void destruir_mapa(mapa_t* mapa) {
     free(mapa);
 }
 
-int batalla_pokemon(pokemon_t* pokemon_uno, pokemon_t* pokemon_dos, funcion_batalla estilo) {
+int pelea_pokemon(pokemon_t* pokemon_uno, pokemon_t* pokemon_dos, funcion_batalla estilo) {
     return estilo(pokemon_uno, pokemon_dos);
 }
 
