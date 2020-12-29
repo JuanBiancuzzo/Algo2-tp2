@@ -34,7 +34,7 @@ int leer_id (FILE* archivo, char* id) {
 /*
  * Va leyendo un archivo y va guardandolos en la cola
  */
-int guardar_pokemon (FILE* archivo, lista_t* pokemones, int* cantidad, char* ultima_leida) {
+int guardar_pokemon (FILE* archivo, lista_t* pokemones, bool per_prin, int* cantidad, char* ultima_leida) {
 
     char id_resultado;
     pokemon_t pokemon;
@@ -49,6 +49,9 @@ int guardar_pokemon (FILE* archivo, lista_t* pokemones, int* cantidad, char* ult
     leido = leer_pokemon(archivo, &pokemon);
     if (leido != CANT_POKEMON)
         return ERROR;
+
+    if ((*cantidad) >= MAX_POKE_COMBATE && !per_prin)
+        return IGNORAR;
 
     pokemon_t* p_pokemon = calloc(1, sizeof(pokemon_t));
     if (!p_pokemon) return ERROR;
@@ -68,13 +71,13 @@ int guardar_pokemon (FILE* archivo, lista_t* pokemones, int* cantidad, char* ult
 /*
  * Va leyendo un archivo y va guardandolos en la cola
  */
-int guardar_pokemones(FILE* archivo, lista_t* pokemones, char* ultima_leida) {
+int guardar_pokemones(FILE* archivo, lista_t* pokemones, bool per_prin, char* ultima_leida) {
     int cant_pokemones = 0;
 
-    int resultado = guardar_pokemon(archivo, pokemones, &cant_pokemones, ultima_leida);
+    int resultado = guardar_pokemon(archivo, pokemones, per_prin, &cant_pokemones, ultima_leida);
 
-    while (resultado == EXITO)
-        resultado = guardar_pokemon(archivo, pokemones, &cant_pokemones, ultima_leida);
+    while (resultado == EXITO || resultado == IGNORAR)
+        resultado = guardar_pokemon(archivo, pokemones, per_prin, &cant_pokemones, ultima_leida);
 
     return cant_pokemones;
 }
@@ -89,16 +92,13 @@ int guardar_entrenador(FILE* archivo, char id, lista_t* entrenadores, int* canti
     int leido;
 
     if (*(ultima_leida) == NADA) {
-
         leido = leer_id(archivo, &id_resultado);
         if (leido != CANT_ID || id_resultado != id)
             return ERROR;
-
     } else {
         if (*(ultima_leida) != ENTRENADOR)
             return ERROR;
-        else
-            *(ultima_leida) = NADA;
+        *(ultima_leida) = NADA;
     }
 
     entrenador.cant_pokemones = 0;
@@ -107,7 +107,7 @@ int guardar_entrenador(FILE* archivo, char id, lista_t* entrenadores, int* canti
         return ERROR;
 
     entrenador.pokemones = lista_crear();
-    int resultado = guardar_pokemones(archivo, entrenador.pokemones, ultima_leida);
+    int resultado = guardar_pokemones(archivo, entrenador.pokemones, false, ultima_leida);
 
     if (resultado == 0) {
         lista_destruir(entrenador.pokemones);
@@ -165,7 +165,7 @@ int archivo_2_personaje_principal (char ruta_archivo[], personaje_t* principal) 
     }
 
     principal->pokemones = lista_crear();
-    int resultado = guardar_pokemones(archivo, principal->pokemones, &ultima_leida);
+    int resultado = guardar_pokemones(archivo, principal->pokemones, true, &ultima_leida);
 
     if (resultado == 0) {
         lista_destruir(principal->pokemones);
