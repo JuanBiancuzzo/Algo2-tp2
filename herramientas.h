@@ -6,6 +6,7 @@
 
 #define MAX_NOMBRE 100
 #define MAX_POKE_COMBATE 6
+#define IGNORAR 1
 #define EXITO 0
 #define ERROR -1
 
