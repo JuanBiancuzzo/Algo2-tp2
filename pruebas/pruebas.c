@@ -421,6 +421,78 @@ void probar_archivo_2_gimnasio () {
     probar_archivo_2_gimnasio_formato_validos();
 }
 
+void probar_gimnasio_2_mapa_valores_invalidos () {
+    mapa_t* mapa = crear_mapa();
+
+    gimnasio_t* gimnasio = crear_gimnasio();
+
+    char ruta_archivo[MAX_NOMBRE];
+    strcpy(ruta_archivo, "pruebas/gimnasio_formato_valido.txt");
+    archivo_2_gimnasio (ruta_archivo, gimnasio);
+
+    pa2m_afirmar(gimnasio_2_mapa(NULL, gimnasio) == ERROR,
+                 "Detecta correctamente que el mapa es invalido");
+
+    pa2m_afirmar(gimnasio_2_mapa(mapa, NULL) == ERROR,
+                 "Detecta correctamente que el gimnasio es invalido\n");
+
+    destruir_gimnasio(gimnasio);
+    destruir_mapa(mapa);
+}
+
+void probar_gimnasio_2_mapa_gimnasio_valido () {
+     mapa_t* mapa = crear_mapa();
+
+    gimnasio_t* gimnasio = crear_gimnasio();
+
+    char ruta_archivo[MAX_NOMBRE];
+    strcpy(ruta_archivo, "pruebas/gimnasio_formato_valido.txt");
+    archivo_2_gimnasio (ruta_archivo, gimnasio);
+
+    pa2m_afirmar(gimnasio_2_mapa(mapa, gimnasio) == EXITO,
+                 "Mensaje de exito al agregar un gimnasio al mapa");
+
+    pa2m_afirmar(mapa->gimnasios,
+                 "Crea el heap de gimnasios");
+
+    pa2m_afirmar(mapa->cant_gimnasios == 1,
+                 "La cantidad de gimnasios es 1\n");
+
+    destruir_mapa(mapa);
+}
+
+void probar_gimnasio_2_mapa_varios_gimnasios_validos () {
+     mapa_t* mapa = crear_mapa();
+
+    gimnasio_t* gimnasio_uno = crear_gimnasio();
+    gimnasio_t* gimnasio_dos = crear_gimnasio();
+
+    char ruta_archivo[MAX_NOMBRE];
+    strcpy(ruta_archivo, "pruebas/gimnasio_formato_valido.txt");
+    archivo_2_gimnasio (ruta_archivo, gimnasio_uno);
+    archivo_2_gimnasio (ruta_archivo, gimnasio_dos);
+
+    pa2m_afirmar(gimnasio_2_mapa(mapa, gimnasio_uno) == EXITO,
+                 "Mensaje de exito al agregar el primer gimnasio al mapa");
+
+    pa2m_afirmar(gimnasio_2_mapa(mapa, gimnasio_dos) == EXITO,
+                 "Mensaje de exito al agregar el segundo gimnasio al mapa");
+
+    pa2m_afirmar(mapa->gimnasios,
+                 "Crea el heap de gimnasios");
+
+    pa2m_afirmar(mapa->cant_gimnasios == 2,
+                 "La cantidad de gimnasios es 2\n");
+
+    destruir_mapa(mapa);
+}
+
+void probar_gimnasio_2_mapa () {
+    probar_gimnasio_2_mapa_valores_invalidos();
+    probar_gimnasio_2_mapa_gimnasio_valido();
+    probar_gimnasio_2_mapa_varios_gimnasios_validos();
+}
+
 int main () {
 
     pa2m_nuevo_grupo("Pruebas de heap");
@@ -438,6 +510,8 @@ int main () {
     probar_archivo_2_personaje_principal();
     printf("\n * De archivo a gimnasio:\n");
     probar_archivo_2_gimnasio();
+    printf("\n * Agregar gimnasio al mapa:\n");
+    probar_gimnasio_2_mapa();
 
     pa2m_mostrar_reporte();
 
