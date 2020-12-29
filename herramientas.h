@@ -41,7 +41,6 @@ typedef struct pokemon{
 typedef struct mapa {
 	heap_t* gimnasios;
 	int cant_gimnasios;
-	heap_liberar_elemento liberar_gimnasio;
 } mapa_t;
 
 typedef struct gimnasio {
