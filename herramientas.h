@@ -33,8 +33,6 @@ typedef int (* funcion_batalla)(void*, void *);
 
 typedef int (* liberar_gimnasio)(void*, void *);
 
-typedef int (* liberar_entrenador)(void*, void *);
-
 typedef struct pokemon{
 	char nombre[MAX_NOMBRE];
 	int velocidad;
@@ -94,6 +92,12 @@ personaje_t* crear_personaje_principal();
 gimnasio_t* crear_gimnasio();
 
 /*
+ * Se encarga de reservar memoria en el heap para el mapa y devuelve esa
+ * direccion, en caso de que no lo logre devuelve NULL
+ */
+mapa_t* crear_mapa();
+
+/*
  * Se encanrga de liberar toda la memoria necesaria que se utilizo al
  * crear el personaje, esto incluye todos sus pokemones
  */
@@ -105,5 +109,11 @@ void destruir_personaje_principal(personaje_t* principal);
  * tiene todos sus pokemones
  */
 void destruir_gimnasio(gimnasio_t* gimnasio);
+
+/*
+ * Se encanrga de liberar toda la memoria necesaria que se utilizo al
+ * crear el mapa
+ */
+void destruir_mapa(mapa_t* mapa);
 
 #endif /* __HERRAMIENTAS_H__ */
