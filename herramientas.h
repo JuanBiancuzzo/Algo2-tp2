@@ -31,8 +31,6 @@
 
 typedef int (* funcion_batalla)(void*, void *);
 
-typedef int (* liberar_gimnasio)(void*, void *);
-
 typedef struct pokemon{
 	char nombre[MAX_NOMBRE];
 	int velocidad;
@@ -43,6 +41,7 @@ typedef struct pokemon{
 typedef struct mapa {
 	heap_t* gimnasios;
 	int cant_gimnasios;
+	heap_liberar_elemento liberar_gimnasio;
 } mapa_t;
 
 typedef struct gimnasio {
