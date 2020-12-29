@@ -65,7 +65,8 @@ int heap_insertar(heap_t* heap, void* elemento) {
     heap->elementos[heap->cant_elementos] = elemento;
     (heap->cant_elementos)++;
 
-    heap_subir(heap, (heap->cant_elementos) - 1);
+    if ((heap->cant_elementos) - 1 > 0)
+        heap_subir(heap, (heap->cant_elementos) - 1);
     return EXITO;
 }
 
