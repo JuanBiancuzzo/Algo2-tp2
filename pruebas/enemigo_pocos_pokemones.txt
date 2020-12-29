@@ -1,0 +1,5 @@
+G;Gimnasio de Ciudad Celeste;15;3
+L;Misty
+P;Primeape;57;0;0
+P;Muk;59;0;0
+P;Shellder;61;0;5

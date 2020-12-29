@@ -1,0 +1,4 @@
+E;Ash
+P;Krabby;58;0;0
+P;Squirtle;60;0;0
+P;Charmander;62;0;0

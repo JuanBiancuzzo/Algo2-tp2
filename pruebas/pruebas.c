@@ -8,6 +8,8 @@
 
 #define ERROR -1
 #define EXITO 0
+#define GANO_PRINCIPAL 1
+#define GANO_ENEMIGO -1
 
 int comparador_prueba (void* elemento_uno, void* elemento_dos) {
     return *(int*) elemento_uno > *(int*) elemento_dos ? 1 : *(int*) elemento_uno < *(int*) elemento_dos ? -1 : 0;
@@ -493,6 +495,113 @@ void probar_gimnasio_2_mapa () {
     probar_gimnasio_2_mapa_varios_gimnasios_validos();
 }
 
+int batalla_prueba (void* pkm_1, void* pkm_2) {
+    return (((pokemon_t*)pkm_1)->velocidad > ((pokemon_t*)pkm_2)->velocidad) ? GANO_PRINCIPAL : GANO_ENEMIGO;
+}
+
+void probar_batalla_pokemon_valores_invalidos () {
+    personaje_t personaje;
+    entrenador_t entrenador;
+    funcion_batalla estilo = batalla_prueba;
+
+    pa2m_afirmar(batalla_pokemon(NULL, &entrenador, estilo) == 0,
+                 "Reconoce correctamente que el personaje es invalido");
+
+    pa2m_afirmar(batalla_pokemon(&personaje, NULL, estilo) == 0,
+                 "Reconoce correctamente que el entrenador es invalido");
+
+    pa2m_afirmar(batalla_pokemon(&personaje, &entrenador, NULL) == 0,
+                 "Reconoce correctamente que la funcion de la pelea es invalida\n");
+
+}
+
+void probar_batalla_pokemon_principal_muchos_pokemones () {
+    personaje_t* personaje = crear_personaje_principal();
+    gimnasio_t* gimnasio = crear_gimnasio();
+    funcion_batalla estilo = batalla_prueba;
+    char ruta_archivo[MAX_NOMBRE];
+
+    strcpy(ruta_archivo, "pruebas/principal_muchos_pokemones.txt");
+    archivo_2_personaje_principal (ruta_archivo, personaje);
+
+    strcpy(ruta_archivo, "pruebas/enemigo_pocos_pokemones.txt");
+    archivo_2_gimnasio (ruta_archivo, gimnasio);
+
+    pa2m_afirmar(batalla_pokemon(personaje, (entrenador_t*)lista_elemento_en_posicion(gimnasio->entrenadores, 0), estilo) == GANO_PRINCIPAL,
+                "Gana correctamente el personaje principal porque tiene mas pokemones\n");
+
+    destruir_personaje_principal(personaje);
+    destruir_gimnasio(gimnasio);
+}
+
+void probar_batalla_pokemon_enemigo_muchos_pokemones () {
+    personaje_t* personaje = crear_personaje_principal();
+    gimnasio_t* gimnasio = crear_gimnasio();
+    funcion_batalla estilo = batalla_prueba;
+    char ruta_archivo[MAX_NOMBRE];
+
+    strcpy(ruta_archivo, "pruebas/principal_pocos_pokemones.txt");
+    archivo_2_personaje_principal (ruta_archivo, personaje);
+
+    strcpy(ruta_archivo, "pruebas/enemigo_muchos_pokemones.txt");
+    archivo_2_gimnasio (ruta_archivo, gimnasio);
+
+    pa2m_afirmar(batalla_pokemon(personaje, (entrenador_t*)lista_elemento_en_posicion(gimnasio->entrenadores, 0), estilo) == GANO_ENEMIGO,
+                "Gana correctamente el enemigo porque tiene mas pokemones\n");
+
+    destruir_personaje_principal(personaje);
+    destruir_gimnasio(gimnasio);
+}
+
+void probar_batalla_pokemon_dos_muchos_pokemones () {
+    personaje_t* personaje = crear_personaje_principal();
+    gimnasio_t* gimnasio = crear_gimnasio();
+    funcion_batalla estilo = batalla_prueba;
+    char ruta_archivo[MAX_NOMBRE];
+
+    strcpy(ruta_archivo, "pruebas/principal_muchos_pokemones.txt");
+    archivo_2_personaje_principal (ruta_archivo, personaje);
+
+    strcpy(ruta_archivo, "pruebas/enemigo_muchos_pokemones.txt");
+    archivo_2_gimnasio (ruta_archivo, gimnasio);
+
+    pa2m_afirmar(batalla_pokemon(personaje, (entrenador_t*)lista_elemento_en_posicion(gimnasio->entrenadores, 0), estilo) == GANO_PRINCIPAL,
+                "Gana correctamente el personaje principal aunque la misma cantidad de pokemones, el empieza ganando\n");
+
+    destruir_personaje_principal(personaje);
+    destruir_gimnasio(gimnasio);
+}
+
+void probar_batalla_pokemon_dos_pocos_pokemones () {
+    personaje_t* personaje = crear_personaje_principal();
+    gimnasio_t* gimnasio = crear_gimnasio();
+    funcion_batalla estilo = batalla_prueba;
+    char ruta_archivo[MAX_NOMBRE];
+
+    strcpy(ruta_archivo, "pruebas/principal_pocos_pokemones.txt");
+    archivo_2_personaje_principal (ruta_archivo, personaje);
+
+    strcpy(ruta_archivo, "pruebas/enemigo_pocos_pokemones.txt");
+    archivo_2_gimnasio (ruta_archivo, gimnasio);
+
+    pa2m_afirmar(batalla_pokemon(personaje, (entrenador_t*)lista_elemento_en_posicion(gimnasio->entrenadores, 0), estilo) == GANO_PRINCIPAL,
+                "Gana correctamente el personaje principal aunque la misma cantidad de pokemones, el empieza ganando\n");
+
+    destruir_personaje_principal(personaje);
+    destruir_gimnasio(gimnasio);
+}
+
+void probar_batalla_pokemon () {
+    probar_batalla_pokemon_valores_invalidos();
+    printf("  · El principal tiene muchos pokemones y el enemigo no:\n");
+    probar_batalla_pokemon_principal_muchos_pokemones();
+    printf("  · El enemigo tiene muchos pokemones y el principal no:\n");
+    probar_batalla_pokemon_enemigo_muchos_pokemones();
+    printf("  · El principal y el enemigo tiene muchos pokemones:\n");
+    probar_batalla_pokemon_dos_muchos_pokemones();
+    printf("  · El principal y el enemigo tiene pocos pokemones:\n");
+    probar_batalla_pokemon_dos_pocos_pokemones();
+}
 
 void probar_level_up_valor_invalido () {
     pokemon_t pokemon;
@@ -562,6 +671,8 @@ int main () {
     probar_gimnasio_2_mapa();
 
     pa2m_nuevo_grupo("Pruebas de batallas");
+    printf(" * Batalla pokemon:\n");
+    probar_batalla_pokemon();
     printf("\n * Level up:\n");
     probar_level_up();
 

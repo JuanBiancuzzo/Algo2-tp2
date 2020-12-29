@@ -1,0 +1,8 @@
+E;Ash
+P;Krabby;58;0;0
+P;Squirtle;60;0;0
+P;Charmander;62;0;0
+P;Bulbasaur;64;0;0
+P;Pidgeotto;66;0;0
+P;Butterfree;68;0;0
+P;Pikachu;70;0;0
