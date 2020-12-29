@@ -230,6 +230,34 @@ gimnasio_t* crear_gimnasio () {
     return gimnasio;
 }
 
+int comparador_gimnasios (void* elemento_uno, void* elemento_dos) {
+
+    int dificultad_uno = ((gimnasio_t*)elemento_uno)->dificultad;
+    int dificultad_dos = ((gimnasio_t*)elemento_dos)->dificultad;
+
+    return dificultad_uno > dificultad_dos ? 1 : dificultad_uno < dificultad_dos ? -1 : 0;
+}
+
+void destructor_gimnasios (void* gimnasio) {
+    destruir_gimnasio((gimnasio_t*) gimnasio);
+}
+
+mapa_t* crear_mapa () {
+    heap_comparador comparador = comparador_gimnasios;
+    heap_liberar_elemento destructor = destructor_gimnasios;
+    mapa_t mapa;
+
+    mapa.gimnasios = heap_crear(comparador, destructor);
+    if (!mapa.gimnasios) return NULL;
+    mapa.cant_gimnasios = 0;
+
+    mapa_t* p_mapa = calloc(1, sizeof(mapa_t));
+    if (!p_mapa) return NULL;
+    (*p_mapa) = mapa;
+
+    return p_mapa;
+}
+
 /*
  * Funcion que se encarga de liberar el puntero en el heap
  * de cada pokemon
@@ -289,4 +317,12 @@ void destruir_gimnasio(gimnasio_t* gimnasio) {
         destruir_pila_entrenadores(gimnasio->entrenadores);
 
     free(gimnasio);
+}
+
+void destruir_mapa(mapa_t* mapa) {
+
+    if (!mapa) return;
+
+    heap_destruir(mapa->gimnasios);
+    free(mapa);
 }
