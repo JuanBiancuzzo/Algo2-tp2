@@ -326,3 +326,17 @@ void destruir_mapa(mapa_t* mapa) {
     heap_destruir(mapa->gimnasios);
     free(mapa);
 }
+
+int gimnasio_2_heap(mapa_t* mapa, gimnasio_t* gimnasio) {
+
+    if (!mapa || !gimnasio) return ERROR;
+
+    if (!mapa->gimnasios) return ERROR;
+
+    int resultado = heap_insertar(mapa->gimnasios, gimnasio);
+
+    if (resultado == ERROR) return ERROR;
+    (mapa->cant_gimnasios)++;
+
+    return EXITO;
+}
