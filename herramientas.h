@@ -116,4 +116,9 @@ void destruir_gimnasio(gimnasio_t* gimnasio);
  */
 void destruir_mapa(mapa_t* mapa);
 
+/*
+ * Agrega el gimnasio al heap
+ */
+int gimnasio_2_heap(mapa_t* mapa, gimnasio_t* gimnasio);
+
 #endif /* __HERRAMIENTAS_H__ */
