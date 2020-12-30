@@ -145,4 +145,10 @@ int tomar_prestado(personaje_t* principal, entrenador_t* enemigo, int id_pokemon
  */
 int level_up(pokemon_t* pokemon);
 
+/*
+ * Dado una lista de pokemones, intercambia los pokemones dado por
+ * su id
+ */
+int reordenar_pokemones(lista_t* pokemones, int pkm_uno, int pkm_dos);
+
 #endif /* __HERRAMIENTAS_H__ */
