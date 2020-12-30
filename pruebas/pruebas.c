@@ -603,6 +603,93 @@ void probar_batalla_pokemon () {
     probar_batalla_pokemon_dos_pocos_pokemones();
 }
 
+void probar_tomar_prestado_valores_invalidos() {
+    gimnasio_t* gimnasio = crear_gimnasio();
+    char ruta_archivo[MAX_NOMBRE];
+    personaje_t principal;
+    int id_pokemon = 5;
+
+    strcpy(ruta_archivo, "pruebas/enemigo_pocos_pokemones.txt");
+    archivo_2_gimnasio (ruta_archivo, gimnasio);
+
+    entrenador_t* enemigo = (entrenador_t*)lista_elemento_en_posicion(gimnasio->entrenadores, 0);
+
+    pa2m_afirmar(tomar_prestado(NULL, enemigo, id_pokemon) == ERROR,
+                 "Reconoce correctamente que el personaje principal es invalido");
+
+    pa2m_afirmar(tomar_prestado(&principal, NULL, id_pokemon) == ERROR,
+                 "Reconoce correctamente que el enemigo es invalido");
+
+    pa2m_afirmar(tomar_prestado(&principal, enemigo, id_pokemon) == ERROR,
+                 "Reconoce que el id_pokemon es invalido\n");
+
+    destruir_gimnasio(gimnasio);
+}
+
+void probar_tomar_prestado_principal_pocos_pokemones () {
+    personaje_t* principal = crear_personaje_principal();
+    gimnasio_t* gimnasio = crear_gimnasio();
+    char ruta_archivo[MAX_NOMBRE];
+    int id_pokemon = 2;
+
+    strcpy(ruta_archivo, "pruebas/principal_pocos_pokemones.txt");
+    archivo_2_personaje_principal (ruta_archivo, principal);
+
+    strcpy(ruta_archivo, "pruebas/enemigo_pocos_pokemones.txt");
+    archivo_2_gimnasio (ruta_archivo, gimnasio);
+
+    entrenador_t* enemigo = (entrenador_t*)lista_elemento_en_posicion(gimnasio->entrenadores, 0);
+
+    pa2m_afirmar(tomar_prestado(principal, enemigo, id_pokemon) == EXITO,
+                 "Mensaje de exito al tomar prestado un pokemon");
+
+    pokemon_t* pokemon_prestado = lista_elemento_en_posicion(principal->pokemones, (size_t) (principal->cant_pokemones - 1));
+    pa2m_afirmar(strcmp("Shellder", pokemon_prestado->nombre) == 0,
+                 "Se presto el pokemon correcto ubicada en la ultima posicion");
+
+    pa2m_afirmar(principal->cant_pokemones == 4,
+                 "Aumento la cantidad de pokemones del personaje principal\n");
+
+    destruir_personaje_principal(principal);
+    destruir_gimnasio(gimnasio);
+}
+
+void probar_tomar_prestado_principal_muchos_pokemones () {
+    personaje_t* principal = crear_personaje_principal();
+    gimnasio_t* gimnasio = crear_gimnasio();
+    char ruta_archivo[MAX_NOMBRE];
+    int id_pokemon = 2;
+
+    strcpy(ruta_archivo, "pruebas/principal_muchos_pokemones.txt");
+    archivo_2_personaje_principal (ruta_archivo, principal);
+
+    strcpy(ruta_archivo, "pruebas/enemigo_pocos_pokemones.txt");
+    archivo_2_gimnasio (ruta_archivo, gimnasio);
+
+    entrenador_t* enemigo = (entrenador_t*)lista_elemento_en_posicion(gimnasio->entrenadores, 0);
+
+    pa2m_afirmar(tomar_prestado(principal, enemigo, id_pokemon) == EXITO,
+                 "Mensaje de exito al tomar prestado un pokemon");
+
+    pokemon_t* pokemon_prestado = lista_elemento_en_posicion(principal->pokemones, (size_t) MAX_POKE_COMBATE);
+    pa2m_afirmar(strcmp("Shellder", pokemon_prestado->nombre) == 0,
+                 "Se presto el pokemon correcto ubicada como 7mo pokemon");
+
+    pa2m_afirmar(principal->cant_pokemones == 8,
+                 "Aumento la cantidad de pokemones del personaje principal\n");
+
+    destruir_personaje_principal(principal);
+    destruir_gimnasio(gimnasio);
+}
+
+void probar_tomar_prestado () {
+    probar_tomar_prestado_valores_invalidos();
+    printf("  · El enemigo presta su pokemon cuando el principal tiene pocos:\n");
+    probar_tomar_prestado_principal_pocos_pokemones();
+    printf("  · El enemigo presta su pokemon cuando el principal tiene muchos:\n");
+    probar_tomar_prestado_principal_muchos_pokemones();
+}
+
 void probar_level_up_valor_invalido () {
     pokemon_t pokemon;
 
@@ -673,6 +760,8 @@ int main () {
     pa2m_nuevo_grupo("Pruebas de batallas");
     printf(" * Batalla pokemon:\n");
     probar_batalla_pokemon();
+    printf("\n * Tomar prestado:\n");
+    probar_tomar_prestado();
     printf("\n * Level up:\n");
     probar_level_up();
 
