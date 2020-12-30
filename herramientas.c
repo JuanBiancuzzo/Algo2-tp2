@@ -33,6 +33,14 @@ int leer_id (FILE* archivo, char* id) {
     return fscanf(archivo, LEER_ID, id);
 }
 
+pokemon_t* crear_pokemon() {
+    return calloc(1, sizeof(pokemon_t));
+}
+
+void destruir_pokemon(pokemon_t* pokemon) {
+    free(pokemon);
+}
+
 /*
  * Va leyendo un archivo y va guardandolos en la lista
  */
@@ -55,14 +63,14 @@ int guardar_pokemon (FILE* archivo, lista_t* pokemones, bool per_prin, int* cant
     if ((*cantidad) >= MAX_POKE_COMBATE && !per_prin)
         return IGNORAR;
 
-    pokemon_t* p_pokemon = calloc(1, sizeof(pokemon_t));
+    pokemon_t* p_pokemon = crear_pokemon();
     if (!p_pokemon) return ERROR;
 
     (*p_pokemon) = pokemon;
 
     int resultado = lista_insertar(pokemones, p_pokemon);
     if (resultado == ERROR)  {
-        free(p_pokemon);
+        destruir_pokemon(p_pokemon);
         return ERROR;
     }
 
@@ -82,6 +90,10 @@ int guardar_pokemones(FILE* archivo, lista_t* pokemones, bool per_prin, char* ul
         resultado = guardar_pokemon(archivo, pokemones, per_prin, &cant_pokemones, ultima_leida);
 
     return cant_pokemones;
+}
+
+void liberar_pokemon(void* pokemon) {
+    destruir_pokemon((pokemon_t*)pokemon);
 }
 
 /*
@@ -108,7 +120,8 @@ int guardar_entrenador(FILE* archivo, char id, lista_t* entrenadores, int* canti
     if (leido != CANT_ENTRENADOR)
         return ERROR;
 
-    entrenador.pokemones = lista_crear();
+    void (*lista_liberar_pokemon)(void*) = liberar_pokemon;
+    entrenador.pokemones = lista_crear(lista_liberar_pokemon);
     int resultado = guardar_pokemones(archivo, entrenador.pokemones, false, ultima_leida);
 
     if (resultado == 0) {
@@ -166,7 +179,8 @@ int archivo_2_personaje_principal (char ruta_archivo[], personaje_t* principal) 
         return ERROR;
     }
 
-    principal->pokemones = lista_crear();
+    void (*lista_liberar_pokemon)(void*) = liberar_pokemon;
+    principal->pokemones = lista_crear(lista_liberar_pokemon);
     int resultado = guardar_pokemones(archivo, principal->pokemones, true, &ultima_leida);
 
     if (resultado == 0) {
@@ -200,7 +214,7 @@ int archivo_2_gimnasio (char ruta_archivo[], gimnasio_t* gimnasio) {
         return ERROR;
     }
 
-    gimnasio->entrenadores = lista_crear();
+    gimnasio->entrenadores = lista_crear(NULL);
     int resultado = guardar_entrenadores(archivo, gimnasio->entrenadores, &ultima_leida);
 
     if (resultado == 0) {
@@ -277,31 +291,12 @@ mapa_t* crear_mapa () {
     return p_mapa;
 }
 
-/*
- * Funcion que se encarga de liberar el puntero en el heap
- * de cada pokemon
- */
-bool liberar_pokemones(void* pokemon, void* contexto) {
-    contexto = contexto;
-    free(pokemon);
-    return true;
-}
-
-/*
- * Se encarga de liberar todos los pokemones en la lista
- */
-void destruir_lista_pokemones(lista_t* pokemones) {
-    bool (*funcion) (void*, void*) = liberar_pokemones;
-    lista_con_cada_elemento(pokemones, funcion, NULL);
-    lista_destruir(pokemones);
-}
-
 void destruir_personaje_principal(personaje_t* principal) {
 
     if (!principal) return;
 
     if (principal->cant_pokemones > 0)
-        destruir_lista_pokemones(principal->pokemones);
+        lista_destruir(principal->pokemones);
 
     free(principal);
 }
@@ -313,7 +308,7 @@ void destruir_personaje_principal(personaje_t* principal) {
 bool liberar_entrenadores(void* entrenador, void* contexto) {
     contexto = contexto;
     if (((entrenador_t*)entrenador)->cant_pokemones > 0)
-        destruir_lista_pokemones(((entrenador_t*)entrenador)->pokemones);
+        lista_destruir(((entrenador_t*)entrenador)->pokemones);
 
     free(entrenador);
     return true;
