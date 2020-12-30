@@ -6,13 +6,13 @@
 #define EXITO 0
 #define ERROR -1
 
-lista_t* lista_crear() {
+lista_t* lista_crear(lista_liberar_elemento destructor) {
 
     lista_t* lista = calloc(1, sizeof(lista_t));
 
-    if (!lista)
-        return NULL;
+    if (!lista) return NULL;
 
+    lista->destructor = (destructor) ? destructor : NULL;
     return lista;
 }
 
@@ -129,6 +129,8 @@ int lista_borrar_de_posicion(lista_t* lista, size_t posicion) {
         nodo_aux = nodo->siguiente;
         nodo->siguiente = nodo_aux->siguiente;
 
+        if (lista->destructor)
+            lista->destructor(nodo_aux->elemento);
         free(nodo_aux);
 
         lista->cantidad--;
@@ -214,6 +216,9 @@ int lista_desapilar(lista_t* lista) {
 
     nodo_t* nodo_aux = lista->nodo_inicio->siguiente;
 
+    if (lista->destructor)
+        lista->destructor(lista->nodo_inicio->elemento);
+
     free(lista->nodo_inicio);
     lista->nodo_inicio = nodo_aux;
 
@@ -264,6 +269,8 @@ int lista_desencolar(lista_t* lista) {
 
     nodo_t* nodo_aux = lista->nodo_inicio->siguiente;
 
+    if (lista->destructor)
+        lista->destructor(nodo_aux->elemento);
     free(lista->nodo_inicio);
     lista->nodo_inicio = nodo_aux;
 

@@ -4,6 +4,8 @@
 #include <stdbool.h>
 #include <stddef.h>
 
+typedef void (*lista_liberar_elemento)(void*);
+
 typedef struct nodo{
     void* elemento;
     struct nodo* siguiente;
@@ -13,6 +15,7 @@ typedef struct lista{
     nodo_t* nodo_inicio;
     nodo_t* nodo_fin;
     size_t cantidad;
+    lista_liberar_elemento destructor;
 }lista_t;
 
 typedef struct lista_iterador{
@@ -24,7 +27,7 @@ typedef struct lista_iterador{
  * Crea la lista reservando la memoria necesaria.
  * Devuelve un puntero a la lista creada o NULL en caso de error.
  */
-lista_t* lista_crear();
+lista_t* lista_crear(lista_liberar_elemento destructor);
 
 /*
  * Inserta un elemento al final de la lista.
