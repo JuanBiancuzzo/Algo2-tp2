@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "herramientas.h"
-#include "batallas.h"
+#include "librerias/herramientas.h"
+#include "librerias/batallas.h"
 
 int main() {
 

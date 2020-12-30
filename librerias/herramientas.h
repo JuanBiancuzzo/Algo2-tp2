@@ -15,6 +15,8 @@
 #define LIDER 'L'
 #define POKEMON 'P'
 #define ENTRENADOR 'E'
+
+// menus
 #define INGRESAR_ARCHIVO 'E'
 #define AGREGAR_GIMNASIO 'A'
 #define COMENZAR_PARTIDA 'I'

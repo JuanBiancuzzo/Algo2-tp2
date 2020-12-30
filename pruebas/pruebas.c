@@ -3,8 +3,8 @@
 #include <string.h>
 
 #include "pa2mm.h"
-#include "../heap.h"
-#include "../herramientas.h"
+#include "../librerias/heap.h"
+#include "../librerias/herramientas.h"
 
 #define ERROR -1
 #define EXITO 0
