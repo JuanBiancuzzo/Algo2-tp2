@@ -348,6 +348,21 @@ int pelea_pokemon(pokemon_t* pokemon_uno, pokemon_t* pokemon_dos, funcion_batall
 }
 
 /*
+ * Aumenta las caracteristicas del pokemon +1 en cada caracteristica
+ * hasta llegar a 63
+ */
+int level_up(pokemon_t* pokemon) {
+    if (!pokemon)
+        return ERROR;
+
+    (pokemon->velocidad) += ((pokemon->velocidad) <= MAX_LEVEL_UP) ? 1 : 0;
+    (pokemon->defensa) += ((pokemon->defensa) <= MAX_LEVEL_UP) ? 1 : 0;
+    (pokemon->ataque) += ((pokemon->ataque) <= MAX_LEVEL_UP) ? 1 : 0;
+
+    return EXITO;
+}
+
+/*
  * Como solo pueden tener 6 pokemones para la pelea, si perdio mas
  * de 6 pokemones ya no puede pelear, pero si desde el principio
  * tenia menos pokemones, si llega a esa cantidad ya no puede pelear
@@ -370,10 +385,12 @@ int batalla_pokemon(personaje_t* principal, entrenador_t* enemigo, funcion_batal
             lista_elemento_en_posicion(enemigo->pokemones, (size_t) contador_enemigo), \
             estilo);
 
-        if (resultado == GANO_PRINCIPAL)
+        if (resultado == GANO_PRINCIPAL) {
+            level_up(lista_elemento_en_posicion(principal->pokemones, (size_t) contador_principal));
             contador_enemigo++;
-        else
+        } else {
             contador_principal++;
+        }
     }
 
     return condicion_pelea(contador_principal, principal->cant_pokemones) ? GANO_PRINCIPAL : GANO_ENEMIGO;
@@ -400,17 +417,6 @@ int tomar_prestado(personaje_t* principal, entrenador_t* enemigo, int id_pokemon
     (enemigo->cant_pokemones)--;
 
     (principal->cant_pokemones)++;
-    return EXITO;
-}
-
-int level_up(pokemon_t* pokemon) {
-    if (!pokemon)
-        return ERROR;
-
-    (pokemon->velocidad) += ((pokemon->velocidad) <= MAX_LEVEL_UP) ? 1 : 0;
-    (pokemon->defensa) += ((pokemon->defensa) <= MAX_LEVEL_UP) ? 1 : 0;
-    (pokemon->ataque) += ((pokemon->ataque) <= MAX_LEVEL_UP) ? 1 : 0;
-
     return EXITO;
 }
 
