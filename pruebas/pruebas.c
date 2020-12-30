@@ -737,6 +737,34 @@ void probar_level_up () {
     probar_level_up_valor_valido();
 }
 
+void probar_reordenar_pokemones_valores_invalido () {
+    personaje_t* principal = crear_personaje_principal();
+    char ruta_archivo[MAX_NOMBRE];
+    int pkm_uno = 2, pkm_dos = 3;
+
+    strcpy(ruta_archivo, "pruebas/principal_muchos_pokemones.txt");
+    archivo_2_personaje_principal (ruta_archivo, principal);
+
+    pa2m_afirmar(reordenar_pokemones(NULL, pkm_uno, pkm_dos) == ERROR,
+                 "Reconoce que no tiene una lista de pokemones");
+
+    pkm_uno = 60;
+    pa2m_afirmar(reordenar_pokemones(principal->pokemones, pkm_uno, pkm_dos) == ERROR,
+                 "Reconoce que el id del primer pokemon es invalido");
+
+    pkm_uno = 2;
+    pkm_dos = 60;
+    pa2m_afirmar(reordenar_pokemones(principal->pokemones, pkm_uno, pkm_dos) == ERROR,
+                 "Reconoce que el id del segundo pokemon es invalido\n");
+
+    destruir_personaje_principal(principal);
+}
+
+void probar_reordenar_pokemones () {
+    // int reordenar_pokemones(lista_t* pokemones, int pkm_uno, int pkm_dos);
+    probar_reordenar_pokemones_valores_invalido();
+}
+
 int main () {
 
     pa2m_nuevo_grupo("Pruebas de heap");
@@ -764,6 +792,8 @@ int main () {
     probar_tomar_prestado();
     printf("\n * Level up:\n");
     probar_level_up();
+    printf("\n * Reordenar pokemones:\n");
+    probar_reordenar_pokemones();
 
     pa2m_mostrar_reporte();
 
