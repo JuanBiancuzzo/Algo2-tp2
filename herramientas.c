@@ -413,3 +413,23 @@ int level_up(pokemon_t* pokemon) {
 
     return EXITO;
 }
+
+int reordenar_pokemones(lista_t* pokemones, int pkm_uno, int pkm_dos) {
+
+    if (!pokemones)
+        return ERROR;
+
+    pokemon_t* pokemon_uno = lista_elemento_en_posicion(pokemones, (size_t) pkm_uno);
+    if (!pokemon_uno)
+        return ERROR;
+
+    pokemon_t* pokemon_dos = lista_elemento_en_posicion(pokemones, (size_t) pkm_dos);
+    if (!pokemon_dos)
+        return ERROR;
+
+    pokemon_t pokemon_aux = (*pokemon_uno);
+    (*pokemon_uno) = (*pokemon_dos);
+    (*pokemon_dos) = pokemon_aux;
+
+    return EXITO;
+}
