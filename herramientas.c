@@ -383,12 +383,11 @@ int tomar_prestado(personaje_t* principal, entrenador_t* enemigo, int id_pokemon
     if (!principal || !enemigo)
         return ERROR;
 
-    if (id_pokemon >= enemigo->cant_pokemones)
+    pokemon_t* pokemon_prestado = lista_elemento_en_posicion(enemigo->pokemones, (size_t) id_pokemon);
+    if (!pokemon_prestado)
         return ERROR;
 
-    pokemon_t* pokemon_prestado = lista_elemento_en_posicion(enemigo->pokemones, (size_t) id_pokemon);
     pokemon_t* pokemon = crear_pokemon();
-
     (*pokemon) = (*pokemon_prestado);
 
     int resultado = lista_insertar_en_posicion(principal->pokemones, pokemon, MAX_POKE_COMBATE);
