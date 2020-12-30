@@ -760,9 +760,36 @@ void probar_reordenar_pokemones_valores_invalido () {
     destruir_personaje_principal(principal);
 }
 
+void probar_reordenar_pokemones_intercambio () {
+    personaje_t* principal = crear_personaje_principal();
+    char ruta_archivo[MAX_NOMBRE];
+    int pkm_uno = 1, pkm_dos = 2;
+
+    strcpy(ruta_archivo, "pruebas/principal_muchos_pokemones.txt");
+    archivo_2_personaje_principal (ruta_archivo, principal);
+
+    char pkm_uno_nombre[MAX_NOMBRE], pkm_dos_nombre[MAX_NOMBRE];
+
+    strcpy(pkm_uno_nombre, ((pokemon_t*)lista_elemento_en_posicion(principal->pokemones, (size_t) pkm_uno))->nombre);
+    strcpy(pkm_dos_nombre, ((pokemon_t*)lista_elemento_en_posicion(principal->pokemones, (size_t) pkm_dos))->nombre);
+
+    pa2m_afirmar(reordenar_pokemones(principal->pokemones, pkm_uno, pkm_dos) == EXITO,
+                 "Mensaje de exito al intercambiar dos pokemones");
+
+    pokemon_t* pokemon = lista_elemento_en_posicion(principal->pokemones, (size_t) pkm_uno);
+    pa2m_afirmar(strcmp(pkm_dos_nombre, pokemon->nombre) == 0,
+                 "Intercambia correctamente el pokemon");
+
+    pokemon = lista_elemento_en_posicion(principal->pokemones, (size_t) pkm_dos);
+    pa2m_afirmar(strcmp(pkm_uno_nombre, pokemon->nombre) == 0,
+                 "Intercambia correctamente el pokemon\n");
+
+    destruir_personaje_principal(principal);
+}
+
 void probar_reordenar_pokemones () {
-    // int reordenar_pokemones(lista_t* pokemones, int pkm_uno, int pkm_dos);
     probar_reordenar_pokemones_valores_invalido();
+    probar_reordenar_pokemones_intercambio();
 }
 
 int main () {
