@@ -366,8 +366,8 @@ int batalla_pokemon(personaje_t* principal, entrenador_t* enemigo, funcion_batal
            && condicion_pelea(contador_enemigo, enemigo->cant_pokemones)) {
 
         int resultado = pelea_pokemon(                                  \
-            (pokemon_t*)lista_elemento_en_posicion(principal->pokemones, (size_t) contador_principal), \
-            (pokemon_t*)lista_elemento_en_posicion(enemigo->pokemones, (size_t) contador_enemigo), \
+            lista_elemento_en_posicion(principal->pokemones, (size_t) contador_principal), \
+            lista_elemento_en_posicion(enemigo->pokemones, (size_t) contador_enemigo), \
             estilo);
 
         if (resultado == GANO_PRINCIPAL)
