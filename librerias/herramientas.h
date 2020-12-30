@@ -142,12 +142,6 @@ int batalla_pokemon(personaje_t* principal, entrenador_t* enemigo, funcion_batal
 int tomar_prestado(personaje_t* principal, entrenador_t* enemigo, int id_pokemon);
 
 /*
- * Aumenta las caracteristicas del pokemon +1 en cada caracteristica
- * hasta llegar a 63
- */
-int level_up(pokemon_t* pokemon);
-
-/*
  * Dado una lista de pokemones, intercambia los pokemones dado por
  * su id
  */
