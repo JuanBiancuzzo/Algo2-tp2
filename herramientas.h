@@ -129,6 +129,17 @@ int gimnasio_2_mapa(mapa_t* mapa, gimnasio_t* gimnasio);
 int batalla_pokemon(personaje_t* principal, entrenador_t* enemigo, funcion_batalla estilo);
 
 /*
+ * Dado un pokemon prestado del enemigo, se agrega a la lista de
+ * pokemones del personaje pricipal, si tiene menos de
+ * MAX_POKE_COMBATE (6) se agrega al final, si tiene mas se
+ * agrega como septimo pokemon
+ *
+ * El id_pokemon va desde 0 siendo el primero pokemon hasta la
+ * cantidad de pokemones del enemigo menos uno
+ */
+int tomar_prestado(personaje_t* principal, entrenador_t* enemigo, int id_pokemon);
+
+/*
  * Aumenta las caracteristicas del pokemon +1 en cada caracteristica
  * hasta llegar a 63
  */
