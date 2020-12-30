@@ -379,6 +379,31 @@ int batalla_pokemon(personaje_t* principal, entrenador_t* enemigo, funcion_batal
     return condicion_pelea(contador_principal, principal->cant_pokemones) ? GANO_PRINCIPAL : GANO_ENEMIGO;
 }
 
+int tomar_prestado(personaje_t* principal, entrenador_t* enemigo, int id_pokemon) {
+    if (!principal || !enemigo)
+        return ERROR;
+
+    if (id_pokemon >= enemigo->cant_pokemones)
+        return ERROR;
+
+    pokemon_t* pokemon_prestado = lista_elemento_en_posicion(enemigo->pokemones, (size_t) id_pokemon);
+    pokemon_t* pokemon = crear_pokemon();
+
+    (*pokemon) = (*pokemon_prestado);
+
+    int resultado = lista_insertar_en_posicion(principal->pokemones, pokemon, MAX_POKE_COMBATE);
+    if (resultado == ERROR) {
+        destruir_pokemon(pokemon);
+        return ERROR;
+    }
+
+    lista_borrar_de_posicion(enemigo->pokemones, (size_t) id_pokemon);
+    (enemigo->cant_pokemones)--;
+
+    (principal->cant_pokemones)++;
+    return EXITO;
+}
+
 int level_up(pokemon_t* pokemon) {
     if (!pokemon)
         return ERROR;
