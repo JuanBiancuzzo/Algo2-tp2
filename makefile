@@ -12,5 +12,6 @@ exe: build
 	./$(NAME)
 
 valgrind:
+	clear
 	$(CC) $(LIB) pruebas/pruebas.c -o $(NAME) $(CFLAGS)
 	$(VAL) $(VFLAGS) ./$(NAME)
