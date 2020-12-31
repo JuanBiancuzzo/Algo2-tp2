@@ -18,7 +18,7 @@
 #define REINTENTAR 'R'
 #define FINALIZAR 'F'
 
-#define MAX_INSTRUC 5
+#define MAX_INSTRUC 10
 
 typedef char* (*funcion_menu) (char[]);
 
