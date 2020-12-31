@@ -22,14 +22,14 @@
 
 typedef char* (*funcion_menu) (char[]);
 
-char* menu_inicio(char isntrucciones[]);
+char* menu_inicio(char instrucciones[]);
 
-char* menu_gimnasio(char isntrucciones[]);
+char* menu_gimnasio(char instrucciones[]);
 
-char* menu_batalla(char isntrucciones[]);
+char* menu_batalla(char instrucciones[]);
 
-char* menu_victoria(char isntrucciones[]);
+char* menu_victoria(char instrucciones[]);
 
-char* menu_derrota(char isntrucciones[]);
+char* menu_derrota(char instrucciones[]);
 
 #endif /* __HERRAMIENTAS_H__ */
