@@ -20,16 +20,16 @@
 
 #define MAX_INSTRUC 10
 
-typedef char* (*funcion_menu) (char[]);
+typedef void (*funcion_menu) (char[]);
 
-char* menu_inicio(char instrucciones[]);
+void menu_inicio(char instrucciones[]);
 
-char* menu_gimnasio(char instrucciones[]);
+void menu_gimnasio(char instrucciones[]);
 
-char* menu_batalla(char instrucciones[]);
+void menu_batalla(char instrucciones[]);
 
-char* menu_victoria(char instrucciones[]);
+void menu_victoria(char instrucciones[]);
 
-char* menu_derrota(char instrucciones[]);
+void menu_derrota(char instrucciones[]);
 
 #endif /* __HERRAMIENTAS_H__ */
