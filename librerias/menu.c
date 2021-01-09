@@ -20,6 +20,17 @@
 #define MAX_ALTO 200
 #define MAX_LINEAS 10
 
+typedef struct coordenadas {
+    int x;
+    int y;
+} coor_t;
+
+typedef struct pantalla {
+    char display[MAX_ANCHO][MAX_ALTO];
+    int ancho;
+    int alto;
+} pantalla_t;
+
 /*
  * Crea, por terminar, una linea de caracteres con
  * fondo blanco y un ancho especifico

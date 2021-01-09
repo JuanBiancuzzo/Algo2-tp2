@@ -1,7 +1,7 @@
 #ifndef __MENU_H__
 #define __MENU_H__
 
-#define ANCHO 80
+#include "herramientas.h"
 
 #define INGRESAR_ARCHIVO 'E'
 #define AGREGAR_GIMNASIO 'A'
@@ -18,7 +18,14 @@
 #define REINTENTAR 'R'
 #define FINALIZAR 'F'
 
+#define AFIRMAR 'S'
+#define NEGAR 'N'
+#define SIGUIENTE 'S'
+#define ANTERIOR 'A'
+
 #define MAX_INSTRUC 10
+#define ANCHO 100
+#define ALTO 30
 
 typedef void (*funcion_menu) (char[]);
 
