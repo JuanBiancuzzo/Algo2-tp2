@@ -363,6 +363,58 @@ void poner_lado_horizontal(pantalla_t* pantalla, int altura) {
         pantalla->display[altura][i] = '-';
 }
 
+void bloque_pokemon (pantalla_t* bloque, pokemon_t pokemon) {
+
+    poner_esquinas(bloque);
+
+    poner_lado_horizontal(bloque, 0);
+    poner_lado_horizontal(bloque, bloque->alto - 1);
+
+    poner_lado_vertical(bloque, 0);
+    poner_lado_vertical(bloque, bloque->ancho - 1);
+
+    int largo = ((int) strlen(pokemon.nombre) < bloque->ancho - 2) ? (int) strlen(pokemon.nombre) : bloque->ancho - 2;
+    coor_t coor = {1, posicion_media(pokemon.nombre, bloque->ancho)};
+    texto_2_pantalla(bloque, pokemon.nombre, largo, coor);
+
+    coor_t desfase = {2, 2};
+    bloque_estadistica(bloque, 'a', pokemon.ataque, desfase);
+    desfase.y = 8;
+    bloque_estadistica(bloque, 'd', pokemon.defensa, desfase);
+    desfase.y = 14;
+    bloque_estadistica(bloque, 'v', pokemon.velocidad, desfase);
+}
+
+void mostrar_intercambiar_pokemones(pokemon_t* pkm1, pokemon_t* pkm2) {
+
+    int cant_pokemones = 2 , ancho_pkm = 20, linea_inicial = 1;
+    pantalla_t pantalla, bloque;
+    pantalla.ancho = ANCHO, pantalla.alto = 6;
+    bloque.ancho = pantalla.ancho / cant_pokemones, bloque.alto = pantalla.alto - 2;
+
+    inicializar_matriz(&pantalla);
+    inicializar_matriz(&bloque);
+
+    pokemon_t* pokemones[2] = {pkm1, pkm2};
+
+    for (int i = 0; i < cant_pokemones; i++) {
+        bloque.ancho = ancho_pkm;
+
+        pokemon_t pkm_vacio = {"Elegir pokemon", 0, 0, 0};
+        if (pokemones[i]) pkm_vacio = *pokemones[i];
+
+        bloque_pokemon (&bloque, pkm_vacio);
+
+        int posicion_media = (pantalla.ancho / cant_pokemones) / 2 - ancho_pkm / 2;
+        coor_t coor = {linea_inicial, posicion_media + (pantalla.ancho / cant_pokemones) * i};
+        bloque_2_pantalla(&pantalla, bloque, coor);
+
+        inicializar_matriz(&bloque);
+    }
+
+    imprimir_pantalla(pantalla);
+}
+
     }
 
     imprimir_pantalla(pantalla, ancho, alto);
