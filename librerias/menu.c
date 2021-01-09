@@ -273,6 +273,62 @@ void menu_derrota(char instrucciones[]) {
     imprimir_pantalla(pantalla);
 }
 
+void menu_confirmacion(char instrucciones[]) {
+
+    int cant_instrucciones = 2, cant_lineas = 1, linea_inicial = 1;
+    pantalla_t pantalla, bloque;
+    pantalla.ancho = ANCHO;
+    pantalla.alto = 4;
+    bloque.ancho = pantalla.ancho / cant_instrucciones;
+    bloque.alto = pantalla.alto - 2;
+
+    inicializar_matriz(&pantalla);
+    inicializar_matriz(&bloque);
+
+    char instruc[3] = {AFIRMAR, NEGAR};
+    strcpy(instrucciones, instruc);
+
+    char* items[MAX_INSTRUC][MAX_LINEAS] = {{"Afirmar"}, \
+                                            {"Negar"} };
+
+    for (int i = 0; i < cant_instrucciones; i++) {
+        crear_instruccion(&bloque, instruc[i], items[i], cant_lineas, bloque.ancho);
+        coor_t coor = {linea_inicial, bloque.ancho * i};
+        bloque_2_pantalla(&pantalla, bloque, coor);
+        inicializar_matriz(&bloque);
+    }
+
+    imprimir_pantalla(pantalla);
+}
+
+void menu_avanzar_retroceder(char instrucciones[]) {
+
+    int cant_instrucciones = 2, cant_lineas = 1, linea_inicial = 1;
+    pantalla_t pantalla, bloque;
+    pantalla.ancho = ANCHO;
+    pantalla.alto = 4;
+    bloque.ancho = pantalla.ancho / cant_instrucciones;
+    bloque.alto = pantalla.alto - 2;
+
+    inicializar_matriz(&pantalla);
+    inicializar_matriz(&bloque);
+
+    char instruc[3] = {SIGUIENTE, ANTERIOR};
+    strcpy(instrucciones, instruc);
+
+    char* items[MAX_INSTRUC][MAX_LINEAS] = {{"Siguiente"}, \
+                                            {"Anterior"} };
+
+    for (int i = 0; i < cant_instrucciones; i++) {
+        crear_instruccion(&bloque, instruc[i], items[i], cant_lineas, bloque.ancho);
+        coor_t coor = {linea_inicial, bloque.ancho * i};
+        bloque_2_pantalla(&pantalla, bloque, coor);
+        inicializar_matriz(&bloque);
+    }
+
+    imprimir_pantalla(pantalla);
+}
+
     }
 
     imprimir_pantalla(pantalla, ancho, alto);
