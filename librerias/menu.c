@@ -415,7 +415,77 @@ void mostrar_intercambiar_pokemones(pokemon_t* pkm1, pokemon_t* pkm2) {
     imprimir_pantalla(pantalla);
 }
 
+void mostrar_pila_pokemones (pantalla_t* pantalla, lista_t pokemones, int cant_pokemones, int maximo) {
+
+    pantalla_t bloque;
+    bloque.ancho = ANCHO_POKEMON, bloque.alto = ALTO_POKEMON;
+    inicializar_matriz(&bloque);
+
+    int iteraciones = (cant_pokemones < maximo) ? cant_pokemones : maximo;
+
+    for (int i = 0; i < iteraciones; i++) {
+        pokemon_t pokemon = *(pokemon_t*)lista_elemento_en_posicion(&pokemones, (size_t) i);
+        bloque_pokemon(&bloque, pokemon);
+        coor_t coor = {bloque.alto * i, 0};
+        bloque_2_pantalla(pantalla, bloque, coor);
+        inicializar_matriz(&bloque);
+    }
+}
+
+void mostrar_columna_entrandor (pantalla_t* pantalla, entrenador_t entrenador, bool lider) {
+
+    pantalla_t bloque;
+    bloque.ancho = pantalla->ancho, bloque.alto = pantalla->alto;
+    inicializar_matriz(&bloque);
+
+    crear_titulo(pantalla, entrenador.nombre, pantalla->ancho);
+
+    if (lider) {
+        coor_t coor = {1, 0};
+        crear_titulo(&bloque, "(Lider)", pantalla->ancho);
+        bloque_2_pantalla(pantalla, cambiar_pantalla(bloque, pantalla->ancho, 1), coor);
+        inicializar_matriz(&bloque);
     }
 
-    imprimir_pantalla(pantalla, ancho, alto);
+    mostrar_pila_pokemones(&bloque, *(entrenador.pokemones), entrenador.cant_pokemones, 6);
+    coor_t coor = {2, 0};
+    bloque_2_pantalla(pantalla, bloque, coor);
+}
+
+int mostrar_gimnasio(gimnasio_t gimnasio, int iteracion) {
+
+    int ancho_pkm = ANCHO_POKEMON;
+    pantalla_t pantalla, bloque;
+    pantalla.ancho = ANCHO, pantalla.alto = ALTO;
+    bloque.ancho = ANCHO, bloque.alto = ALTO;
+
+    inicializar_matriz(&pantalla);
+    inicializar_matriz(&bloque);
+
+    crear_titulo(&bloque, gimnasio.nombre, bloque.ancho);
+    coor_t coor = {1, 0};
+
+    bloque_2_pantalla(&pantalla, cambiar_pantalla(bloque, -1, 3), coor);
+    inicializar_matriz(&bloque);
+
+    int maximo = (pantalla.ancho/ancho_pkm) - 1 + iteracion;
+    int cant_entrenadores = (gimnasio.cant_entrenadores < maximo) ? gimnasio.cant_entrenadores : maximo;
+    int ancho_entrenadores = pantalla.ancho / cant_entrenadores;
+
+    coor_t desfase = {3, (ancho_entrenadores - ancho_pkm) / 2};
+
+    for (int i = iteracion; i < cant_entrenadores; i++) {
+        size_t entrenador_posicion = (size_t) (gimnasio.cant_entrenadores - (i+1));
+        entrenador_t entrenador = *(entrenador_t*)lista_elemento_en_posicion(gimnasio.entrenadores, entrenador_posicion);
+
+        bloque.ancho = ancho_pkm;
+        mostrar_columna_entrandor(&bloque, entrenador, i == 0);
+
+        bloque_2_pantalla(&pantalla, bloque, desfase);
+        desfase.y += ancho_entrenadores;
+        inicializar_matriz(&bloque);
+    }
+
+    imprimir_pantalla(pantalla);
+    return cant_entrenadores - iteracion;
 }
