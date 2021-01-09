@@ -332,6 +332,37 @@ void menu_avanzar_retroceder(char instrucciones[]) {
     imprimir_pantalla(pantalla);
 }
 
+/*
+ * Si ancho o alto es menor a 0, se mantiene el ancho y alto,
+ * respectivamente, de la pantalla
+ */
+pantalla_t cambiar_pantalla(pantalla_t pantalla, int ancho, int alto) {
+    if (ancho >= 0) pantalla.ancho = ancho;
+    if (alto >= 0) pantalla.alto = alto;
+    return pantalla;
+}
+
+void bloque_estadistica(pantalla_t* bloque, char letra, int valor, coor_t desfase) {
+    char frase[6] = {letra, ':', (char) (48 + (valor % 100) / 10), (char) (48 + (valor % 10))};
+    texto_2_pantalla(bloque, frase, (int)strlen(frase), desfase);
+}
+
+void poner_esquinas (pantalla_t* pantalla) {
+    for (int i = 0; i <= 1; i++)
+        for (int j = 0; j <= 1; j++)
+            pantalla->display[(pantalla->alto - 1) * i][(pantalla->ancho - 1) * j] = '+';
+}
+
+void poner_lado_vertical(pantalla_t* pantalla, int altura) {
+    for (int i = 1; i < pantalla->alto - 1; i++)
+        pantalla->display[i][altura] = '|';
+}
+
+void poner_lado_horizontal(pantalla_t* pantalla, int altura) {
+    for (int i = 1; i < pantalla->ancho - 1; i++)
+        pantalla->display[altura][i] = '-';
+}
+
     }
 
     imprimir_pantalla(pantalla, ancho, alto);
