@@ -55,76 +55,90 @@ int posicion_media (char* texto, int ancho) {
  * Sorpresa, sorpresa, inicializa una matriz con
  * espacios
  */
-void inicializar_matriz(char matriz[MAX_ANCHO][MAX_ALTO], int ancho, int alto){
-    for (int i = 0; i < alto; i++)
-        for (int j = 0; j < ancho; j++)
-            matriz[i][j] = ' ';
+void inicializar_matriz(pantalla_t* pantalla){
+    for (int i = 0; i < pantalla->alto; i++)
+        for (int j = 0; j < pantalla->ancho; j++)
+            pantalla->display[i][j] = ' ';
 }
 
 /*
  * Dado una pantalla, los imprime con un borde
  * blanco
  */
-void imprimir_pantalla (char pantalla[MAX_ANCHO][MAX_ALTO], int ancho, int alto) {
-    linea_blanca(ancho + 4);
+void imprimir_pantalla (pantalla_t pantalla) {
+    linea_blanca(pantalla.ancho + 4);
     printf("\n");
-    for (int i = 0; i < alto; i++) {
+    for (int i = 0; i < pantalla.alto; i++) {
         linea_blanca(2);
-        printf("%s", pantalla[i]);
+        int largo = ((int) strlen(pantalla.display[i]) < pantalla.ancho) ? (int) strlen(pantalla.display[i]) : pantalla.ancho;
+
+        for (int j = 0; j < largo; j++)
+            printf("%c", pantalla.display[i][j]);
+
+        for (int j = (int) strlen (pantalla.display[i]); j < pantalla.ancho ; j++)
+            printf(" ");
+
         linea_blanca(2);
         printf("\n");
     }
-    linea_blanca(ancho + 4);
+    linea_blanca(pantalla.ancho + 4);
     printf("\n");
 }
 
 /*
- * Inserta una texto en la pantalla, en una pocicion
- * x e y
+ * Inserta una texto en la pantalla, en una pocicion x e y
  */
-void texto_2_pantalla (char pantalla[MAX_ANCHO][MAX_ALTO], char* texto, int largo, int x, int y) {
+void texto_2_pantalla (pantalla_t* pantalla, char* texto, int largo, coor_t coor) {
     for (int i = 0; i < largo; i++)
-        pantalla[x][y+i] = *(texto + i);
+        (pantalla->display)[coor.x][coor.y + i] = texto[i];
 }
 
 /*
  * Inserta el bloque de textos en la pantalla en
  * las posiciones x e y
  */
-void bloque_2_pantalla (char pantalla[MAX_ANCHO][MAX_ALTO],\
-                        char bloque[MAX_ANCHO][MAX_ALTO], int alto_bloque, int ancho_bloque,\
-                        int x, int y) {
-
-    for (int i = 0; i < alto_bloque; i++)
-        texto_2_pantalla(pantalla, bloque[i], ancho_bloque, x+i, y);
+void bloque_2_pantalla (pantalla_t* pantalla, pantalla_t bloque, coor_t coor) {
+    for (int i = 0; i < bloque.alto; i++) {
+        texto_2_pantalla(pantalla, bloque.display[i], bloque.ancho, coor);
+        (coor.x)++;
+    }
 }
 
 /*
  * Dado una serie de instrucciones, devuelve una
  * bloque con los elementos centrados en este
  */
-void crear_instruccion (char bloque[MAX_ANCHO][MAX_ALTO], \
+void crear_instruccion (pantalla_t* bloque, \
                         char letra, char* instruc[MAX_INSTRUC], int tope_instrucciones, \
                         int espacio)  {
 
     char caracter[4] = {'[', letra, ']'};
-    texto_2_pantalla(bloque, caracter, 3, 0, posicion_media(caracter, espacio));
+    coor_t coor = {0, posicion_media(caracter, espacio)};
+    texto_2_pantalla(bloque, caracter, 3, coor);
 
-    for (int i = 0; i < tope_instrucciones; i++)
-        texto_2_pantalla(bloque, instruc[i], (int) strlen(instruc[i]),  \
-                         1 + i, posicion_media(instruc[i], espacio));
+    for (int i = 0; i < tope_instrucciones; i++) {
+        coor.x = 1 + i;
+        coor.y = posicion_media(instruc[i], espacio);
+        texto_2_pantalla(bloque, instruc[i], (int) strlen(instruc[i]), coor);
+    }
+}
+
+void crear_titulo(pantalla_t* bloque, char* texto, int ancho) {
+    coor_t coor = {0, posicion_media(texto, ancho)};
+    texto_2_pantalla(bloque, texto, (int) strlen(texto), coor);
 }
 
 void menu_inicio(char* instrucciones) {
 
-    int ancho = ANCHO, alto = 6, linea_inicial = 1;
+    int cant_instrucciones = 4, cant_lineas = 3, linea_inicial = 1;
+    pantalla_t pantalla, bloque;
+    pantalla.ancho = ANCHO;
+    pantalla.alto = 6;
+    bloque.ancho = pantalla.ancho / cant_instrucciones;
+    bloque.alto = pantalla.alto - 2;
 
-    char pantalla[MAX_ANCHO][MAX_ALTO], bloque[MAX_ANCHO][MAX_ALTO];
-    int cant_instrucciones = 4, cant_lineas = 3;
-    int ancho_bloque = ancho / cant_instrucciones, alto_bloque = alto - 2;
-
-    inicializar_matriz(pantalla, ancho, alto);
-    inicializar_matriz(bloque, ancho_bloque, alto_bloque);
+    inicializar_matriz(&pantalla);
+    inicializar_matriz(&bloque);
 
     char instruc[5] = {INGRESAR_ARCHIVO, AGREGAR_GIMNASIO, COMENZAR_PARTIDA, SIMULAR_PARTIDA};
     strcpy(instrucciones, instruc);
@@ -135,24 +149,26 @@ void menu_inicio(char* instrucciones) {
                                             {"Simular" , "partida" , " "} };
 
     for (int i = 0; i < cant_instrucciones; i++) {
-        crear_instruccion(bloque, instruc[i], items[i], cant_lineas, ancho_bloque);
-        bloque_2_pantalla(pantalla, bloque, alto_bloque, ancho_bloque, linea_inicial, ancho_bloque * i);
-        inicializar_matriz(bloque, ancho_bloque, alto_bloque);
+        crear_instruccion(&bloque, instruc[i], items[i], cant_lineas, bloque.ancho);
+        coor_t coor = {linea_inicial, bloque.ancho * i};
+        bloque_2_pantalla(&pantalla, bloque, coor);
+        inicializar_matriz(&bloque);
     }
 
-    imprimir_pantalla(pantalla, ancho, alto);
+    imprimir_pantalla(pantalla);
 }
 
 void menu_gimnasio(char instrucciones[]) {
 
-    int ancho = ANCHO, alto = 6, linea_inicial = 1;
+    int cant_instrucciones = 4, cant_lineas = 3, linea_inicial = 1;
+    pantalla_t pantalla, bloque;
+    pantalla.ancho = ANCHO;
+    pantalla.alto = 6;
+    bloque.ancho = pantalla.ancho / cant_instrucciones;
+    bloque.alto = pantalla.alto - 2;
 
-    char pantalla[MAX_ANCHO][MAX_ALTO], bloque[MAX_ANCHO][MAX_ALTO];
-    int cant_instrucciones = 4, cant_lineas = 3;
-    int ancho_bloque = ancho / cant_instrucciones, alto_bloque = alto - 2;
-
-    inicializar_matriz(pantalla, ancho, alto);
-    inicializar_matriz(bloque, ancho_bloque, alto_bloque);
+    inicializar_matriz(&pantalla);
+    inicializar_matriz(&bloque);
 
     char instruc[5] = {MOSTRAR_ENTRENADOR, MOSTRAR_GIMNASIO, CAMBIAR_POKEMON, PROXIMA_BATALLA};
     strcpy(instrucciones, instruc);
@@ -163,24 +179,26 @@ void menu_gimnasio(char instrucciones[]) {
                                             {"Proxima" , "batalla" , " "} };
 
     for (int i = 0; i < cant_instrucciones; i++) {
-        crear_instruccion(bloque, instruc[i], items[i], cant_lineas, ancho_bloque);
-        bloque_2_pantalla(pantalla, bloque, alto_bloque, ancho_bloque, linea_inicial, ancho_bloque * i);
-        inicializar_matriz(bloque, ancho_bloque, alto_bloque);
+        crear_instruccion(&bloque, instruc[i], items[i], cant_lineas, bloque.ancho);
+        coor_t coor = {linea_inicial, bloque.ancho * i};
+        bloque_2_pantalla(&pantalla, bloque, coor);
+        inicializar_matriz(&bloque);
     }
 
-    imprimir_pantalla(pantalla, ancho, alto);
+    imprimir_pantalla(pantalla);
 }
 
 void menu_batalla(char instrucciones[]) {
 
-    int ancho = ANCHO, alto = 5, linea_inicial = 1;
+    int cant_instrucciones = 1, cant_lineas = 2, linea_inicial = 1;
+    pantalla_t pantalla, bloque;
+    pantalla.ancho = ANCHO;
+    pantalla.alto = 5;
+    bloque.ancho = pantalla.ancho / cant_instrucciones;
+    bloque.alto = pantalla.alto - 2;
 
-    char pantalla[MAX_ANCHO][MAX_ALTO], bloque[MAX_ANCHO][MAX_ALTO];
-    int cant_instrucciones = 1, cant_lineas = 2;
-    int ancho_bloque = ancho / cant_instrucciones, alto_bloque = alto - 2;
-
-    inicializar_matriz(pantalla, ancho, alto);
-    inicializar_matriz(bloque, ancho_bloque, alto_bloque);
+    inicializar_matriz(&pantalla);
+    inicializar_matriz(&bloque);
 
     char instruc[2] = {PROXIMO_COMBATE};
     strcpy(instrucciones, instruc);
@@ -188,24 +206,26 @@ void menu_batalla(char instrucciones[]) {
     char* items[MAX_INSTRUC][MAX_LINEAS] = {{"Proximo", "combate"}};
 
     for (int i = 0; i < cant_instrucciones; i++) {
-        crear_instruccion(bloque, instruc[i], items[i], cant_lineas, ancho_bloque);
-        bloque_2_pantalla(pantalla, bloque, alto_bloque, ancho_bloque, linea_inicial, ancho_bloque * i);
-        inicializar_matriz(bloque, ancho_bloque, alto_bloque);
+        crear_instruccion(&bloque, instruc[i], items[i], cant_lineas, bloque.ancho);
+        coor_t coor = {linea_inicial, bloque.ancho * i};
+        bloque_2_pantalla(&pantalla, bloque, coor);
+        inicializar_matriz(&bloque);
     }
 
-    imprimir_pantalla(pantalla, ancho, alto);
+    imprimir_pantalla(pantalla);
 }
 
 void menu_victoria(char instrucciones[]) {
 
-    int ancho = ANCHO, alto = 6, linea_inicial = 1;
+    int cant_instrucciones = 3, cant_lineas = 3, linea_inicial = 1;
+    pantalla_t pantalla, bloque;
+    pantalla.ancho = ANCHO;
+    pantalla.alto = 6;
+    bloque.ancho = pantalla.ancho / cant_instrucciones;
+    bloque.alto = pantalla.alto - 2;
 
-    char pantalla[MAX_ANCHO][MAX_ALTO], bloque[MAX_ANCHO][MAX_ALTO];
-    int cant_instrucciones = 3, cant_lineas = 3;
-    int ancho_bloque = ancho / cant_instrucciones, alto_bloque = alto - 2;
-
-    inicializar_matriz(pantalla, ancho, alto);
-    inicializar_matriz(bloque, ancho_bloque, alto_bloque);
+    inicializar_matriz(&pantalla);
+    inicializar_matriz(&bloque);
 
     char instruc[4] = {TOMAR_PRESTADO, CAMBIAR_POKEMONES, PROXIMO_GIMNASIO};
     strcpy(instrucciones, instruc);
@@ -215,24 +235,26 @@ void menu_victoria(char instrucciones[]) {
                                             {"Proximo"       , "gimnasio"     , " "} };
 
     for (int i = 0; i < cant_instrucciones; i++) {
-        crear_instruccion(bloque, instruc[i], items[i], cant_lineas, ancho_bloque);
-        bloque_2_pantalla(pantalla, bloque, alto_bloque, ancho_bloque, linea_inicial, ancho_bloque * i);
-        inicializar_matriz(bloque, ancho_bloque, alto_bloque);
+        crear_instruccion(&bloque, instruc[i], items[i], cant_lineas, bloque.ancho);
+        coor_t coor = {linea_inicial, bloque.ancho * i};
+        bloque_2_pantalla(&pantalla, bloque, coor);
+        inicializar_matriz(&bloque);
     }
 
-    imprimir_pantalla(pantalla, ancho, alto);
+    imprimir_pantalla(pantalla);
 }
 
 void menu_derrota(char instrucciones[]) {
 
-    int ancho = ANCHO, alto = 6, linea_inicial = 1;
+    int cant_instrucciones = 3, cant_lineas = 3, linea_inicial = 1;
+    pantalla_t pantalla, bloque;
+    pantalla.ancho = ANCHO;
+    pantalla.alto = 6;
+    bloque.ancho = pantalla.ancho / cant_instrucciones;
+    bloque.alto = pantalla.alto - 2;
 
-    char pantalla[MAX_ANCHO][MAX_ALTO], bloque[MAX_ANCHO][MAX_ALTO];
-    int cant_instrucciones = 3, cant_lineas = 3;
-    int ancho_bloque = ancho / cant_instrucciones, alto_bloque = alto - 2;
-
-    inicializar_matriz(pantalla, ancho, alto);
-    inicializar_matriz(bloque, ancho_bloque, alto_bloque);
+    inicializar_matriz(&pantalla);
+    inicializar_matriz(&bloque);
 
     char instruc[4] = {CAMBIAR_POKEMONES, REINTENTAR, FINALIZAR};
     strcpy(instrucciones, instruc);
@@ -242,9 +264,15 @@ void menu_derrota(char instrucciones[]) {
                                             {"Finalizar" , "partida" , " "} };
 
     for (int i = 0; i < cant_instrucciones; i++) {
-        crear_instruccion(bloque, instruc[i], items[i], cant_lineas, ancho_bloque);
-        bloque_2_pantalla(pantalla, bloque, alto_bloque, ancho_bloque, linea_inicial, ancho_bloque * i);
-        inicializar_matriz(bloque, ancho_bloque, alto_bloque);
+        crear_instruccion(&bloque, instruc[i], items[i], cant_lineas, bloque.ancho);
+        coor_t coor = {linea_inicial, bloque.ancho * i};
+        bloque_2_pantalla(&pantalla, bloque, coor);
+        inicializar_matriz(&bloque);
+    }
+
+    imprimir_pantalla(pantalla);
+}
+
     }
 
     imprimir_pantalla(pantalla, ancho, alto);
