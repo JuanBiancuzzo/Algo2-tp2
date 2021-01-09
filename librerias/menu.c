@@ -20,6 +20,9 @@
 #define MAX_ALTO 200
 #define MAX_LINEAS 10
 
+#define ANCHO_POKEMON 20
+#define ALTO_POKEMON 4
+
 typedef struct coordenadas {
     int x;
     int y;

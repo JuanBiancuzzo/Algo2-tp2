@@ -85,4 +85,30 @@ void menu_confirmacion(char instrucciones[]);
  * Deja al usuario navegar por los menus
  */
 void menu_avanzar_retroceder(char instrucciones[]);
+
+/*
+ * Muestra dos pokemones, en el caso de que no este alguno de ellos
+ * se mostrara el espacio disponible para el pokemon a elegir
+ */
+void mostrar_intercambiar_pokemones(pokemon_t* pkm1, pokemon_t* pkm2);
+
+/*
+ * Muestra todos los pokemones que hay en la lista, con los primeros
+ * 6 separados, estos seria los que usarian para luchar
+ */
+int mostrar_pokemones(lista_t pokemones);
+
+/*
+ * Muestra al entrenador con todos sus pokemones, y con la variable
+ * iteracion se puede ir viendo en mas detalle los pokemones del
+ * entrenador
+ */
+int mostrar_entrenador(entrenador_t entrenador, bool lider, int iteracion);
+
+/*
+ * Muestra la estructura del gimnasio y con la variable iteracion
+ * se puede ir viendo mas entrenadores que no entren en la pantalla
+ */
+int mostrar_gimnasio(gimnasio_t gimnasio, int iteracion);
+
 #endif /* __HERRAMIENTAS_H__ */
