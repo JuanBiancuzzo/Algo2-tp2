@@ -96,7 +96,7 @@ void mostrar_intercambiar_pokemones(pokemon_t* pkm1, pokemon_t* pkm2);
  * Muestra todos los pokemones que hay en la lista, con los primeros
  * 6 separados, estos seria los que usarian para luchar
  */
-int mostrar_pokemones(lista_t pokemones);
+int mostrar_pokemones(lista_t pokemones, int cant_pokemones);
 
 /*
  * Muestra al entrenador con todos sus pokemones, y con la variable
