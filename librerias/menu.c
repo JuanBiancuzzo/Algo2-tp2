@@ -406,16 +406,23 @@ void bloque_pokemon (pantalla_t* bloque, pokemon_t pokemon) {
     bloque_estadistica(bloque, 'v', pokemon.velocidad, desfase);
 }
 
-void mostrar_intercambiar_pokemones(pokemon_t* pkm1, pokemon_t* pkm2) {
+void mostrar_intercambiar_pokemones(pokemon_t* pkm1, pokemon_t* pkm2, char* frase) {
 
-    int cant_pokemones = 2 , ancho_pkm = 20, linea_inicial = 1;
+    int cant_pokemones = 2 , ancho_pkm = 20, linea_inicial = 2;
     pantalla_t pantalla, bloque;
-    pantalla.ancho = ANCHO, pantalla.alto = 6;
-    bloque.ancho = pantalla.ancho / cant_pokemones, bloque.alto = pantalla.alto - 2;
+    pantalla.ancho = ANCHO, pantalla.alto = 7;
+    bloque.ancho = pantalla.ancho, bloque.alto = pantalla.alto;
 
     inicializar_matriz(&pantalla);
     inicializar_matriz(&bloque);
 
+    crear_titulo(&bloque, frase, bloque.ancho);
+    coor_t coor = {1, 0};
+
+    bloque_2_pantalla(&pantalla, cambiar_pantalla(bloque, -1, 3), coor);
+    inicializar_matriz(&bloque);
+
+    bloque.ancho = pantalla.ancho / cant_pokemones, bloque.alto = pantalla.alto - 3;
     pokemon_t* pokemones[2] = {pkm1, pkm2};
 
     for (int i = 0; i < cant_pokemones; i++) {

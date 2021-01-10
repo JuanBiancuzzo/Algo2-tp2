@@ -90,7 +90,7 @@ void menu_avanzar_retroceder(char instrucciones[]);
  * Muestra dos pokemones, en el caso de que no este alguno de ellos
  * se mostrara el espacio disponible para el pokemon a elegir
  */
-void mostrar_intercambiar_pokemones(pokemon_t* pkm1, pokemon_t* pkm2);
+void mostrar_intercambiar_pokemones(pokemon_t* pkm1, pokemon_t* pkm2, char* frase);
 
 /*
  * Muestra todos los pokemones que hay en la lista, con los primeros
