@@ -376,15 +376,19 @@ void poner_lado_horizontal(pantalla_t* pantalla, int altura) {
         pantalla->display[altura][i] = '-';
 }
 
+void poner_cuadrado(pantalla_t* pantalla) {
+    poner_esquinas(pantalla);
+
+    poner_lado_horizontal(pantalla, 0);
+    poner_lado_horizontal(pantalla, pantalla->alto - 1);
+
+    poner_lado_vertical(pantalla, 0);
+    poner_lado_vertical(pantalla, pantalla->ancho - 1);
+}
+
 void bloque_pokemon (pantalla_t* bloque, pokemon_t pokemon) {
 
-    poner_esquinas(bloque);
-
-    poner_lado_horizontal(bloque, 0);
-    poner_lado_horizontal(bloque, bloque->alto - 1);
-
-    poner_lado_vertical(bloque, 0);
-    poner_lado_vertical(bloque, bloque->ancho - 1);
+    poner_cuadrado(bloque);
 
     int largo = ((int) strlen(pokemon.nombre) < bloque->ancho - 2) ? (int) strlen(pokemon.nombre) : bloque->ancho - 2;
     coor_t coor = {1, posicion_media(pokemon.nombre, bloque->ancho)};
@@ -463,6 +467,106 @@ void mostrar_columna_entrandor (pantalla_t* pantalla, entrenador_t entrenador, b
     mostrar_pila_pokemones(&bloque, *(entrenador.pokemones), entrenador.cant_pokemones, 6);
     coor_t coor = {2, 0};
     bloque_2_pantalla(pantalla, bloque, coor);
+}
+
+void circulo (pantalla_t* bloque, int radio, coor_t posicion, int rango) {
+
+    int relacion = 2, centro = bloque->ancho / 4;
+    int desfase = centro - radio;
+
+    for (int i = -rango; i < rango; i++)
+        if (potencia(posicion.x - radio, 2) + potencia(posicion.y - radio, 2) == potencia(radio, 2)+i)
+            bloque->display[posicion.x + desfase][(posicion.y + desfase) * relacion] = 'o';
+}
+
+void pokebola (pantalla_t* pantalla) {
+
+    int radio = (pantalla->ancho) / 4 - 1;
+
+    for (int i = 0; i < pantalla->ancho; i++) {
+        for (int j = 0; j < pantalla->alto; j++) {
+            coor_t posicion = {i, j};
+            circulo(pantalla, radio/2, posicion, 2);
+            circulo(pantalla, radio, posicion, 6);
+        }
+        if (i%2 == 0 && i != 0)
+            pantalla->display[pantalla->alto / 2][i] = 'o';
+    }
+}
+
+void bloque_pokebola (pantalla_t* pantalla, pokemon_t* pokemon) {
+
+    pokemon_t pkm_vacio = {"Vacio", 0, 0, 0};
+    if (pokemon) pkm_vacio = *pokemon;
+
+    pantalla_t bloque;
+    bloque.alto = (pantalla->alto * 2 ) / 3 , bloque.ancho = bloque.alto * 2;
+    inicializar_matriz(&bloque);
+
+    poner_cuadrado(pantalla);
+
+    int largo = ((int) strlen(pkm_vacio.nombre) < pantalla->ancho - 2) ? (int) strlen(pkm_vacio.nombre) : pantalla->ancho - 2;
+    coor_t coor = {1, posicion_media(pkm_vacio.nombre, pantalla->ancho)};
+    texto_2_pantalla(pantalla, pkm_vacio.nombre, largo, coor);
+
+    pokebola(&bloque);
+    coor.x = 2;
+    coor.y = (pantalla->ancho - bloque.ancho) / 2;
+    bloque_2_pantalla(pantalla, bloque, coor);
+
+    int cant_atributos = 3;
+    int ancho_atributos = pantalla->ancho / cant_atributos;
+
+    if (pokemon) {
+        char* atributos[4] = {"Ataque", "Defensa", "Velocidad"};
+        int valores[4] = {pkm_vacio.ataque, pkm_vacio.defensa, pkm_vacio.velocidad};
+
+        for (int i = 0; i < cant_atributos; i++) {
+            coor_t coor = {pantalla->alto - 4, posicion_media(atributos[i], ancho_atributos) + ancho_atributos * i};
+            texto_2_pantalla(pantalla, atributos[i], (int) strlen(atributos[i]), coor);
+        }
+
+        for (int i = 0; i < cant_atributos; i++) {
+            char numero[4];
+            numero_2_texto(numero, valores[i], 2);
+
+            coor_t coor = {pantalla->alto - 3, posicion_media(numero, ancho_atributos) + ancho_atributos * i};
+            texto_2_pantalla(pantalla, numero, (int) strlen(numero), coor);
+        }
+    }
+}
+
+
+int mostrar_entrenador(entrenador_t entrenador, bool lider, int iteracion) {
+
+    int ancho_pkm = ANCHO_POKEMON;
+    pantalla_t pantalla, bloque;
+    pantalla.ancho = ANCHO, pantalla.alto = ALTO;
+    bloque.ancho = ANCHO, bloque.alto = ALTO;
+
+    inicializar_matriz(&pantalla);
+    inicializar_matriz(&bloque);
+
+    bloque.ancho = ancho_pkm;
+    mostrar_columna_entrandor(&bloque, entrenador, lider);
+
+    coor_t desfase = {1, 2};
+    bloque_2_pantalla(&pantalla, bloque, desfase);
+    inicializar_matriz(&bloque);
+
+    int separacion = desfase.y * 2 + ancho_pkm;
+    poner_lado_vertical(&pantalla, separacion);
+
+    pokemon_t* pokemon = (pokemon_t*)lista_elemento_en_posicion(entrenador.pokemones, (size_t) iteracion);
+
+    bloque.ancho = pantalla.ancho - separacion - 4;
+    bloque.alto = (pantalla.alto * 3) / 4;
+    bloque_pokebola(&bloque, pokemon);
+    coor_t coor = {(pantalla.alto - bloque.alto) / 2, separacion + 2};
+    bloque_2_pantalla(&pantalla, bloque, coor);
+
+    imprimir_pantalla(pantalla);
+    return entrenador.cant_pokemones;
 }
 
 int mostrar_gimnasio(gimnasio_t gimnasio, int iteracion) {
