@@ -135,6 +135,16 @@ void crear_titulo(pantalla_t* bloque, char* texto, int ancho) {
     texto_2_pantalla(bloque, texto, (int) strlen(texto), coor);
 }
 
+/*
+ * Si ancho o alto es menor a 0, se mantiene el ancho y alto,
+ * respectivamente, de la pantalla
+ */
+pantalla_t cambiar_pantalla(pantalla_t pantalla, int ancho, int alto) {
+    if (ancho >= 0) pantalla.ancho = ancho;
+    if (alto >= 0) pantalla.alto = alto;
+    return pantalla;
+}
+
 void menu_inicio(char* instrucciones) {
 
     int cant_instrucciones = 4, cant_lineas = 3, linea_inicial = 1;
@@ -280,18 +290,23 @@ void menu_derrota(char instrucciones[]) {
     imprimir_pantalla(pantalla);
 }
 
-void menu_confirmacion(char instrucciones[]) {
+void menu_confirmacion(char instrucciones[], char* frase) {
 
-    int cant_instrucciones = 2, cant_lineas = 1, linea_inicial = 1;
+    int cant_instrucciones = 2, cant_lineas = 1, linea_inicial = 2;
     pantalla_t pantalla, bloque;
-    pantalla.ancho = ANCHO;
-    pantalla.alto = 4;
-    bloque.ancho = pantalla.ancho / cant_instrucciones;
-    bloque.alto = pantalla.alto - 2;
+    pantalla.ancho = ANCHO, pantalla.alto = 5;
+    bloque.ancho = pantalla.ancho, bloque.alto = pantalla.alto;
 
     inicializar_matriz(&pantalla);
     inicializar_matriz(&bloque);
 
+    crear_titulo(&bloque, frase, bloque.ancho);
+    coor_t coor = {1, 0};
+
+    bloque_2_pantalla(&pantalla, cambiar_pantalla(bloque, -1, 3), coor);
+    inicializar_matriz(&bloque);
+
+    bloque.ancho = pantalla.ancho / cant_instrucciones, bloque.alto = pantalla.alto - 2;
     char instruc[3] = {AFIRMAR, NEGAR};
     strcpy(instrucciones, instruc);
 
@@ -334,16 +349,6 @@ void menu_avanzar_retroceder(char instrucciones[]) {
     }
 
     imprimir_pantalla(pantalla);
-}
-
-/*
- * Si ancho o alto es menor a 0, se mantiene el ancho y alto,
- * respectivamente, de la pantalla
- */
-pantalla_t cambiar_pantalla(pantalla_t pantalla, int ancho, int alto) {
-    if (ancho >= 0) pantalla.ancho = ancho;
-    if (alto >= 0) pantalla.alto = alto;
-    return pantalla;
 }
 
 int potencia (int base, int potencia) {

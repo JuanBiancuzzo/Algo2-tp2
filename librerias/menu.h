@@ -76,15 +76,15 @@ void menu_victoria(char instrucciones[]);
 void menu_derrota(char instrucciones[]);
 
 /*
- * Mostrarle al usuario que tiene la opcion de afirmar o de
- * negar lo que se le pregunta
- */
-void menu_confirmacion(char instrucciones[]);
-
-/*
  * Deja al usuario navegar por los menus
  */
 void menu_avanzar_retroceder(char instrucciones[]);
+
+/*
+ * Mostrarle al usuario que tiene la opcion de afirmar o de
+ * negar lo que se le pregunta
+ */
+void menu_confirmacion(char instrucciones[], char* frase);
 
 /*
  * Muestra dos pokemones, en el caso de que no este alguno de ellos
