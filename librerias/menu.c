@@ -342,8 +342,21 @@ pantalla_t cambiar_pantalla(pantalla_t pantalla, int ancho, int alto) {
     return pantalla;
 }
 
+int potencia (int base, int potencia) {
+    int resultado = 1;
+    for (int i = 0; i < potencia; i++)
+        resultado *= base;
+    return resultado;
+}
+
+void numero_2_texto(char texto[], int numero, int cant_numeros) {
+    for (int i = 0; i < cant_numeros; i++)
+        texto[cant_numeros - (1 + i)] = (char) (48 + (numero % potencia(10, i+1)) / potencia(10, i));
+}
+
 void bloque_estadistica(pantalla_t* bloque, char letra, int valor, coor_t desfase) {
-    char frase[6] = {letra, ':', (char) (48 + (valor % 100) / 10), (char) (48 + (valor % 10))};
+    char frase[6] = {letra, ':'};
+    numero_2_texto(frase+2, valor, 2);
     texto_2_pantalla(bloque, frase, (int)strlen(frase), desfase);
 }
 
