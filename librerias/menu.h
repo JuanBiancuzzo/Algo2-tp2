@@ -81,6 +81,12 @@ void menu_derrota(char instrucciones[]);
 void menu_avanzar_retroceder(char instrucciones[]);
 
 /*
+ * Muestra el titulo del juego en la pantalla, esta pensado para
+ * cuando no hay algo especifico para mostrar
+ */
+void pantalla_titulo();
+
+/*
  * Mostrarle al usuario que tiene la opcion de afirmar o de
  * negar lo que se le pregunta
  */
@@ -93,10 +99,10 @@ void menu_confirmacion(char instrucciones[], char* frase);
 void mostrar_intercambiar_pokemones(pokemon_t* pkm1, pokemon_t* pkm2, char* frase);
 
 /*
- * Muestra todos los pokemones que hay en la lista, con los primeros
- * 6 separados, estos seria los que usarian para luchar
+ * Dado el personaje principal, muestra todos sus pokemones y cuales
+ * son los pokemones que va a usar para luchar
  */
-int mostrar_pokemones(lista_t pokemones, int cant_pokemones);
+int mostrar_principal(personaje_t principal);
 
 /*
  * Muestra al entrenador con todos sus pokemones, y con la variable
