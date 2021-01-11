@@ -130,8 +130,8 @@ void crear_instruccion (pantalla_t* bloque, \
     }
 }
 
-void crear_titulo(pantalla_t* pantalla, char* texto, int linea, int ancho) {
-    coor_t coor = {linea, posicion_media(texto, ancho)};
+void crear_titulo(pantalla_t* pantalla, char* texto, coor_t desfase, int ancho) {
+    coor_t coor = {desfase.x, posicion_media(texto, ancho) + desfase.y};
     texto_2_pantalla(pantalla, texto, (int) strlen(texto), coor);
 }
 
@@ -300,7 +300,8 @@ void menu_confirmacion(char instrucciones[], char* frase) {
     inicializar_matriz(&pantalla);
     inicializar_matriz(&bloque);
 
-    crear_titulo(&pantalla, frase, 1, pantalla.ancho);
+    coor_t desfase = {1, 0};
+    crear_titulo(&pantalla, frase, desfase, pantalla.ancho);
 
     bloque.ancho = pantalla.ancho / cant_instrucciones, bloque.alto = pantalla.alto - 2;
     char instruc[3] = {AFIRMAR, NEGAR};
@@ -417,7 +418,8 @@ void mostrar_intercambiar_pokemones(pokemon_t* pkm1, pokemon_t* pkm2, char* fras
     inicializar_matriz(&pantalla);
     inicializar_matriz(&bloque);
 
-    crear_titulo(&pantalla, frase, 1, pantalla.ancho);
+    coor_t desfase = {1, 0};
+    crear_titulo(&pantalla, frase, desfase, pantalla.ancho);
 
     bloque.ancho = pantalla.ancho / cant_pokemones, bloque.alto = pantalla.alto - 3;
     pokemon_t* pokemones[2] = {pkm1, pkm2};
@@ -470,8 +472,9 @@ int mostrar_principal(personaje_t personaje) {
     inicializar_matriz(&pantalla);
     inicializar_matriz(&bloque);
 
-    crear_titulo(&pantalla, personaje.nombre, 1, pantalla.ancho);
-    crear_titulo(&pantalla, "Pokemones para luchar", 1, ancho_pkm + 6);
+    coor_t coor = {1, 0};
+    crear_titulo(&pantalla, personaje.nombre, coor, pantalla.ancho);
+    crear_titulo(&pantalla, "Pokemones para luchar", coor, ancho_pkm + 6);
 
     mostrar_pila_pokemones(&bloque, *(personaje.pokemones), personaje.cant_pokemones, maximo, 0);
 
@@ -502,10 +505,13 @@ void mostrar_columna_entrandor (pantalla_t* pantalla, entrenador_t entrenador, b
     bloque.ancho = pantalla->ancho, bloque.alto = pantalla->alto;
     inicializar_matriz(&bloque);
 
-    crear_titulo(pantalla, entrenador.nombre, 0, pantalla->ancho);
+    coor_t desfase = {0, 0};
+    crear_titulo(pantalla, entrenador.nombre, desfase, pantalla->ancho);
 
-    if (lider)
-        crear_titulo(pantalla, "(Lider)", 1, pantalla->ancho);
+    if (lider) {
+        desfase.x = 1;
+        crear_titulo(pantalla, "(Lider)", desfase, pantalla->ancho);
+    }
 
     mostrar_pila_pokemones(&bloque, *(entrenador.pokemones), entrenador.cant_pokemones, 6, 0);
     coor_t coor = {2, 0};
@@ -622,7 +628,8 @@ int mostrar_gimnasio(gimnasio_t gimnasio, int iteracion) {
     inicializar_matriz(&pantalla);
     inicializar_matriz(&bloque);
 
-    crear_titulo(&pantalla, gimnasio.nombre, 1, pantalla.ancho);
+    coor_t coor = {1, 0};
+    crear_titulo(&pantalla, gimnasio.nombre, coor, pantalla.ancho);
 
     int maximo = (pantalla.ancho/ancho_pkm) - 1 + iteracion;
     int cant_entrenadores = minimo(gimnasio.cant_entrenadores, maximo);
