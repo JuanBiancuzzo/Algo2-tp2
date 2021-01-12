@@ -141,6 +141,23 @@ void inicializar_mapa(mapa_t* mapa) {
     gimnasio_2_mapa(mapa, gimnasio);
 }
 
+char menu_principal (mapa_t* mapa, personaje_t* principal) {
+    char respuesta;
+
+    do {
+        CLEAR;
+        respuesta = iniciar_juego();
+        if (responder_caracter(INGRESAR_ARCHIVO, respuesta))
+            inicializar_personaje(principal);
+        if (responder_caracter(AGREGAR_GIMNASIO, respuesta))
+            inicializar_mapa(mapa);
+
+    } while ((!responder_caracter(COMENZAR_PARTIDA, respuesta) && \
+              !responder_caracter(SIMULAR_PARTIDA, respuesta)) ||  \
+              !juego_preparado(mapa, principal));
+
+    return respuesta;
+}
 int main() {
     CLEAR;
 
