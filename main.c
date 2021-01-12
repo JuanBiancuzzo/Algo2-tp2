@@ -113,6 +113,34 @@ void inicializar_personaje(personaje_t* principal) {
 
 }
 
+void inicializar_mapa(mapa_t* mapa) {
+
+    gimnasio_t* gimnasio = crear_gimnasio();
+    char instrucciones[MAX_INSTRUC];
+    char respuesta;
+
+    do {
+        int (*funcion_validacion) (char*, void*) = archivo_2_gimnasio;
+        preguntar_archivo(CARPETA_GIMNASIO, funcion_validacion, gimnasio);
+
+        CLEAR;
+        mostrar_gimnasio(*gimnasio, 0);
+        menu_confirmacion(instrucciones, "Este es el gimnasio que vas a luchar contra?");
+        scanf(" %c", &respuesta);
+
+        while (!responder_opciones(instrucciones, respuesta)) {
+            CLEAR;
+            mostrar_gimnasio(*gimnasio, 0);
+            menu_confirmacion(instrucciones, "Este es el gimnasio que vas a luchar contra?");
+            printf("Tenes que elegir una de las opciones\n");
+            scanf(" %c", &respuesta);
+        }
+
+    } while (responder_caracter(NEGAR, respuesta));
+
+    gimnasio_2_mapa(mapa, gimnasio);
+}
+
 int main() {
     CLEAR;
 
