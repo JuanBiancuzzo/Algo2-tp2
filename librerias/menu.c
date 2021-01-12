@@ -89,7 +89,7 @@ void imprimir_pantalla (pantalla_t pantalla) {
         printf("\n");
     }
     linea_blanca(pantalla.ancho + 4);
-    printf("\n");
+    printf("\n\n");
 }
 
 /*
@@ -540,42 +540,48 @@ void bloque_pokebola (pantalla_t* pantalla, pokemon_t* pokemon) {
     if (pokemon) pkm_vacio = *pokemon;
 
     pantalla_t bloque;
-    bloque.alto = (pantalla->alto * 2 ) / 3 , bloque.ancho = bloque.alto * 2;
+    bloque.alto = 12 , bloque.ancho = 22;
     inicializar_matriz(&bloque);
-
-    poner_cuadrado(pantalla);
 
     int largo = minimo((int) strlen(pkm_vacio.nombre), pantalla->ancho - 2);
     coor_t coor = {1, posicion_media(pkm_vacio.nombre, pantalla->ancho)};
     texto_2_pantalla(pantalla, pkm_vacio.nombre, largo, coor);
 
-    pokebola(&bloque);
-    coor.x = 2;
-    coor.y = (pantalla->ancho - bloque.ancho) / 2;
-    bloque_2_pantalla(pantalla, bloque, coor);
+    if (imprimir_imagen(&bloque, "imagenes/imagen_pokebola.txt") == EXITO) {
+        coor.x = 4;
+        coor.y = (pantalla->ancho - bloque.ancho) / 2;
+        bloque_2_pantalla(pantalla, bloque, coor);
+    }
+    bloque.alto = (pantalla->alto * 2 ) / 3 , bloque.ancho = bloque.alto * 2;
+    inicializar_matriz(&bloque);
 
     int cant_atributos = 3;
     int ancho_atributos = pantalla->ancho / cant_atributos;
 
-    if (pokemon) {
-        char* atributos[4] = {"Ataque", "Defensa", "Velocidad"};
-        int valores[4] = {pkm_vacio.ataque, pkm_vacio.defensa, pkm_vacio.velocidad};
+    char* atributos[4] = {"Ataque", "Defensa", "Velocidad"};
+    int valores[4] = {pkm_vacio.ataque, pkm_vacio.defensa, pkm_vacio.velocidad};
 
-        for (int i = 0; i < cant_atributos; i++) {
-            coor_t coor = {pantalla->alto - 4, posicion_media(atributos[i], ancho_atributos) + ancho_atributos * i};
-            texto_2_pantalla(pantalla, atributos[i], (int) strlen(atributos[i]), coor);
-        }
+    for (int i = 0; i < cant_atributos; i++) {
+        coor_t coor = {pantalla->alto - 4, posicion_media(atributos[i], ancho_atributos) + ancho_atributos * i};
+        texto_2_pantalla(pantalla, atributos[i], (int) strlen(atributos[i]), coor);
+    }
 
-        for (int i = 0; i < cant_atributos; i++) {
-            char numero[4];
-            numero_2_texto(numero, valores[i], 2);
+    for (int i = 0; i < cant_atributos; i++) {
+        char numero[4];
+        numero_2_texto(numero, valores[i], 2);
 
-            coor_t coor = {pantalla->alto - 3, posicion_media(numero, ancho_atributos) + ancho_atributos * i};
-            texto_2_pantalla(pantalla, numero, (int) strlen(numero), coor);
-        }
+        coor_t coor = {pantalla->alto - 3, posicion_media(numero, ancho_atributos) + ancho_atributos * i};
+        texto_2_pantalla(pantalla, numero, (int) strlen(numero), coor);
     }
 }
 
+void pantalla_titulo() {
+    pantalla_t pantalla;
+    pantalla.ancho = ANCHO, pantalla.alto = ALTO;
+    inicializar_matriz(&pantalla);
+    imprimir_imagen(&pantalla, "imagenes/imagen_principal.txt");
+    imprimir_pantalla(pantalla);
+}
 
 int mostrar_entrenador(entrenador_t entrenador, bool lider, int iteracion) {
 
