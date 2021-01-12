@@ -491,7 +491,7 @@ int mostrar_principal(personaje_t personaje) {
 
     for (int i = 0; i < limite; i++) {
         inicializar_matriz(&bloque);
-        mostrar_pila_pokemones(&bloque, *(personaje.pokemones), personaje.cant_pokemones, maximo, maximo * (1+i));
+        mostrar_pila_pokemones(&bloque, *(personaje.pokemones), personaje.cant_pokemones, maximo.x, maximo.x * (1+i));
         bloque_2_pantalla(&pantalla, bloque, desfase);
         desfase.y += ancho_pkm + 3;
     }
