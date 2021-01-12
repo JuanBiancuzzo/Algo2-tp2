@@ -33,6 +33,25 @@ bool responder_opciones (char opciones[], char respuesta) {
 bool juego_preparado(mapa_t* mapa, personaje_t* principal) {
     return (mapa->gimnasios && principal->pokemones);
 }
+
+char iniciar_juego () {
+
+    pantalla_titulo();
+    char instrucciones[MAX_INSTRUC];
+    menu_inicio(instrucciones);
+
+    char respuesta;
+    scanf(" %c", &respuesta);
+
+    while (!responder_opciones(instrucciones, respuesta)) {
+        CLEAR;
+        pantalla_titulo();
+        menu_inicio(instrucciones);
+        printf("Tenes que elegir una de las opciones\n");
+        scanf(" %c", &respuesta);
+    }
+    return respuesta;
+}
 int main() {
     CLEAR;
 
