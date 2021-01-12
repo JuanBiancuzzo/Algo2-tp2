@@ -19,6 +19,20 @@
 #define CARPETA_GIMNASIO "gimnasios/"
 #define CARPETA_PRINCIPAL "principal/"
 
+bool responder_caracter (char opcion, char respuesta) {
+    return (opcion == respuesta || opcion+32 == respuesta);
+}
+
+bool responder_opciones (char opciones[], char respuesta) {
+    for (size_t i = 0; i < strlen(opciones); i++)
+        if (responder_caracter(opciones[i], respuesta))
+            return true;
+    return false;
+}
+
+bool juego_preparado(mapa_t* mapa, personaje_t* principal) {
+    return (mapa->gimnasios && principal->pokemones);
+}
 int main() {
     CLEAR;
 
