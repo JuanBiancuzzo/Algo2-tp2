@@ -513,34 +513,25 @@ void mostrar_columna_entrandor (pantalla_t* pantalla, entrenador_t entrenador, b
         crear_titulo(pantalla, "(Lider)", desfase, pantalla->ancho);
     }
 
-    mostrar_pila_pokemones(&bloque, *(entrenador.pokemones), entrenador.cant_pokemones, 6, 0);
-    coor_t coor = {2, 0};
-    bloque_2_pantalla(pantalla, bloque, coor);
-}
-
-void circulo (pantalla_t* bloque, int radio, coor_t posicion, int rango) {
-
-    int relacion = 2, centro = bloque->ancho / 4;
-    int desfase = centro - radio;
-
-    for (int i = -rango; i < rango; i++)
-        if (potencia(posicion.x - radio, 2) + potencia(posicion.y - radio, 2) == potencia(radio, 2)+i)
-            bloque->display[posicion.x + desfase][(posicion.y + desfase) * relacion] = 'o';
-}
-
-void pokebola (pantalla_t* pantalla) {
-
-    int radio = (pantalla->ancho) / 4 - 1;
-
-    for (int i = 0; i < pantalla->ancho; i++) {
-        for (int j = 0; j < pantalla->alto; j++) {
-            coor_t posicion = {i, j};
-            circulo(pantalla, radio/2, posicion, 2);
-            circulo(pantalla, radio, posicion, 6);
-        }
-        if (i%2 == 0 && i != 0)
-            pantalla->display[pantalla->alto / 2][i] = 'o';
+    if (entrenador.pokemones) {
+        mostrar_pila_pokemones(&bloque, *(entrenador.pokemones), entrenador.cant_pokemones, 6, 0);
+        coor_t coor = {2, 0};
+        bloque_2_pantalla(pantalla, bloque, coor);
     }
+}
+
+int imprimir_imagen (pantalla_t* pantalla, char* ruta_imagen) {
+
+    FILE* archivo = fopen(ruta_imagen, "r");
+    if (!archivo) return ERROR;
+
+    for (int i = 0; i < pantalla->alto; i++) {
+        fscanf(archivo, "%100[^\n]\n", pantalla->display[i]);
+        for (int j = 0; j < pantalla->ancho; j++)
+            if (pantalla->display[i][j] == '.')
+                pantalla->display[i][j] = ' ';
+    }
+    return EXITO;
 }
 
 void bloque_pokebola (pantalla_t* pantalla, pokemon_t* pokemon) {
