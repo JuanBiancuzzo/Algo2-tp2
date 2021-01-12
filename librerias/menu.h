@@ -101,6 +101,8 @@ void mostrar_intercambiar_pokemones(pokemon_t* pkm1, pokemon_t* pkm2, char* fras
 /*
  * Dado el personaje principal, muestra todos sus pokemones y cuales
  * son los pokemones que va a usar para luchar
+ *
+ * Devuelve la cantidad de pokemones que pudo mostrar en la pantalla
  */
 int mostrar_principal(personaje_t principal);
 
@@ -109,11 +111,13 @@ int mostrar_principal(personaje_t principal);
  * iteracion se puede ir viendo en mas detalle los pokemones del
  * entrenador
  */
-int mostrar_entrenador(entrenador_t entrenador, bool lider, int iteracion);
+void mostrar_entrenador(entrenador_t entrenador, bool lider, int iteracion);
 
 /*
  * Muestra la estructura del gimnasio y con la variable iteracion
  * se puede ir viendo mas entrenadores que no entren en la pantalla
+ *
+ * Devuelve la cantidad de entrenadores que pudo mostrar
  */
 int mostrar_gimnasio(gimnasio_t gimnasio, int iteracion);
 

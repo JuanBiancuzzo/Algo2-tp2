@@ -464,7 +464,8 @@ void mostrar_pila_pokemones (pantalla_t* pantalla, lista_t pokemones, int cant_p
 
 int mostrar_principal(personaje_t personaje) {
 
-    int ancho_pkm = ANCHO_POKEMON, maximo = 6;
+    int ancho_pkm = ANCHO_POKEMON;
+    coor_t maximo = {6, 4};
     pantalla_t pantalla, bloque;
     pantalla.ancho = ANCHO, pantalla.alto = ALTO;
     bloque.ancho = ancho_pkm, bloque.alto = pantalla.alto;
@@ -474,9 +475,9 @@ int mostrar_principal(personaje_t personaje) {
 
     coor_t coor = {1, 0};
     crear_titulo(&pantalla, personaje.nombre, coor, pantalla.ancho);
-    crear_titulo(&pantalla, "Pokemones para luchar", coor, ancho_pkm + 6);
+    crear_titulo(&pantalla, "Pokemones para luchar", coor, ancho_pkm + maximo.x);
 
-    mostrar_pila_pokemones(&bloque, *(personaje.pokemones), personaje.cant_pokemones, maximo, 0);
+    mostrar_pila_pokemones(&bloque, *(personaje.pokemones), personaje.cant_pokemones, maximo.x, 0);
 
     coor_t desfase = {3, 3};
     bloque_2_pantalla(&pantalla, bloque, desfase);
@@ -485,7 +486,7 @@ int mostrar_principal(personaje_t personaje) {
     int separacion = desfase.y * 2 + ancho_pkm;
     poner_lado_vertical(&pantalla, separacion);
 
-    int limite = minimo(personaje.cant_pokemones/maximo, 4);
+    int limite = minimo(personaje.cant_pokemones/maximo.x, 4);
     desfase.y = separacion + 4;
 
     for (int i = 0; i < limite; i++) {
@@ -496,7 +497,7 @@ int mostrar_principal(personaje_t personaje) {
     }
 
     imprimir_pantalla(pantalla);
-    return 0;
+    return minimo(maximo.x * maximo.y, personaje.cant_pokemones);
 }
 
 void mostrar_columna_entrandor (pantalla_t* pantalla, entrenador_t entrenador, bool lider) {
@@ -583,7 +584,7 @@ void pantalla_titulo() {
     imprimir_pantalla(pantalla);
 }
 
-int mostrar_entrenador(entrenador_t entrenador, bool lider, int iteracion) {
+void mostrar_entrenador(entrenador_t entrenador, bool lider, int iteracion) {
 
     int ancho_pkm = ANCHO_POKEMON;
     pantalla_t pantalla, bloque;
@@ -612,7 +613,6 @@ int mostrar_entrenador(entrenador_t entrenador, bool lider, int iteracion) {
     bloque_2_pantalla(&pantalla, bloque, coor);
 
     imprimir_pantalla(pantalla);
-    return entrenador.cant_pokemones;
 }
 
 int mostrar_gimnasio(gimnasio_t gimnasio, int iteracion) {
