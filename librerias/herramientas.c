@@ -159,7 +159,7 @@ int guardar_entrenadores(FILE* archivo, lista_t* entrenadores, char* ultima_leid
     return cant_entrenadores;
 }
 
-int archivo_2_personaje_principal (char ruta_archivo[], personaje_t* principal) {
+int archivo_2_personaje_principal (char ruta_archivo[], void* principal) {
     if (!ruta_archivo || !principal)
         return ERROR;
 
@@ -173,28 +173,28 @@ int archivo_2_personaje_principal (char ruta_archivo[], personaje_t* principal) 
         return ERROR;
     }
 
-    leido = leer_entrenador(archivo, principal->nombre);
+    leido = leer_entrenador(archivo, ((personaje_t*)principal)->nombre);
     if (leido != CANT_ENTRENADOR) {
         fclose(archivo);
         return ERROR;
     }
 
     void (*lista_liberar_pokemon)(void*) = liberar_pokemon;
-    principal->pokemones = lista_crear(lista_liberar_pokemon);
-    int resultado = guardar_pokemones(archivo, principal->pokemones, true, &ultima_leida);
+    ((personaje_t*)principal)->pokemones = lista_crear(lista_liberar_pokemon);
+    int resultado = guardar_pokemones(archivo, ((personaje_t*)principal)->pokemones, true, &ultima_leida);
 
     if (resultado == 0) {
-        lista_destruir(principal->pokemones);
+        lista_destruir(((personaje_t*)principal)->pokemones);
         fclose(archivo);
         return ERROR;
     }
 
-    principal->cant_pokemones = resultado;
+    ((personaje_t*)principal)->cant_pokemones = resultado;
     fclose(archivo);
     return EXITO;
 }
 
-int archivo_2_gimnasio (char ruta_archivo[], gimnasio_t* gimnasio) {
+int archivo_2_gimnasio (char ruta_archivo[], void* gimnasio) {
     if (!ruta_archivo || !gimnasio)
         return ERROR;
 
@@ -214,15 +214,15 @@ int archivo_2_gimnasio (char ruta_archivo[], gimnasio_t* gimnasio) {
         return ERROR;
     }
 
-    gimnasio->entrenadores = lista_crear(NULL);
-    int resultado = guardar_entrenadores(archivo, gimnasio->entrenadores, &ultima_leida);
+    ((gimnasio_t*)gimnasio)->entrenadores = lista_crear(NULL);
+    int resultado = guardar_entrenadores(archivo, ((gimnasio_t*)gimnasio)->entrenadores, &ultima_leida);
 
     if (resultado == 0) {
-        lista_destruir(gimnasio->entrenadores);
+        lista_destruir(((gimnasio_t*)gimnasio)->entrenadores);
         fclose(archivo);
         return ERROR;
     }
-    gimnasio->cant_entrenadores = resultado;
+    ((gimnasio_t*)gimnasio)->cant_entrenadores = resultado;
 
     fclose(archivo);
     return EXITO;

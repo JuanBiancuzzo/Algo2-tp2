@@ -55,14 +55,14 @@ typedef struct personaje {
  * con los datos del archivo y devuelve EXITO si los cargo correctamente,
  * y ERROR si no lo logra
  */
-int archivo_2_personaje_principal (char ruta_archivo[], personaje_t* principal);
+int archivo_2_personaje_principal (char ruta_archivo[], void* principal);
 
 /*
  * Apartir del ruta del archivo y un gimnasio vacio, carga el gimnasio
  * con los datos del archivo y devuelve EXITO si los cargo correctamente,
  * y ERROR si no lo logra
  */
-int archivo_2_gimnasio (char ruta_archivo[], gimnasio_t* gimnasio);
+int archivo_2_gimnasio (char ruta_archivo[], void* gimnasio);
 
 /*
  * Se encarga de reservar memoria en el heap para el personaje principal
