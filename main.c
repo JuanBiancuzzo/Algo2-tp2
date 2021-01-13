@@ -326,6 +326,75 @@ char hub_derrota(personaje_t* principal, entrenador_t* entrenador) {
 
     return respuesta;
 }
+
+void tomar_prestado_pokemon (personaje_t* principal, gimnasio_t* gimnasio) {
+
+    CLEAR;
+    entrenador_t* entrenador = pelear_entrenador(gimnasio, gimnasio->cant_entrenadores - 1);
+    char instrucciones[MAX_INSTRUC], respuesta;
+    int id_pokemon = 0;
+    mostrar_entrenador(*entrenador, true, id_pokemon);
+    printf("Elegir el pokemon, del numero 1 al %i, de arriba a abajo: ", entrenador->cant_pokemones);
+    scanf("%i", &id_pokemon);
+
+    id_pokemon--;
+    while (id_pokemon < 0 || id_pokemon >= entrenador->cant_pokemones) {
+        id_pokemon = 0;
+        CLEAR;
+        mostrar_entrenador(*entrenador, true, id_pokemon);
+        printf("Elegiste un numero invalido, tenes que ");
+        printf("elegir el pokemon, del numero 1 al %i, de arriba a abajo: ", entrenador->cant_pokemones);
+        scanf("%i", &id_pokemon);
+
+        id_pokemon--;
+    }
+
+    CLEAR;
+    mostrar_entrenador(*entrenador, true, id_pokemon);
+    menu_confirmacion(instrucciones, "Este es el pokemon que quieres tomar prestado?");
+    scanf(" %c", &respuesta);
+
+    while (!responder_opciones(instrucciones, respuesta)) {
+        CLEAR;
+        mostrar_entrenador(*entrenador, true, id_pokemon);
+        menu_confirmacion(instrucciones, "Este es el pokemon que quieres tomar prestado?");
+        printf("Tenes que elegir una de las opciones\n");
+        scanf(" %c", &respuesta);
+    }
+
+    if (responder_caracter(AFIRMAR, respuesta))
+        tomar_prestado(principal, entrenador, id_pokemon);
+}
+
+char hub_victoria(personaje_t* principal, gimnasio_t* gimnasio) {
+    char respuesta;
+    bool intercambio = false;
+
+    do {
+        CLEAR;
+        respuesta = mostrar_menu(menu_victoria, NULL, pantalla_victoria, NULL);
+
+        if (responder_caracter(TOMAR_PRESTADO, respuesta)) {
+            if (!intercambio) {
+                tomar_prestado_pokemon(principal, gimnasio);
+                intercambio = true;
+            } else {
+                mostrar_informacion("Ya intercambiaste un pokemon con el lider");
+                SLEEP;
+            }
+        } else if (responder_caracter(CAMBIAR_POKEMONES, respuesta)) {
+            cambiar_pokemones(principal);
+        }
+
+    } while (!responder_caracter(PROXIMO_GIMNASIO, respuesta));
+
+    return respuesta;
+}
+
+void maestro_pokemon() {
+    CLEAR;
+    pantalla_maestro_pokemon(NULL);
+}
     CLEAR;
 
     return 0;
