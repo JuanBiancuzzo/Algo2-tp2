@@ -5,7 +5,7 @@
 #ifdef __linux__
 #include <unistd.h>
 #define CLEAR system("clear")
-#define SLEEP sleep(1)
+#define SLEEP sleep(2)
 #elif _WIN32
 #include <windows.h>
 #define CLEAR system("cls")
@@ -18,6 +18,9 @@
 
 #define CARPETA_GIMNASIO "gimnasios/"
 #define CARPETA_PRINCIPAL "principal/"
+
+#define ENTRENADOR_GANA -1
+#define PRINCIPAL_GANA 1
 
 bool responder_caracter (char opcion, char respuesta) {
     return (opcion == respuesta || opcion+32 == respuesta);
