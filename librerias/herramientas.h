@@ -90,6 +90,24 @@ int archivo_2_gimnasio (char ruta_archivo[], void* gimnasio);
 int gimnasio_2_mapa(mapa_t* mapa, gimnasio_t* gimnasio);
 
 /*
+ * Dado un mapa, devuelve el gimnasio que tenga menor dificultad
+ * y lo elimina del mapa. En caso de error devuelve NULL
+ */
+gimnasio_t* pelar_gimnasio(mapa_t* mapa);
+
+/*
+ * Dado un gimnasio, devuelve el entrenador que tenga este primero
+ * en la lista, en caso de error devuelve NULL
+ */
+entrenador_t* pelear_entrenador(gimnasio_t* gimnasio, int posicion);
+
+/*
+ * Dado la posicion de un pokemon, devuelve el pokemon de la lista
+ * de pokemones del personaje principal
+ */
+pokemon_t* elegir_pokemon(personaje_t* principal, int posicion);
+
+/*
  * Dados el personaje principal y entrenador o lider, se hace la
  * batalla, devolviendo 1 si el personaje principal gana o -1 si
  * gano el entrenador o lider

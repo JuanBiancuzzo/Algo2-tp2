@@ -439,3 +439,20 @@ int reordenar_pokemones(lista_t* pokemones, int pkm_uno, int pkm_dos) {
 
     return EXITO;
 }
+
+gimnasio_t* pelar_gimnasio(mapa_t* mapa) {
+    gimnasio_t* gimnasio = heap_raiz(mapa->gimnasios);
+
+    if (gimnasio)
+        mapa->cant_gimnasios = mapa->gimnasios->cant_elementos;
+
+    return gimnasio;
+}
+
+entrenador_t* pelear_entrenador(gimnasio_t* gimnasio, int posicion) {
+    return (entrenador_t*)lista_elemento_en_posicion(gimnasio->entrenadores, (size_t) posicion);
+}
+
+pokemon_t* elegir_pokemon(personaje_t* principal, int posicion) {
+    return lista_elemento_en_posicion(principal->pokemones, (size_t) posicion);
+}
