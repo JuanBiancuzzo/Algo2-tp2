@@ -501,5 +501,41 @@ void simular_partida(mapa_t* mapa, personaje_t* principal) {
 
 }
 
+void valores_iniciales(int argc, char* argv[], mapa_t* mapa, personaje_t* principal) {
+    if (argc < 2)
+        return;
+
+    char ruta_archivo[MAX_NOMBRE] = {CARPETA_PRINCIPAL};
+    gimnasio_t* gimnasio;
+    gimnasio_t auxilear;
+
+    if (strcmp(argv[1], "default") == 0) {
+        strcat(ruta_archivo, "ash.txt");
+        archivo_2_personaje_principal(ruta_archivo, principal);
+
+        strcpy(ruta_archivo, CARPETA_GIMNASIO);
+        strcat(ruta_archivo, "ciudad_celeste.txt");
+        if (archivo_2_gimnasio("gimnasios/ciudad_celeste.txt", &auxilear) == EXITO) {
+            gimnasio = crear_gimnasio();
+            *gimnasio = auxilear;
+            gimnasio_2_mapa(mapa, gimnasio);
+        }
+        return;
+    }
+
+    strcpy(ruta_archivo, CARPETA_PRINCIPAL);
+    strcat(ruta_archivo, argv[1]);
+    archivo_2_personaje_principal(ruta_archivo, principal);
+
+    for (int i = 2; i < argc; i++) {
+        strcpy(ruta_archivo, CARPETA_GIMNASIO);
+        strcat(ruta_archivo, argv[i]);
+        if (archivo_2_gimnasio(ruta_archivo, &auxilear) == EXITO) {
+            gimnasio = crear_gimnasio();
+            *gimnasio = auxilear;
+            gimnasio_2_mapa(mapa, gimnasio);
+        }
+    }
+}
     return 0;
 }
