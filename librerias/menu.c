@@ -147,7 +147,7 @@ pantalla_t cambiar_pantalla(pantalla_t pantalla, int ancho, int alto) {
     return pantalla;
 }
 
-void menu_inicio(char* instrucciones) {
+void menu_inicio(char* instrucciones, void* auxilear) {
 
     int cant_instrucciones = 4, cant_lineas = 3, linea_inicial = 1;
     pantalla_t pantalla, bloque;
@@ -292,7 +292,7 @@ void menu_derrota(char instrucciones[], void* auxilear) {
     imprimir_pantalla(pantalla);
 }
 
-void menu_confirmacion(char instrucciones[], char* frase) {
+void menu_confirmacion(char instrucciones[], void* frase) {
 
     int cant_instrucciones = 2, cant_lineas = 1, linea_inicial = 2;
     pantalla_t pantalla, bloque;
@@ -303,7 +303,7 @@ void menu_confirmacion(char instrucciones[], char* frase) {
     inicializar_matriz(&bloque);
 
     coor_t desfase = {1, 0};
-    crear_titulo(&pantalla, frase, desfase, pantalla.ancho);
+    crear_titulo(&pantalla, (char*) frase, desfase, pantalla.ancho);
 
     bloque.ancho = pantalla.ancho / cant_instrucciones, bloque.alto = pantalla.alto - 2;
     char instruc[3] = {AFIRMAR, NEGAR};
@@ -322,9 +322,9 @@ void menu_confirmacion(char instrucciones[], char* frase) {
     imprimir_pantalla(pantalla);
 }
 
-void menu_avanzar_retroceder(char instrucciones[]) {
+void menu_avanzar_retroceder(char instrucciones[], void* auxilear) {
 
-    int cant_instrucciones = 2, cant_lineas = 1, linea_inicial = 1;
+    int cant_instrucciones = 3, cant_lineas = 1, linea_inicial = 1;
     pantalla_t pantalla, bloque;
     pantalla.ancho = ANCHO;
     pantalla.alto = 4;
@@ -334,11 +334,12 @@ void menu_avanzar_retroceder(char instrucciones[]) {
     inicializar_matriz(&pantalla);
     inicializar_matriz(&bloque);
 
-    char instruc[3] = {SIGUIENTE, ANTERIOR};
+    char instruc[4] = {VOLVER, ANTERIOR, SIGUIENTE};
     strcpy(instrucciones, instruc);
 
-    char* items[MAX_INSTRUC][MAX_LINEAS] = {{"Siguiente"}, \
-                                            {"Anterior"} };
+    char* items[MAX_INSTRUC][MAX_LINEAS] = {{"Volver"}, \
+                                            {"Anterior"}, \
+                                            {"Siguiente"} };
 
     for (int i = 0; i < cant_instrucciones; i++) {
         crear_instruccion(&bloque, instruc[i], items[i], cant_lineas, bloque.ancho);
