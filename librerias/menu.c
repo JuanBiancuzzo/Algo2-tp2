@@ -19,6 +19,8 @@
 #define MAX_ANCHO 200
 #define MAX_ALTO 200
 #define MAX_LINEAS 10
+#define MAX_ENTRENADORES 4
+#define MAX_POKEMONES 6
 
 #define ANCHO_POKEMON 20
 #define ALTO_POKEMON 4
@@ -187,7 +189,7 @@ void menu_gimnasio(char instrucciones[]) {
     inicializar_matriz(&pantalla);
     inicializar_matriz(&bloque);
 
-    char instruc[5] = {MOSTRAR_ENTRENADOR, MOSTRAR_GIMNASIO, CAMBIAR_POKEMON, PROXIMA_BATALLA};
+    char instruc[5] = {MOSTRAR_ENTRENADOR, MOSTRAR_GIMNASIO, CAMBIAR_POKEMONES, PROXIMA_BATALLA};
     strcpy(instrucciones, instruc);
 
     char* items[MAX_INSTRUC][MAX_LINEAS] = {{"Mostrar el", "entrenador" , " "}, \
