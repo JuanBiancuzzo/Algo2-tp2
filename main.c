@@ -37,11 +37,11 @@ bool mapa_preparado(mapa_t* mapa) {
     return mapa->cant_gimnasios > 0;
 }
 
-bool principal_preparado(personaje_t* principal) {
+bool principal_preparado(entrenador_t* principal) {
     return principal->cant_pokemones > 0;
 }
 
-bool juego_preparado(mapa_t* mapa, personaje_t* principal) {
+bool juego_preparado(mapa_t* mapa, entrenador_t* principal) {
     return (mapa_preparado(mapa) && principal_preparado(principal));
 }
 
@@ -109,7 +109,7 @@ void preguntar_archivo(char* carpeta_destino, int (*funcion_validacion) (char*, 
     fclose(archivo);
 }
 
-void inicializar_personaje(personaje_t* principal) {
+void inicializar_personaje(entrenador_t* principal) {
 
     char respuesta;
 
@@ -152,7 +152,7 @@ void inicializar_mapa(mapa_t* mapa) {
     gimnasio_2_mapa(mapa, gimnasio);
 }
 
-char hub_principal (mapa_t* mapa, personaje_t* principal) {
+char hub_principal (mapa_t* mapa, entrenador_t* principal) {
     char respuesta;
 
     do {
@@ -180,7 +180,7 @@ char hub_principal (mapa_t* mapa, personaje_t* principal) {
     return respuesta;
 }
 
-void cambiar_pokemones(personaje_t* principal) {
+void cambiar_pokemones(entrenador_t* principal) {
 
     pokemon_t* pkm[2] = {NULL, NULL};
     int posicion[2];
@@ -287,7 +287,7 @@ void mostrar_gimnasio_actual (gimnasio_t* gimnasio) {
 
 }
 
-char hub_gimnasio (personaje_t* principal, gimnasio_t* gimnasio) {
+char hub_gimnasio (entrenador_t* principal, gimnasio_t* gimnasio) {
 
     char respuesta;
 
@@ -311,7 +311,7 @@ char hub_batalla(entrenador_t* entrenador) {
 }
 
 
-char hub_derrota(personaje_t* principal, entrenador_t* entrenador) {
+char hub_derrota(entrenador_t* principal, entrenador_t* entrenador) {
     char respuesta;
 
     do {
@@ -327,7 +327,7 @@ char hub_derrota(personaje_t* principal, entrenador_t* entrenador) {
     return respuesta;
 }
 
-void tomar_prestado_pokemon (personaje_t* principal, gimnasio_t* gimnasio) {
+void tomar_prestado_pokemon (entrenador_t* principal, gimnasio_t* gimnasio) {
 
     CLEAR;
     entrenador_t* entrenador = pelear_entrenador(gimnasio, gimnasio->cant_entrenadores - 1);
@@ -366,7 +366,7 @@ void tomar_prestado_pokemon (personaje_t* principal, gimnasio_t* gimnasio) {
         tomar_prestado(principal, entrenador, id_pokemon);
 }
 
-char hub_victoria(personaje_t* principal, gimnasio_t* gimnasio) {
+char hub_victoria(entrenador_t* principal, gimnasio_t* gimnasio) {
     char respuesta;
     bool intercambio = false;
 
@@ -396,7 +396,7 @@ void maestro_pokemon() {
     pantalla_maestro_pokemon(NULL);
 }
 
-void comenzar_partida(mapa_t* mapa, personaje_t* principal) {
+void comenzar_partida(mapa_t* mapa, entrenador_t* principal) {
 
     gimnasio_t* gimnasio = pelar_gimnasio(mapa);
     funcion_batalla estilo = estilo_batalla(gimnasio->id_funcion);
@@ -475,7 +475,7 @@ bool simular_batalla(int resultado, entrenador_t* enemigo, int* contador) {
     return !(resultado == PRINCIPAL_GANA);
 }
 
-void simular_partida(mapa_t* mapa, personaje_t* principal) {
+void simular_partida(mapa_t* mapa, entrenador_t* principal) {
 
     gimnasio_t* gimnasio = pelar_gimnasio(mapa);
     funcion_batalla estilo = estilo_batalla(gimnasio->id_funcion);
@@ -510,7 +510,7 @@ void simular_partida(mapa_t* mapa, personaje_t* principal) {
 
 }
 
-void valores_iniciales(int argc, char* argv[], mapa_t* mapa, personaje_t* principal) {
+void valores_iniciales(int argc, char* argv[], mapa_t* mapa, entrenador_t* principal) {
     if (argc < 2)
         return;
 
@@ -549,7 +549,7 @@ void valores_iniciales(int argc, char* argv[], mapa_t* mapa, personaje_t* princi
 
 int main(int argc, char* argv[]) {
 
-    personaje_t* principal = crear_personaje_principal();
+    entrenador_t* principal = crear_personaje_principal();
     mapa_t* mapa = crear_mapa();
 
     valores_iniciales(argc, argv, mapa, principal);

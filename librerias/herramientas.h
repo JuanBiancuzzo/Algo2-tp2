@@ -45,17 +45,11 @@ typedef struct entrenador {
 	int cant_pokemones;
 } entrenador_t;
 
-typedef struct personaje {
-	char nombre[MAX_NOMBRE];
-	lista_t* pokemones; // es una lista
-	int cant_pokemones;
-} personaje_t;
-
 /*
  * Se encarga de reservar memoria en el heap para el personaje principal
  * y devolver esa direccion, en caso de que no lo logre devuelve NULL
  */
-personaje_t* crear_personaje_principal();
+entrenador_t* crear_personaje_principal();
 
 /*
  * Se encarga de reservar memoria en el heap para el gimnasio y devuelve
@@ -105,14 +99,14 @@ entrenador_t* pelear_entrenador(gimnasio_t* gimnasio, int posicion);
  * Dado la posicion de un pokemon, devuelve el pokemon de la lista
  * de pokemones del personaje principal
  */
-pokemon_t* elegir_pokemon(personaje_t* principal, int posicion);
+pokemon_t* elegir_pokemon(entrenador_t* principal, int posicion);
 
 /*
  * Dados el personaje principal y entrenador o lider, se hace la
  * batalla, devolviendo 1 si el personaje principal gana o -1 si
  * gano el entrenador o lider
  */
-int batalla_pokemon(personaje_t* principal, entrenador_t* enemigo, funcion_batalla estilo);
+int batalla_pokemon(entrenador_t* principal, entrenador_t* enemigo, funcion_batalla estilo);
 
 /*
  * Dado un pokemon prestado del enemigo, se agrega a la lista de
@@ -123,7 +117,7 @@ int batalla_pokemon(personaje_t* principal, entrenador_t* enemigo, funcion_batal
  * El id_pokemon va desde 0 siendo el primero pokemon hasta la
  * cantidad de pokemones del enemigo menos uno
  */
-int tomar_prestado(personaje_t* principal, entrenador_t* enemigo, int id_pokemon);
+int tomar_prestado(entrenador_t* principal, entrenador_t* enemigo, int id_pokemon);
 
 /*
  * Dado una lista de pokemones, intercambia los pokemones dado por
@@ -135,7 +129,7 @@ int reordenar_pokemones(lista_t* pokemones, int pkm_uno, int pkm_dos);
  * Se encanrga de liberar toda la memoria necesaria que se utilizo al
  * crear el personaje, esto incluye todos sus pokemones
  */
-void destruir_personaje_principal(personaje_t* principal);
+void destruir_personaje_principal(entrenador_t* principal);
 
 /*
  * Se encanrga de liberar toda la memoria necesaria que se utilizo al

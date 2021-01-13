@@ -491,10 +491,10 @@ void mostrar_principal(void* principal) {
     inicializar_matriz(&bloque);
 
     coor_t coor = {1, 0};
-    crear_titulo(&pantalla, ((personaje_t*)principal)->nombre, coor, pantalla.ancho);
+    crear_titulo(&pantalla, ((entrenador_t*)principal)->nombre, coor, pantalla.ancho);
     crear_titulo(&pantalla, "Pokemones para luchar", coor, ancho_pkm + maximo.x);
 
-    mostrar_pila_pokemones(&bloque, *(((personaje_t*)principal)->pokemones), ((personaje_t*)principal)->cant_pokemones, maximo.x, 0);
+    mostrar_pila_pokemones(&bloque, *(((entrenador_t*)principal)->pokemones), ((entrenador_t*)principal)->cant_pokemones, maximo.x, 0);
 
     coor_t desfase = {3, 3};
     bloque_2_pantalla(&pantalla, bloque, desfase);
@@ -503,12 +503,12 @@ void mostrar_principal(void* principal) {
     int separacion = desfase.y * 2 + ancho_pkm;
     poner_lado_vertical(&pantalla, separacion);
 
-    int limite = minimo(((personaje_t*)principal)->cant_pokemones/maximo.x, 4);
+    int limite = minimo(((entrenador_t*)principal)->cant_pokemones/maximo.x, 4);
     desfase.y = separacion + 4;
 
     for (int i = 0; i < limite; i++) {
         inicializar_matriz(&bloque);
-        mostrar_pila_pokemones(&bloque, *(((personaje_t*)principal)->pokemones), ((personaje_t*)principal)->cant_pokemones, maximo.x, maximo.x * (1+i));
+        mostrar_pila_pokemones(&bloque, *(((entrenador_t*)principal)->pokemones), ((entrenador_t*)principal)->cant_pokemones, maximo.x, maximo.x * (1+i));
         bloque_2_pantalla(&pantalla, bloque, desfase);
         desfase.y += ancho_pkm + 3;
     }

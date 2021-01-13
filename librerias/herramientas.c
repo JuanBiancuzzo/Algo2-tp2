@@ -173,23 +173,23 @@ int archivo_2_personaje_principal (char ruta_archivo[], void* principal) {
         return ERROR;
     }
 
-    leido = leer_entrenador(archivo, ((personaje_t*)principal)->nombre);
+    leido = leer_entrenador(archivo, ((entrenador_t*)principal)->nombre);
     if (leido != CANT_ENTRENADOR) {
         fclose(archivo);
         return ERROR;
     }
 
     void (*lista_liberar_pokemon)(void*) = liberar_pokemon;
-    ((personaje_t*)principal)->pokemones = lista_crear(lista_liberar_pokemon);
-    int resultado = guardar_pokemones(archivo, ((personaje_t*)principal)->pokemones, true, &ultima_leida);
+    ((entrenador_t*)principal)->pokemones = lista_crear(lista_liberar_pokemon);
+    int resultado = guardar_pokemones(archivo, ((entrenador_t*)principal)->pokemones, true, &ultima_leida);
 
     if (resultado == 0) {
-        lista_destruir(((personaje_t*)principal)->pokemones);
+        lista_destruir(((entrenador_t*)principal)->pokemones);
         fclose(archivo);
         return ERROR;
     }
 
-    ((personaje_t*)principal)->cant_pokemones = resultado;
+    ((entrenador_t*)principal)->cant_pokemones = resultado;
     fclose(archivo);
     return EXITO;
 }
@@ -242,8 +242,8 @@ int gimnasio_2_mapa(mapa_t* mapa, gimnasio_t* gimnasio) {
     return EXITO;
 }
 
-personaje_t* crear_personaje_principal () {
-    personaje_t* personaje = calloc(1, sizeof(personaje_t));
+entrenador_t* crear_personaje_principal () {
+    entrenador_t* personaje = calloc(1, sizeof(entrenador_t));
 
     if (!personaje) return NULL;
 
@@ -291,7 +291,7 @@ mapa_t* crear_mapa () {
     return p_mapa;
 }
 
-void destruir_personaje_principal(personaje_t* principal) {
+void destruir_personaje_principal(entrenador_t* principal) {
 
     if (!principal) return;
 
@@ -371,7 +371,7 @@ bool condicion_pelea (int pokemones_derrotados, int pokemones_para_pelea) {
     return (pokemones_derrotados < MAX_POKE_COMBATE && pokemones_derrotados < pokemones_para_pelea);
 }
 
-int batalla_pokemon(personaje_t* principal, entrenador_t* enemigo, funcion_batalla estilo) {
+int batalla_pokemon(entrenador_t* principal, entrenador_t* enemigo, funcion_batalla estilo) {
 
     if (!principal || !enemigo || !estilo) return 0;
 
@@ -396,7 +396,7 @@ int batalla_pokemon(personaje_t* principal, entrenador_t* enemigo, funcion_batal
     return condicion_pelea(contador_principal, principal->cant_pokemones) ? GANO_PRINCIPAL : GANO_ENEMIGO;
 }
 
-int tomar_prestado(personaje_t* principal, entrenador_t* enemigo, int id_pokemon) {
+int tomar_prestado(entrenador_t* principal, entrenador_t* enemigo, int id_pokemon) {
     if (!principal || !enemigo)
         return ERROR;
 
@@ -453,6 +453,6 @@ entrenador_t* pelear_entrenador(gimnasio_t* gimnasio, int posicion) {
     return (entrenador_t*)lista_elemento_en_posicion(gimnasio->entrenadores, (size_t) posicion);
 }
 
-pokemon_t* elegir_pokemon(personaje_t* principal, int posicion) {
+pokemon_t* elegir_pokemon(entrenador_t* principal, int posicion) {
     return lista_elemento_en_posicion(principal->pokemones, (size_t) posicion);
 }
