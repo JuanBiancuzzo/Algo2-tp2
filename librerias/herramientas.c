@@ -305,7 +305,7 @@ void destruir_personaje_principal(personaje_t* principal) {
  * Funcion que se encarga de liberar a todos los pokemones que tengan
  * y despues libere al entrenador
  */
-bool liberar_entrenadores(void* entrenador, void* contexto) {
+bool liberar_entrenador(void* entrenador, void* contexto) {
     contexto = contexto;
     if (((entrenador_t*)entrenador)->cant_pokemones > 0)
         lista_destruir(((entrenador_t*)entrenador)->pokemones);
@@ -318,7 +318,7 @@ bool liberar_entrenadores(void* entrenador, void* contexto) {
  * Se encarga de liberar todos los entrenadores en la pila
  */
 void destruir_pila_entrenadores(lista_t* entrenadores) {
-    bool (*funcion) (void*, void*) = liberar_entrenadores;
+    bool (*funcion) (void*, void*) = liberar_entrenador;
     lista_con_cada_elemento(entrenadores, funcion, NULL);
     lista_destruir(entrenadores);
 }
