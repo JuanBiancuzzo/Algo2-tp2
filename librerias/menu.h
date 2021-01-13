@@ -27,7 +27,9 @@
 #define ANCHO 100
 #define ALTO 30
 
-typedef void (*funcion_menu) (char[]);
+typedef void (*funcion_menu) (char[], void*);
+
+typedef void (*mostrar_pantalla) (void*);
 
 /*
  * Teniendo las opciones de ingresar el archivo del personaje
