@@ -118,17 +118,7 @@ void inicializar_personaje(personaje_t* principal) {
         preguntar_archivo(CARPETA_PRINCIPAL, funcion_validacion, principal);
 
         CLEAR;
-        mostrar_principal(*principal);
-        menu_confirmacion(instrucciones, "Este es el personaje que queres usar?");
-        scanf(" %c", &respuesta);
-
-        while (!responder_opciones(instrucciones, respuesta)) {
-            CLEAR;
-            mostrar_principal(*principal);
-            menu_confirmacion(instrucciones, "Este es el personaje que queres usar?");
-            printf("Tenes que elegir una de las opciones\n");
-            scanf(" %c", &respuesta);
-        }
+        respuesta = mostrar_menu(menu_confirmacion, "Este es el personaje que queres usar?", mostrar_principal, principal);
 
     } while (responder_caracter(NEGAR, respuesta));
 
@@ -162,16 +152,26 @@ void inicializar_mapa(mapa_t* mapa) {
     gimnasio_2_mapa(mapa, gimnasio);
 }
 
-char menu_principal (mapa_t* mapa, personaje_t* principal) {
+char hub_principal (mapa_t* mapa, personaje_t* principal) {
     char respuesta;
 
     do {
         CLEAR;
-        respuesta = iniciar_juego();
+        respuesta = mostrar_menu(menu_inicio, NULL, pantalla_titulo, NULL);
         if (responder_caracter(INGRESAR_ARCHIVO, respuesta))
             inicializar_personaje(principal);
         if (responder_caracter(AGREGAR_GIMNASIO, respuesta))
             inicializar_mapa(mapa);
+        if ((responder_caracter(COMENZAR_PARTIDA, respuesta) ||         \
+             responder_caracter(SIMULAR_PARTIDA, respuesta)) &&         \
+             !juego_preparado(mapa, principal)) {
+            
+            if (!principal_preparado(principal))
+                mostrar_informacion("El personaje principal todavia no esta listo");
+            if (!mapa_preparado(mapa))
+                mostrar_informacion("No se ingreso ningun gimnasio");
+            SLEEP;
+        }
 
     } while ((!responder_caracter(COMENZAR_PARTIDA, respuesta) && \
               !responder_caracter(SIMULAR_PARTIDA, respuesta)) ||  \
