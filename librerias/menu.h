@@ -9,7 +9,6 @@
 #define SIMULAR_PARTIDA 'S'
 #define MOSTRAR_ENTRENADOR 'E'
 #define MOSTRAR_GIMNASIO 'G'
-#define CAMBIAR_POKEMON 'C'
 #define PROXIMA_BATALLA 'B'
 #define PROXIMO_COMBATE 'N'
 #define TOMAR_PRESTADO 'T'
@@ -22,6 +21,7 @@
 #define NEGAR 'N'
 #define SIGUIENTE 'S'
 #define ANTERIOR 'A'
+#define VOLVER 'V'
 
 #define MAX_INSTRUC 10
 #define ANCHO 100
