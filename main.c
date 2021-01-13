@@ -440,6 +440,66 @@ void comenzar_partida(mapa_t* mapa, personaje_t* principal) {
     }
 }
 
+void simular_partida(mapa_t* mapa, personaje_t* principal) {
+
+    gimnasio_t* gimnasio = pelar_gimnasio(mapa);
+    funcion_batalla estilo = estilo_batalla(gimnasio->id_funcion);
+    bool perdiste = false;
+    int contador = 0;
+    char mensaje[MAX_FRASE];
+
+    CLEAR;
+    mostrar_gimnasio(*gimnasio, 0);
+    SLEEP;
+
+    while (mapa->cant_gimnasios >= 0 && !perdiste) {
+        perdiste = false;
+
+        while (contador < gimnasio->cant_entrenadores && !perdiste) {
+            CLEAR;
+            entrenador_t* enemigo = pelear_entrenador(gimnasio, contador);
+            int resultado_batalla = batalla_pokemon(principal, enemigo, estilo);
+
+            if (resultado_batalla == PRINCIPAL_GANA) {
+                pantalla_batalla(enemigo);
+                strcpy(mensaje, "Ganaste contra ");
+                contador++;
+            } else {
+                perdiste = true;
+                pantalla_derrota(enemigo);
+                strcpy(mensaje, "Perdiste contra ");
+            }
+            strcat(mensaje, enemigo->nombre);
+            mostrar_informacion(mensaje);
+            SLEEP;
+        }
+
+        if (!perdiste) {
+            CLEAR;
+            pantalla_victoria(NULL);
+            mostrar_informacion("Yey, venciste este gimnasio");
+            SLEEP;
+        }
+
+        if (!perdiste) {
+            CLEAR;
+            gimnasio = pelar_gimnasio(mapa);
+            estilo = estilo_batalla(gimnasio->id_funcion);
+            contador = 0;
+
+            if (mapa->cant_gimnasios >= 0) {
+                mostrar_gimnasio(*gimnasio, 0);
+                SLEEP;
+            }
+        }
+    }
+
+    if (!perdiste) {
+        maestro_pokemon();
+        mostrar_informacion("Ahora sos un maestro pokemon");
+    }
+
+}
 
     return 0;
 }
