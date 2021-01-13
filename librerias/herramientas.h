@@ -5,6 +5,7 @@
 #include "heap.h"
 
 #define MAX_NOMBRE 100
+#define MAX_FRASE 200
 #define MAX_POKE_COMBATE 6
 #define MAX_LEVEL_UP 63
 #define IGNORAR 1
@@ -51,20 +52,6 @@ typedef struct personaje {
 } personaje_t;
 
 /*
- * Apartir del ruta del archivo y un personaje vacio, carga al personaje
- * con los datos del archivo y devuelve EXITO si los cargo correctamente,
- * y ERROR si no lo logra
- */
-int archivo_2_personaje_principal (char ruta_archivo[], void* principal);
-
-/*
- * Apartir del ruta del archivo y un gimnasio vacio, carga el gimnasio
- * con los datos del archivo y devuelve EXITO si los cargo correctamente,
- * y ERROR si no lo logra
- */
-int archivo_2_gimnasio (char ruta_archivo[], void* gimnasio);
-
-/*
  * Se encarga de reservar memoria en el heap para el personaje principal
  * y devolver esa direccion, en caso de que no lo logre devuelve NULL
  */
@@ -83,23 +70,18 @@ gimnasio_t* crear_gimnasio();
 mapa_t* crear_mapa();
 
 /*
- * Se encanrga de liberar toda la memoria necesaria que se utilizo al
- * crear el personaje, esto incluye todos sus pokemones
+ * Apartir del ruta del archivo y un personaje vacio, carga al personaje
+ * con los datos del archivo y devuelve EXITO si los cargo correctamente,
+ * y ERROR si no lo logra
  */
-void destruir_personaje_principal(personaje_t* principal);
+int archivo_2_personaje_principal (char ruta_archivo[], void* principal);
 
 /*
- * Se encanrga de liberar toda la memoria necesaria que se utilizo al
- * crear el gimnasio, esto incluye todos sus entrenadores que a su vez
- * tiene todos sus pokemones
+ * Apartir del ruta del archivo y un gimnasio vacio, carga el gimnasio
+ * con los datos del archivo y devuelve EXITO si los cargo correctamente,
+ * y ERROR si no lo logra
  */
-void destruir_gimnasio(gimnasio_t* gimnasio);
-
-/*
- * Se encanrga de liberar toda la memoria necesaria que se utilizo al
- * crear el mapa
- */
-void destruir_mapa(mapa_t* mapa);
+int archivo_2_gimnasio (char ruta_archivo[], void* gimnasio);
 
 /*
  * Agrega el gimnasio al mapa, que va a posicionarse de menor
@@ -130,5 +112,24 @@ int tomar_prestado(personaje_t* principal, entrenador_t* enemigo, int id_pokemon
  * su id
  */
 int reordenar_pokemones(lista_t* pokemones, int pkm_uno, int pkm_dos);
+
+/*
+ * Se encanrga de liberar toda la memoria necesaria que se utilizo al
+ * crear el personaje, esto incluye todos sus pokemones
+ */
+void destruir_personaje_principal(personaje_t* principal);
+
+/*
+ * Se encanrga de liberar toda la memoria necesaria que se utilizo al
+ * crear el gimnasio, esto incluye todos sus entrenadores que a su vez
+ * tiene todos sus pokemones
+ */
+void destruir_gimnasio(gimnasio_t* gimnasio);
+
+/*
+ * Se encanrga de liberar toda la memoria necesaria que se utilizo al
+ * crear el mapa
+ */
+void destruir_mapa(mapa_t* mapa);
 
 #endif /* __HERRAMIENTAS_H__ */
