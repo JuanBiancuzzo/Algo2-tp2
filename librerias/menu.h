@@ -39,7 +39,7 @@ typedef void (*mostrar_pantalla) (void*);
  * Devuelve los caracteres de las opciones que se muestran en
  * el menu
  */
-void menu_inicio(char instrucciones[]);
+void menu_inicio(char instrucciones[], void* auxilear);
 
 /*
  * Teniendo las opciones de mostrar el entrenador, mostrar el
@@ -48,7 +48,7 @@ void menu_inicio(char instrucciones[]);
  * Devuelve los caracteres de las opciones que se muestran en
  * el menu
  */
-void menu_gimnasio(char instrucciones[]);
+void menu_gimnasio(char instrucciones[], void* auxilear);
 
 /*
  * La unica "opcion" es ir a la siguiente batalla
@@ -56,7 +56,7 @@ void menu_gimnasio(char instrucciones[]);
  * Devuelve los caracteres de las opciones que se muestran en
  * el menu
  */
-void menu_batalla(char instrucciones[]);
+void menu_batalla(char instrucciones[], void* auxilear);
 
 /*
  * Teniendo las opciones de tomar prestado el pokemon del
@@ -66,7 +66,7 @@ void menu_batalla(char instrucciones[]);
  * Devuelve los caracteres de las opciones que se muestran en
  * el menu
  */
-void menu_victoria(char instrucciones[]);
+void menu_victoria(char instrucciones[], void* auxilear);
 
 /*
  * Teniendo las opciones de cambiar el orden de los pokemones
@@ -75,12 +75,12 @@ void menu_victoria(char instrucciones[]);
  * Devuelve los caracteres de las opciones que se muestran en
  * el menu
  */
-void menu_derrota(char instrucciones[]);
+void menu_derrota(char instrucciones[], void* auxilear);
 
 /*
  * Deja al usuario navegar por los menus
  */
-void menu_avanzar_retroceder(char instrucciones[]);
+void menu_avanzar_retroceder(char instrucciones[], void* auxilear);
 
 /*
  * Muestra el titulo del juego en la pantalla, esta pensado para
@@ -92,7 +92,7 @@ void pantalla_titulo();
  * Mostrarle al usuario que tiene la opcion de afirmar o de
  * negar lo que se le pregunta
  */
-void menu_confirmacion(char instrucciones[], char* frase);
+void menu_confirmacion(char instrucciones[], void* frase);
 
 /*
  * Muestra dos pokemones, en el caso de que no este alguno de ellos
