@@ -537,5 +537,29 @@ void valores_iniciales(int argc, char* argv[], mapa_t* mapa, personaje_t* princi
         }
     }
 }
+
+int main(int argc, char* argv[]) {
+
+    personaje_t* principal = crear_personaje_principal();
+    mapa_t* mapa = crear_mapa();
+
+    valores_iniciales(argc, argv, mapa, principal);
+    if (argc > 1) {
+        CLEAR;
+        if (principal_preparado(principal))
+            mostrar_informacion("Se ingreso correctamente el personaje principal");
+        for (int i = 0; i < mapa->cant_gimnasios; i++)
+            mostrar_informacion("Se ingreso correctamente un gimnasio");
+        SLEEP; 
+    }
+
+    char respuesta = hub_principal(mapa, principal);
+    if (responder_caracter(COMENZAR_PARTIDA, respuesta))
+        comenzar_partida(mapa, principal);
+    else if (responder_caracter(SIMULAR_PARTIDA, respuesta))
+        simular_partida(mapa, principal);
+
+    destruir_personaje_principal(principal);
+    destruir_mapa(mapa);
     return 0;
 }
