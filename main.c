@@ -306,6 +306,26 @@ char hub_gimnasio (personaje_t* principal, gimnasio_t* gimnasio) {
     return respuesta;
 }
 
+char hub_batalla(entrenador_t* entrenador) {
+    return mostrar_menu(menu_batalla, NULL, pantalla_batalla, entrenador);
+}
+
+
+char hub_derrota(personaje_t* principal, entrenador_t* entrenador) {
+    char respuesta;
+
+    do {
+        CLEAR;
+        respuesta = mostrar_menu(menu_derrota, NULL, pantalla_derrota, entrenador);
+
+        if (responder_caracter(CAMBIAR_POKEMONES, respuesta))
+            cambiar_pokemones(principal);
+
+    } while (!responder_caracter(REINTENTAR, respuesta) && \
+             !responder_caracter(FINALIZAR, respuesta));
+
+    return respuesta;
+}
     CLEAR;
 
     return 0;
