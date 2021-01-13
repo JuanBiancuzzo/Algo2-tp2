@@ -395,7 +395,51 @@ void maestro_pokemon() {
     CLEAR;
     pantalla_maestro_pokemon(NULL);
 }
+
+void comenzar_partida(mapa_t* mapa, personaje_t* principal) {
+
+    gimnasio_t* gimnasio = pelar_gimnasio(mapa);
+    funcion_batalla estilo = estilo_batalla(gimnasio->id_funcion);
+    bool perdiste = false, termino = false;
+    int contador = 0;
+    char respuesta;
+
     CLEAR;
+    respuesta = hub_gimnasio(principal, gimnasio);
+
+    while ((mapa->cant_gimnasios >= 0 || perdiste) && !termino) {
+        perdiste = false;
+
+        while (contador < gimnasio->cant_entrenadores && !perdiste) {
+            CLEAR;
+            entrenador_t* enemigo = pelear_entrenador(gimnasio, contador);
+            int resultado_batalla = batalla_pokemon(principal, enemigo, estilo);
+
+            if (resultado_batalla == PRINCIPAL_GANA) {
+                hub_batalla(enemigo);
+                contador++;
+            } else {
+                perdiste = true;
+                respuesta = hub_derrota(principal, enemigo);
+                if (responder_caracter(FINALIZAR, respuesta))
+                    termino = true;
+            }
+        }
+
+        if (!perdiste) {
+            hub_victoria(principal, gimnasio);
+            gimnasio = pelar_gimnasio(mapa);
+            estilo = estilo_batalla(gimnasio->id_funcion);
+            contador = 0;
+        }
+    }
+
+    if (!perdiste) {
+        maestro_pokemon();
+        mostrar_informacion("Yey, venciste todos los gimnasios");
+    }
+}
+
 
     return 0;
 }
