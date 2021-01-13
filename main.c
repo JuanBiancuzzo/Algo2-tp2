@@ -179,7 +179,133 @@ char hub_principal (mapa_t* mapa, personaje_t* principal) {
 
     return respuesta;
 }
-int main() {
+
+void cambiar_pokemones(personaje_t* principal) {
+
+    pokemon_t* pkm[2] = {NULL, NULL};
+    int posicion[2];
+    char respuesta;
+
+    for (int i = 0; i < 2; i++) {
+        CLEAR;
+        mostrar_principal(principal);
+        mostrar_intercambiar_pokemones(pkm[0], pkm[1], "Estos son los pokemones que elegiste");
+
+        printf("Contando de arriba a abajo, y de izquierda a derecha, ");
+        printf("el primero es %s y el segundo %s\n", elegir_pokemon(principal, 0)->nombre,  elegir_pokemon(principal, 1)->nombre);
+        printf("Elegi un numero de 1 al %i: ", principal->cant_pokemones);
+        scanf("%i", posicion+i);
+        posicion[i]--;
+
+        while (posicion[i] < 0 || posicion[i] >= principal->cant_pokemones) {
+            CLEAR;
+            mostrar_principal(principal);
+            mostrar_intercambiar_pokemones(pkm[0], pkm[1], "Estos son los pokemones que elegiste");
+
+            printf("Elegiste un numero no valido, contando de arriba a abajo, y de izquierda a derecha\n");
+            printf("El primero es %s y el segundo %s\n", elegir_pokemon(principal, 0)->nombre,  elegir_pokemon(principal, 1)->nombre);
+            printf("Elegi un numero de 1 al %i: ", principal->cant_pokemones);
+            scanf("%i", posicion+i);
+            posicion[i]--;
+        }
+
+        pkm[i] = elegir_pokemon(principal, posicion[i]);
+    }
+
+    reordenar_pokemones(principal->pokemones, posicion[0], posicion[1]);
+
+    CLEAR;
+    respuesta = mostrar_menu(menu_confirmacion, "Este es el cambio que quiere?", mostrar_principal, principal);
+
+    if (responder_caracter(NEGAR, respuesta))
+        reordenar_pokemones(principal->pokemones, posicion[1], posicion[0]);
+
+}
+
+void mostrar_entrenador_principal(gimnasio_t* gimnasio) {
+
+    entrenador_t* entrenador = pelear_entrenador(gimnasio, gimnasio->cant_entrenadores - 1);
+    char instrucciones[MAX_INSTRUC], respuesta;
+    bool quedarse = true;
+    int contador = 0;
+
+    while (quedarse) {
+        CLEAR;
+        if (contador >= entrenador->cant_pokemones) contador--;
+        if (contador < 0) contador = 0;
+
+        mostrar_entrenador(*entrenador, true, contador);
+        menu_avanzar_retroceder(instrucciones, NULL);
+        scanf(" %c", &respuesta);
+
+        while (!responder_opciones(instrucciones, respuesta)) {
+            CLEAR;
+            mostrar_entrenador(*entrenador, true, contador);
+            menu_avanzar_retroceder(instrucciones, NULL);
+            printf("Tenes que elegir una de las opciones\n");
+            scanf(" %c", &respuesta);
+        }
+
+        if (responder_caracter(VOLVER, respuesta))
+            quedarse = false;
+        contador += (responder_caracter(SIGUIENTE, respuesta)) ? 1 : - 1;
+    }
+
+}
+
+void mostrar_gimnasio_actual (gimnasio_t* gimnasio) {
+
+    char instrucciones[MAX_INSTRUC], respuesta;
+    int cant_entrenadores = 0, maximo = 4;
+    bool quedarse = true;
+
+    while (quedarse) {
+        CLEAR;
+        if (gimnasio->cant_entrenadores - cant_entrenadores <= 0) cant_entrenadores -= maximo;
+        if (cant_entrenadores < 0) cant_entrenadores = 0;
+
+        mostrar_gimnasio(*gimnasio, cant_entrenadores);
+        menu_avanzar_retroceder(instrucciones, NULL);
+        scanf(" %c", &respuesta);
+
+        while (!responder_opciones(instrucciones, respuesta)) {
+            CLEAR;
+            cant_entrenadores = mostrar_gimnasio(*gimnasio, cant_entrenadores);
+            menu_avanzar_retroceder(instrucciones, NULL);
+            printf("Tenes que elegir una de las opciones\n");
+            scanf(" %c", &respuesta);
+        }
+
+        if (responder_caracter(VOLVER, respuesta)) {
+            quedarse = false;
+        } else if (responder_caracter(SIGUIENTE, respuesta)) {
+            cant_entrenadores += maximo;
+        } else {
+            cant_entrenadores -= maximo;
+        }
+    }
+
+}
+
+char hub_gimnasio (personaje_t* principal, gimnasio_t* gimnasio) {
+
+    char respuesta;
+
+    do {
+        CLEAR;
+        respuesta = mostrar_menu(menu_gimnasio, NULL, pantalla_titulo, NULL);
+        if (responder_caracter(MOSTRAR_ENTRENADOR, respuesta))
+            mostrar_entrenador_principal(gimnasio);
+        else if (responder_caracter(MOSTRAR_GIMNASIO, respuesta))
+            mostrar_gimnasio_actual(gimnasio);
+        else if (responder_caracter(CAMBIAR_POKEMONES, respuesta))
+            cambiar_pokemones(principal);
+
+    } while (!responder_caracter(PROXIMA_BATALLA, respuesta));
+
+    return respuesta;
+}
+
     CLEAR;
 
     return 0;
