@@ -177,7 +177,7 @@ void menu_inicio(char* instrucciones) {
     imprimir_pantalla(pantalla);
 }
 
-void menu_gimnasio(char instrucciones[]) {
+void menu_gimnasio(char instrucciones[], void* auxilear) {
 
     int cant_instrucciones = 4, cant_lineas = 3, linea_inicial = 1;
     pantalla_t pantalla, bloque;
@@ -207,7 +207,7 @@ void menu_gimnasio(char instrucciones[]) {
     imprimir_pantalla(pantalla);
 }
 
-void menu_batalla(char instrucciones[]) {
+void menu_batalla(char instrucciones[], void* auxilear) {
 
     int cant_instrucciones = 1, cant_lineas = 2, linea_inicial = 1;
     pantalla_t pantalla, bloque;
@@ -234,7 +234,7 @@ void menu_batalla(char instrucciones[]) {
     imprimir_pantalla(pantalla);
 }
 
-void menu_victoria(char instrucciones[]) {
+void menu_victoria(char instrucciones[], void* auxilear) {
 
     int cant_instrucciones = 3, cant_lineas = 3, linea_inicial = 1;
     pantalla_t pantalla, bloque;
@@ -263,7 +263,7 @@ void menu_victoria(char instrucciones[]) {
     imprimir_pantalla(pantalla);
 }
 
-void menu_derrota(char instrucciones[]) {
+void menu_derrota(char instrucciones[], void* auxilear) {
 
     int cant_instrucciones = 3, cant_lineas = 3, linea_inicial = 1;
     pantalla_t pantalla, bloque;
