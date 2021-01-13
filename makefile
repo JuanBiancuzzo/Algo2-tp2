@@ -12,6 +12,14 @@ exe: build
 	clear
 	./$(NAME)
 
+default: build
+	clear
+	./$(NAME) default
+
+archivos: build
+	clear
+	./$(NAME) ash.txt ciudad_celeste.txt
+
 valgrind:
 	clear
 	$(CC) $(LIB) pruebas/pruebas.c -o $(NAME) $(CFLAGS)
