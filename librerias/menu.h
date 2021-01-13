@@ -86,13 +86,40 @@ void menu_avanzar_retroceder(char instrucciones[], void* auxilear);
  * Muestra el titulo del juego en la pantalla, esta pensado para
  * cuando no hay algo especifico para mostrar
  */
-void pantalla_titulo();
+void pantalla_titulo(void* auxilear);
+
+/*
+ * Muestra al usuario que gano la batalla
+ */
+void pantalla_victoria(void* auxilear);
+
+/*
+ * Muestra al usuario que perdio la batalla
+ */
+void pantalla_derrota(void* entrenador);
+
+/*
+ * Muestra al usuario que gano contra un entrenador
+ */
+void pantalla_batalla(void* entrenador);
+
+/*
+ * Muestra al usuario que gano a todos los gimnasios y que
+ * ahora es un maestro pokemon
+ */
+void pantalla_maestro_pokemon(void* auxilear);
 
 /*
  * Mostrarle al usuario que tiene la opcion de afirmar o de
  * negar lo que se le pregunta
  */
 void menu_confirmacion(char instrucciones[], void* frase);
+
+/*
+ * En la estructura del menu, muestra informacion que es util para
+ * el usuario
+ */
+void mostrar_informacion(char* info);
 
 /*
  * Muestra dos pokemones, en el caso de que no este alguno de ellos
@@ -103,10 +130,8 @@ void mostrar_intercambiar_pokemones(pokemon_t* pkm1, pokemon_t* pkm2, char* fras
 /*
  * Dado el personaje principal, muestra todos sus pokemones y cuales
  * son los pokemones que va a usar para luchar
- *
- * Devuelve la cantidad de pokemones que pudo mostrar en la pantalla
  */
-int mostrar_principal(personaje_t principal);
+void mostrar_principal(void* principal);
 
 /*
  * Muestra al entrenador con todos sus pokemones, y con la variable
