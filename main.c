@@ -33,23 +33,42 @@ bool responder_opciones (char opciones[], char respuesta) {
     return false;
 }
 
-bool juego_preparado(mapa_t* mapa, personaje_t* principal) {
-    return (mapa->gimnasios && principal->pokemones);
+bool mapa_preparado(mapa_t* mapa) {
+    return mapa->cant_gimnasios > 0;
 }
 
-char iniciar_juego () {
+bool principal_preparado(personaje_t* principal) {
+    return principal->cant_pokemones > 0;
+}
 
-    pantalla_titulo();
+bool juego_preparado(mapa_t* mapa, personaje_t* principal) {
+    return (mapa_preparado(mapa) && principal_preparado(principal));
+}
+
+funcion_batalla estilo_batalla(int id_funcion) {
+    switch(id_funcion) {
+        case 1: return funcion_batalla_1;
+        case 2: return funcion_batalla_2;
+        case 3: return funcion_batalla_3;
+        case 4: return funcion_batalla_4;
+        case 5: return funcion_batalla_5;
+        default: return funcion_batalla_1;
+    }
+}
+
+char mostrar_menu (funcion_menu menu, void* menu_aux, mostrar_pantalla pantalla, void* pantalla_aux) {
+
+    pantalla(pantalla_aux);
     char instrucciones[MAX_INSTRUC];
-    menu_inicio(instrucciones);
+    menu(instrucciones, menu_aux);
 
     char respuesta;
     scanf(" %c", &respuesta);
 
     while (!responder_opciones(instrucciones, respuesta)) {
         CLEAR;
-        pantalla_titulo();
-        menu_inicio(instrucciones);
+        pantalla(pantalla_aux);
+        menu(instrucciones, menu_aux);
         printf("Tenes que elegir una de las opciones\n");
         scanf(" %c", &respuesta);
     }
@@ -64,7 +83,7 @@ void preguntar_archivo(char* carpeta_destino, int (*funcion_validacion) (char*, 
 
     do {
         CLEAR;
-        pantalla_titulo();
+        pantalla_titulo(NULL);
 
         if (!error) {
             printf("Por favor ingrese el nombre del archivo que tiene que estar en %s: ", carpeta_destino);
@@ -92,7 +111,6 @@ void preguntar_archivo(char* carpeta_destino, int (*funcion_validacion) (char*, 
 
 void inicializar_personaje(personaje_t* principal) {
 
-    char instrucciones[MAX_INSTRUC];
     char respuesta;
 
     do {
