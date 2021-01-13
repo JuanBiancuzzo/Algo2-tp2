@@ -113,6 +113,20 @@ void bloque_2_pantalla (pantalla_t* pantalla, pantalla_t bloque, coor_t coor) {
     }
 }
 
+int imagen_2_pantalla (pantalla_t* pantalla, char* ruta_imagen) {
+
+    FILE* archivo = fopen(ruta_imagen, "r");
+    if (!archivo) return ERROR;
+
+    for (int i = 0; i < pantalla->alto; i++) {
+        fscanf(archivo, "%100[^\n]\n", pantalla->display[i]);
+        for (int j = 0; j < pantalla->ancho; j++)
+            if (pantalla->display[i][j] == '.')
+                pantalla->display[i][j] = ' ';
+    }
+    return EXITO;
+}
+
 /*
  * Dado una serie de instrucciones, devuelve una
  * bloque con los elementos centrados en este
@@ -455,7 +469,7 @@ void mostrar_pila_pokemones (pantalla_t* pantalla, lista_t pokemones, int cant_p
     int iteraciones = minimo(cant_pokemones, maximo);
 
     for (int i = desfase; i < iteraciones; i++) {
-        pokemon_t* pokemon = (pokemon_t*)lista_elemento_en_posicion(&pokemones, (size_t) i);
+        pokemon_t* pokemon = lista_elemento_en_posicion(&pokemones, (size_t) i);
         if (pokemon) {
             bloque_pokemon(&bloque, *pokemon);
             coor_t coor = {bloque.alto * (i - desfase), 0};
@@ -465,10 +479,10 @@ void mostrar_pila_pokemones (pantalla_t* pantalla, lista_t pokemones, int cant_p
     }
 }
 
-int mostrar_principal(personaje_t personaje) {
+void mostrar_principal(void* principal) {
 
     int ancho_pkm = ANCHO_POKEMON;
-    coor_t maximo = {6, 4};
+    coor_t maximo = {MAX_POKEMONES, 4};
     pantalla_t pantalla, bloque;
     pantalla.ancho = ANCHO, pantalla.alto = ALTO;
     bloque.ancho = ancho_pkm, bloque.alto = pantalla.alto;
@@ -477,10 +491,10 @@ int mostrar_principal(personaje_t personaje) {
     inicializar_matriz(&bloque);
 
     coor_t coor = {1, 0};
-    crear_titulo(&pantalla, personaje.nombre, coor, pantalla.ancho);
+    crear_titulo(&pantalla, ((personaje_t*)principal)->nombre, coor, pantalla.ancho);
     crear_titulo(&pantalla, "Pokemones para luchar", coor, ancho_pkm + maximo.x);
 
-    mostrar_pila_pokemones(&bloque, *(personaje.pokemones), personaje.cant_pokemones, maximo.x, 0);
+    mostrar_pila_pokemones(&bloque, *(((personaje_t*)principal)->pokemones), ((personaje_t*)principal)->cant_pokemones, maximo.x, 0);
 
     coor_t desfase = {3, 3};
     bloque_2_pantalla(&pantalla, bloque, desfase);
@@ -489,18 +503,17 @@ int mostrar_principal(personaje_t personaje) {
     int separacion = desfase.y * 2 + ancho_pkm;
     poner_lado_vertical(&pantalla, separacion);
 
-    int limite = minimo(personaje.cant_pokemones/maximo.x, 4);
+    int limite = minimo(((personaje_t*)principal)->cant_pokemones/maximo.x, 4);
     desfase.y = separacion + 4;
 
     for (int i = 0; i < limite; i++) {
         inicializar_matriz(&bloque);
-        mostrar_pila_pokemones(&bloque, *(personaje.pokemones), personaje.cant_pokemones, maximo.x, maximo.x * (1+i));
+        mostrar_pila_pokemones(&bloque, *(((personaje_t*)principal)->pokemones), ((personaje_t*)principal)->cant_pokemones, maximo.x, maximo.x * (1+i));
         bloque_2_pantalla(&pantalla, bloque, desfase);
         desfase.y += ancho_pkm + 3;
     }
 
     imprimir_pantalla(pantalla);
-    return minimo(maximo.x * maximo.y, personaje.cant_pokemones);
 }
 
 void mostrar_columna_entrandor (pantalla_t* pantalla, entrenador_t entrenador, bool lider) {
@@ -519,23 +532,9 @@ void mostrar_columna_entrandor (pantalla_t* pantalla, entrenador_t entrenador, b
 
     if (entrenador.pokemones) {
         mostrar_pila_pokemones(&bloque, *(entrenador.pokemones), entrenador.cant_pokemones, 6, 0);
-        coor_t coor = {2, 0};
-        bloque_2_pantalla(pantalla, bloque, coor);
+        desfase.x = 2;
+        bloque_2_pantalla(pantalla, bloque, desfase);
     }
-}
-
-int imprimir_imagen (pantalla_t* pantalla, char* ruta_imagen) {
-
-    FILE* archivo = fopen(ruta_imagen, "r");
-    if (!archivo) return ERROR;
-
-    for (int i = 0; i < pantalla->alto; i++) {
-        fscanf(archivo, "%100[^\n]\n", pantalla->display[i]);
-        for (int j = 0; j < pantalla->ancho; j++)
-            if (pantalla->display[i][j] == '.')
-                pantalla->display[i][j] = ' ';
-    }
-    return EXITO;
 }
 
 void bloque_pokebola (pantalla_t* pantalla, pokemon_t* pokemon) {
@@ -551,7 +550,7 @@ void bloque_pokebola (pantalla_t* pantalla, pokemon_t* pokemon) {
     coor_t coor = {1, posicion_media(pkm_vacio.nombre, pantalla->ancho)};
     texto_2_pantalla(pantalla, pkm_vacio.nombre, largo, coor);
 
-    if (imprimir_imagen(&bloque, "imagenes/imagen_pokebola.txt") == EXITO) {
+    if (imagen_2_pantalla(&bloque, "imagenes/imagen_pokebola.txt") == EXITO) {
         coor.x = 4;
         coor.y = (pantalla->ancho - bloque.ancho) / 2;
         bloque_2_pantalla(pantalla, bloque, coor);
@@ -579,11 +578,74 @@ void bloque_pokebola (pantalla_t* pantalla, pokemon_t* pokemon) {
     }
 }
 
-void pantalla_titulo() {
+void imprimir_imagen(char* ruta_archivo) {
     pantalla_t pantalla;
     pantalla.ancho = ANCHO, pantalla.alto = ALTO;
     inicializar_matriz(&pantalla);
-    imprimir_imagen(&pantalla, "imagenes/imagen_principal.txt");
+    imagen_2_pantalla(&pantalla, ruta_archivo);
+    imprimir_pantalla(pantalla);
+}
+
+void pantalla_titulo(void* auxilear) {
+    imprimir_imagen("imagenes/imagen_principal.txt");
+}
+
+void pantalla_victoria(void* auxilear) {
+    imprimir_imagen("imagenes/imagen_ganar.txt");
+}
+
+void pantalla_derrota(void* entrenador) {
+    if (!entrenador) {
+        imprimir_imagen("imagenes/imagen_perder.txt");
+    } else {
+        pantalla_t pantalla, bloque;
+        pantalla.ancho = ANCHO, pantalla.alto = ALTO;
+        bloque.ancho = ANCHO_POKEMON, bloque.alto = ALTO;
+        inicializar_matriz(&pantalla);
+        inicializar_matriz(&bloque);
+
+        imagen_2_pantalla(&pantalla, "imagenes/imagen_perder.txt");
+
+        mostrar_columna_entrandor(&bloque, *(entrenador_t*)entrenador, false);
+        coor_t coor = {2, 2};
+        bloque_2_pantalla(&pantalla, bloque, coor);
+        imprimir_pantalla(pantalla);
+    }
+
+}
+
+void pantalla_batalla(void* entrenador) {
+    if (!entrenador) {
+        imprimir_imagen("imagenes/imagen_batalla.txt");
+    } else {
+        pantalla_t pantalla, bloque;
+        pantalla.ancho = ANCHO, pantalla.alto = ALTO;
+        bloque.ancho = ANCHO_POKEMON, bloque.alto = ALTO;
+        inicializar_matriz(&pantalla);
+        inicializar_matriz(&bloque);
+
+        imagen_2_pantalla(&pantalla, "imagenes/imagen_batalla.txt");
+
+        mostrar_columna_entrandor(&bloque, *(entrenador_t*)entrenador, false);
+        coor_t coor = {2, 2};
+        bloque_2_pantalla(&pantalla, bloque, coor);
+        imprimir_pantalla(pantalla);
+    }
+}
+
+void pantalla_maestro_pokemon(void* auxilear) {
+    imprimir_imagen("imagenes/imagen_maestro_pokemon.txt");
+}
+
+void mostrar_informacion(char* info) {
+    pantalla_t pantalla;
+    pantalla.ancho = ANCHO, pantalla.alto = 3;
+
+    inicializar_matriz(&pantalla);
+
+    coor_t desfase = {1, 0};
+    crear_titulo(&pantalla, info, desfase, pantalla.ancho);
+
     imprimir_pantalla(pantalla);
 }
 
@@ -631,9 +693,9 @@ int mostrar_gimnasio(gimnasio_t gimnasio, int iteracion) {
     coor_t coor = {1, 0};
     crear_titulo(&pantalla, gimnasio.nombre, coor, pantalla.ancho);
 
-    int maximo = (pantalla.ancho/ancho_pkm) - 1 + iteracion;
+    int maximo = MAX_ENTRENADORES + iteracion;
     int cant_entrenadores = minimo(gimnasio.cant_entrenadores, maximo);
-    int ancho_entrenadores = pantalla.ancho / cant_entrenadores;
+    int ancho_entrenadores = pantalla.ancho / (cant_entrenadores - iteracion);
 
     coor_t desfase = {3, (ancho_entrenadores - ancho_pkm) / 2};
 
