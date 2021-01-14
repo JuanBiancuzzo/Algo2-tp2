@@ -24,10 +24,18 @@
 #define GIMNASIOS_MINIMO 1
 #define POKEMONES_MINIMO 1
 
+/*
+ * Dado una letrar, devuelve true si esta en mayuscula o minuscula
+ * es igual a la opcion dada, sino devuelve false
+ */
 bool responder_caracter (char opcion, char respuesta) {
     return (opcion == respuesta || opcion+32 == respuesta);
 }
 
+/*
+ * Dado la respuesta del usuario, devuelve true si esta en las
+ * opciones dadas
+ */
 bool responder_opciones (char opciones[], char respuesta) {
     for (size_t i = 0; i < strlen(opciones); i++)
         if (responder_caracter(opciones[i], respuesta))
@@ -35,10 +43,18 @@ bool responder_opciones (char opciones[], char respuesta) {
     return false;
 }
 
+/*
+ * Para que un mapa este listo para el juego tiene que tener por lo
+ * menos un gimnasio
+ */
 bool mapa_preparado(mapa_t* mapa) {
     return mapa->cant_gimnasios >= GIMNASIOS_MINIMO;
 }
 
+/*
+ * Para que el personaje principal este listo para el juego tiene que
+ * tener por lo un pokemon
+ */
 bool principal_preparado(entrenador_t* principal) {
     return principal->cant_pokemones >= POKEMONES_MINIMO;
 }
@@ -47,6 +63,10 @@ bool juego_preparado(mapa_t* mapa, entrenador_t* principal) {
     return (mapa_preparado(mapa) && principal_preparado(principal));
 }
 
+/*
+ * Dado la id de la funcion devuelve el estilo de batalla que se
+ * tendra para ese gimnasio, el rango va de 1 a 5
+ */
 funcion_batalla estilo_batalla(int id_funcion) {
     switch(id_funcion) {
         case 1: return funcion_batalla_1;
@@ -58,6 +78,10 @@ funcion_batalla estilo_batalla(int id_funcion) {
     }
 }
 
+/*
+ * Dado una pantalla y un meno, devuelve la respuesta del usuario
+ * que pertenezca a una de las opciones dadas por el menu
+ */
 char mostrar_menu (mostrar_pantalla pantalla, void* pantalla_aux, funcion_menu menu, void* menu_aux) {
 
     pantalla(pantalla_aux);
@@ -77,6 +101,11 @@ char mostrar_menu (mostrar_pantalla pantalla, void* pantalla_aux, funcion_menu m
     return respuesta;
 }
 
+/*
+ * Se le pide al usuario que ingrese un archivo en la carpeta_destino,
+ * si no esta o la funcion validacion dan error se le vuelve a preguntar
+ * al usuario hasta tener un archivo valido
+ */
 void preguntar_archivo(char* carpeta_destino, int (*funcion_validacion) (char*, void*), void* auxilear) {
 
     char ruta_archivo[MAX_NOMBRE], nombre_archivo[MAX_NOMBRE];
@@ -114,6 +143,12 @@ void preguntar_archivo(char* carpeta_destino, int (*funcion_validacion) (char*, 
     fclose(archivo);
 }
 
+/*
+ * Le pregunta al usuario que personaje principal quiere, y ese
+ * archivo dado por el usuario se cargara un personaje principal
+ *
+ * En caso de que no quiera ese personaje principal, no se guardara
+ */
 void inicializar_personaje(entrenador_t* principal) {
 
     char respuesta;
@@ -134,6 +169,13 @@ void inicializar_personaje(entrenador_t* principal) {
     }
 }
 
+/*
+ * Le pregunta al usuario que gimnasio quiere agregar, y ese archivo
+ * dado por el usuario se cargara un gimnasio
+ *
+ * Si el usuario acepta el gimnasio, se agregara al mapa, en caso de
+ * que no quiera ese gimnasio, no se guardara en el mapa
+ */
 void inicializar_mapa(mapa_t* mapa) {
 
     gimnasio_t* gimnasio = crear_gimnasio();
@@ -166,6 +208,11 @@ void inicializar_mapa(mapa_t* mapa) {
     }
 }
 
+/*
+ * Desde el hub principal el usuario va a navegar las opciones dadas por
+ * el menu_inicio y no se podra avanzar hasta que el mapa como el personaje
+ * principal esten listos
+ */
 char hub_principal (mapa_t* mapa, entrenador_t* principal) {
     char respuesta;
 
@@ -196,6 +243,10 @@ char hub_principal (mapa_t* mapa, entrenador_t* principal) {
     return respuesta;
 }
 
+/*
+ * El usuario es capaz de elegir dos pokemones del personaje
+ * principal e intercambiarlo
+ */
 void cambiar_pokemones(entrenador_t* principal) {
 
     pokemon_t* pkm[2] = {NULL, NULL};
@@ -238,6 +289,9 @@ void cambiar_pokemones(entrenador_t* principal) {
 
 }
 
+/*
+ * Muestra al usuario el lider del gimnasio dado
+ */
 void mostrar_entrenador_principal(gimnasio_t* gimnasio) {
 
     entrenador_t* entrenador = pelear_entrenador(gimnasio, gimnasio->cant_entrenadores - 1);
@@ -269,6 +323,9 @@ void mostrar_entrenador_principal(gimnasio_t* gimnasio) {
 
 }
 
+/*
+ * Muestra al usuario el gimnasio con todos sus entrenadores
+ */
 void mostrar_gimnasio_actual (gimnasio_t* gimnasio) {
 
     char instrucciones[MAX_INSTRUC], respuesta;
@@ -303,6 +360,10 @@ void mostrar_gimnasio_actual (gimnasio_t* gimnasio) {
 
 }
 
+/*
+ * Desde el hub gimnasio el usuario va a navegar las opciones dadas por el
+ * menu_gimnasio, y podra avazar cuando eliga ir a la porxima batalla
+ */
 char hub_gimnasio (entrenador_t* principal, gimnasio_t* gimnasio) {
 
     char respuesta;
@@ -322,10 +383,19 @@ char hub_gimnasio (entrenador_t* principal, gimnasio_t* gimnasio) {
     return respuesta;
 }
 
+/*
+ * El hub batalla tiene la unica opcion de ir a la proxima batalla
+ * por lo que el usuario tiene que elegir esa opcion
+ */
 char hub_batalla(entrenador_t* entrenador) {
     return mostrar_menu(pantalla_batalla, entrenador, menu_batalla, NULL);
 }
 
+/*
+ * Desde el hub derrota el usuario va a navega las opciones dadas por
+ * el menu_derrota y podra avanzar cuando decida reintentar el gimnasio
+ * o finalizar la partida
+ */
 char hub_derrota(entrenador_t* principal, entrenador_t* entrenador) {
     char respuesta;
 
@@ -342,6 +412,10 @@ char hub_derrota(entrenador_t* principal, entrenador_t* entrenador) {
     return respuesta;
 }
 
+/*
+ * El usuario es capaz de tomar prestado un pokemon del lider del gimnasio
+ * entonces tiene que elegir uno de los pokemones del lider para quedarselo
+ */
 void tomar_prestado_pokemon (entrenador_t* principal, gimnasio_t* gimnasio) {
 
     CLEAR;
@@ -381,6 +455,10 @@ void tomar_prestado_pokemon (entrenador_t* principal, gimnasio_t* gimnasio) {
         tomar_prestado(principal, entrenador, id_pokemon);
 }
 
+/*
+ * En el hub victoria el usuario puede navegar las opciones dadas por
+ * el menu_victoria solo cuando elija ir al proximo gimnasio
+ */
 char hub_victoria(entrenador_t* principal, gimnasio_t* gimnasio) {
     char respuesta;
     bool intercambio = false;
@@ -407,12 +485,21 @@ char hub_victoria(entrenador_t* principal, gimnasio_t* gimnasio) {
     return respuesta;
 }
 
+/*
+ * Muestra al usuario que le gano todos los gimnasios y se
+ * convirtio en maestro pokemon
+ */
 void maestro_pokemon() {
     CLEAR;
     pantalla_maestro_pokemon(NULL);
     mostrar_informacion("Ahora sos maestro pokemon");
 }
 
+/*
+ * En encarga de hacer toda la partida, haciendo que el usario
+ * pelee contra todos los gimnasios, mostrandole al usuario todas
+ * las opciones que tiene devido cada situacion que se encuentre
+ */
 void comenzar_partida(mapa_t* mapa, entrenador_t* principal) {
 
     gimnasio_t* gimnasio = pelar_gimnasio(mapa);
@@ -455,6 +542,10 @@ void comenzar_partida(mapa_t* mapa, entrenador_t* principal) {
         maestro_pokemon();
 }
 
+/*
+ * Si en la simulacion el usuario gana una pelear, se le debe informar
+ * y cargar el siguiente gimnasio para pelar
+ */
 void simular_victoria(mapa_t* mapa, gimnasio_t* gimnasio, funcion_batalla estilo) {
 
     CLEAR;
@@ -467,6 +558,11 @@ void simular_victoria(mapa_t* mapa, gimnasio_t* gimnasio, funcion_batalla estilo
 
 }
 
+/*
+ * En la simulacion de una batalla se le debe informar el resultado al
+ * usuario y aumentar la cantidad de entrenadores que el usuario les
+ * gano
+ */
 bool simular_batalla(int resultado, entrenador_t* enemigo, int* entrenadores_vencidos) {
 
     char mensaje[MAX_FRASE];
@@ -485,6 +581,10 @@ bool simular_batalla(int resultado, entrenador_t* enemigo, int* entrenadores_ven
     return !(resultado == PRINCIPAL_GANA);
 }
 
+/*
+ * Se encarga de simular toda la partida, sin que el usuario
+ * tenga que ingresar ningun input en todo el torneo
+ */
 void simular_partida(mapa_t* mapa, entrenador_t* principal) {
 
     gimnasio_t* gimnasio = pelar_gimnasio(mapa);
@@ -517,6 +617,11 @@ void simular_partida(mapa_t* mapa, entrenador_t* principal) {
         maestro_pokemon();
 }
 
+/*
+ * Con los valores dados al ejecutar el programa, se tiene un modo default donde carga
+ * archivos predeterminados, y otro modo donde el primer argumento es el archivo del
+ * personaje principal y el resto de los gimnasios
+ */
 void valores_iniciales(int argc, char* argv[], mapa_t* mapa, entrenador_t* principal) {
     if (argc < 2)
         return;
