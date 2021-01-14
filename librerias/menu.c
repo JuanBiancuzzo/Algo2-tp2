@@ -724,7 +724,7 @@ void mostrar_entrenador(entrenador_t entrenador, bool lider, int iteracion) {
     int separacion = desfase.y * 2 + ancho_pkm;
     poner_lado_vertical(&pantalla, separacion);
 
-    pokemon_t* pokemon = (pokemon_t*)lista_elemento_en_posicion(entrenador.pokemones, (size_t) iteracion);
+    pokemon_t* pokemon = elegir_pokemon(&entrenador, iteracion);
 
     bloque.ancho = pantalla.ancho - separacion - 4;
     bloque.alto = (pantalla.alto * 3) / 4;
