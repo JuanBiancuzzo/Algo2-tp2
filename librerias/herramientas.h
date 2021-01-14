@@ -136,7 +136,7 @@ void destruir_personaje_principal(entrenador_t* principal);
  * crear el gimnasio, esto incluye todos sus entrenadores que a su vez
  * tiene todos sus pokemones
  */
-void destruir_gimnasio(gimnasio_t* gimnasio);
+void destruir_gimnasio(void* gimnasio);
 
 /*
  * Se encanrga de liberar toda la memoria necesaria que se utilizo al

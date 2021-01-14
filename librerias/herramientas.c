@@ -37,7 +37,7 @@ pokemon_t* crear_pokemon() {
     return calloc(1, sizeof(pokemon_t));
 }
 
-void destruir_pokemon(pokemon_t* pokemon) {
+void destruir_pokemon(void* pokemon) {
     free(pokemon);
 }
 
@@ -92,10 +92,6 @@ int guardar_pokemones(FILE* archivo, lista_t* pokemones, bool per_prin, char* ul
     return cant_pokemones;
 }
 
-void liberar_pokemon(void* pokemon) {
-    destruir_pokemon((pokemon_t*)pokemon);
-}
-
 /*
  * Guarda el tipo de entrenador (ya sea lider o entrenador) en una
  * pila, y guarda sus pokemones
@@ -120,7 +116,7 @@ int guardar_entrenador(FILE* archivo, char id, lista_t* entrenadores, int* canti
     if (leido != CANT_ENTRENADOR)
         return ERROR;
 
-    void (*lista_liberar_pokemon)(void*) = liberar_pokemon;
+    void (*lista_liberar_pokemon)(void*) = destruir_pokemon;
     entrenador.pokemones = lista_crear(lista_liberar_pokemon);
     int resultado = guardar_pokemones(archivo, entrenador.pokemones, false, ultima_leida);
 
@@ -179,7 +175,7 @@ int archivo_2_personaje_principal (char ruta_archivo[], void* principal) {
         return ERROR;
     }
 
-    void (*lista_liberar_pokemon)(void*) = liberar_pokemon;
+    void (*lista_liberar_pokemon)(void*) = destruir_pokemon;
     ((entrenador_t*)principal)->pokemones = lista_crear(lista_liberar_pokemon);
     int resultado = guardar_pokemones(archivo, ((entrenador_t*)principal)->pokemones, true, &ultima_leida);
 
@@ -268,13 +264,9 @@ int comparador_gimnasios (void* elemento_uno, void* elemento_dos) {
     return dificultad_uno > dificultad_dos ? 1 : dificultad_uno < dificultad_dos ? -1 : 0;
 }
 
-void destructor_gimnasios (void* gimnasio) {
-    destruir_gimnasio((gimnasio_t*) gimnasio);
-}
-
 mapa_t* crear_mapa () {
     heap_comparador comparador = comparador_gimnasios;
-    heap_liberar_elemento destructor = destructor_gimnasios;
+    heap_liberar_elemento destructor = destruir_gimnasio;
     mapa_t mapa;
 
     mapa.cant_gimnasios = 0;
@@ -306,7 +298,6 @@ void destruir_personaje_principal(entrenador_t* principal) {
  * y despues libere al entrenador
  */
 bool liberar_entrenador(void* entrenador, void* contexto) {
-    contexto = contexto;
     if (((entrenador_t*)entrenador)->cant_pokemones > 0)
         lista_destruir(((entrenador_t*)entrenador)->pokemones);
 
@@ -323,12 +314,12 @@ void destruir_pila_entrenadores(lista_t* entrenadores) {
     lista_destruir(entrenadores);
 }
 
-void destruir_gimnasio(gimnasio_t* gimnasio) {
+void destruir_gimnasio(void* gimnasio) {
 
     if (!gimnasio) return;
 
-    if (gimnasio->cant_entrenadores > 0)
-        destruir_pila_entrenadores(gimnasio->entrenadores);
+    if (((gimnasio_t*)gimnasio)->cant_entrenadores > 0)
+        destruir_pila_entrenadores(((gimnasio_t*)gimnasio)->entrenadores);
 
     free(gimnasio);
 }
@@ -420,16 +411,24 @@ int tomar_prestado(entrenador_t* principal, entrenador_t* enemigo, int id_pokemo
     return EXITO;
 }
 
+pokemon_t* pokemon_en_lista(lista_t* pokemones, int posicion) {
+    return lista_elemento_en_posicion(pokemones, (size_t) posicion);
+}
+
+pokemon_t* elegir_pokemon(entrenador_t* principal, int posicion) {
+    return pokemon_en_lista(principal->pokemones, posicion);
+}
+
 int reordenar_pokemones(lista_t* pokemones, int pkm_uno, int pkm_dos) {
 
     if (!pokemones)
         return ERROR;
 
-    pokemon_t* pokemon_uno = lista_elemento_en_posicion(pokemones, (size_t) pkm_uno);
+    pokemon_t* pokemon_uno = pokemon_en_lista(pokemones, pkm_uno);
     if (!pokemon_uno)
         return ERROR;
 
-    pokemon_t* pokemon_dos = lista_elemento_en_posicion(pokemones, (size_t) pkm_dos);
+    pokemon_t* pokemon_dos = pokemon_en_lista(pokemones, pkm_dos);
     if (!pokemon_dos)
         return ERROR;
 
@@ -451,8 +450,4 @@ gimnasio_t* pelar_gimnasio(mapa_t* mapa) {
 
 entrenador_t* pelear_entrenador(gimnasio_t* gimnasio, int posicion) {
     return (entrenador_t*)lista_elemento_en_posicion(gimnasio->entrenadores, (size_t) posicion);
-}
-
-pokemon_t* elegir_pokemon(entrenador_t* principal, int posicion) {
-    return lista_elemento_en_posicion(principal->pokemones, (size_t) posicion);
 }
