@@ -113,6 +113,10 @@ void bloque_2_pantalla (pantalla_t* pantalla, pantalla_t bloque, coor_t coor) {
     }
 }
 
+/*
+ * Dado una ruta de un archivo, este devuelve la pantalla con
+ * dicha imagen
+ */
 int imagen_2_pantalla (pantalla_t* pantalla, char* ruta_imagen) {
 
     FILE* archivo = fopen(ruta_imagen, "r");
@@ -128,8 +132,8 @@ int imagen_2_pantalla (pantalla_t* pantalla, char* ruta_imagen) {
 }
 
 /*
- * Dado una serie de instrucciones, devuelve una
- * bloque con los elementos centrados en este
+ * Dado una serie de instrucciones, devuelve una bloque con los
+ * elementos centrados en este
  */
 void crear_instruccion (pantalla_t* bloque, \
                         char letra, char* instruc[MAX_INSTRUC], int tope_instrucciones, \
@@ -146,6 +150,10 @@ void crear_instruccion (pantalla_t* bloque, \
     }
 }
 
+/*
+ * Dado una frase, devuelve esta frase centrada en el ancho esperado
+ * y movida en el desfase dado
+ */
 void crear_titulo(pantalla_t* pantalla, char* texto, coor_t desfase, int ancho) {
     coor_t coor = {desfase.x, posicion_media(texto, ancho) + desfase.y};
     texto_2_pantalla(pantalla, texto, (int) strlen(texto), coor);
@@ -372,13 +380,35 @@ int potencia (int base, int potencia) {
     return resultado;
 }
 
-void numero_2_texto(char texto[], int numero, int cant_numeros) {
-    for (int i = 0; i < cant_numeros; i++)
-        texto[cant_numeros - (1 + i)] = (char) (48 + (numero % potencia(10, i+1)) / potencia(10, i));
+/*
+ * El numero tiene que ser del 0 al 9
+ */
+char numero_2_caracter(int numero) {
+    return (char) (48 + numero);
 }
 
-void bloque_estadistica(pantalla_t* bloque, char letra, int valor, coor_t desfase) {
-    char frase[6] = {letra, ':'};
+/*
+ * Dado un numero, devolvemos el digito que este
+ * en la posicion esperada
+ */
+int aislar_numero(int numero, int posicion) {
+    return (numero % potencia(10, posicion+1) / potencia(10, posicion));
+}
+
+/*
+ * Dado un numero, guarda sus caracteres en un string
+ */
+void numero_2_texto(char texto[], int numero, int cant_numeros) {
+    for (int i = 0; i < cant_numeros; i++)
+        texto[cant_numeros - (1 + i)] = numero_2_caracter(aislar_numero(numero, i));
+}
+
+/*
+ * Devuelve un bloque de la pantalla donde se muestra el valor de un atributo
+ * dado la primera letra de ese atibuto
+ */
+void bloque_estadistica(pantalla_t* bloque, char* atributo, int valor, coor_t desfase) {
+    char frase[6] = {atributo[0], ':'};
     numero_2_texto(frase+2, valor, 2);
     texto_2_pantalla(bloque, frase, (int)strlen(frase), desfase);
 }
@@ -399,6 +429,9 @@ void poner_lado_horizontal(pantalla_t* pantalla, int altura) {
         pantalla->display[altura][i] = '-';
 }
 
+/*
+ * Coloca un cuadrado en el ancho y alto de la pantalla dada
+ */
 void poner_cuadrado(pantalla_t* pantalla) {
     poner_esquinas(pantalla);
 
@@ -409,6 +442,10 @@ void poner_cuadrado(pantalla_t* pantalla) {
     poner_lado_vertical(pantalla, pantalla->ancho - 1);
 }
 
+/*
+ * Devuelve un bloque de la pantalla con el nombre y los atibutos
+ * del pokemon dado
+ */
 void bloque_pokemon (pantalla_t* bloque, pokemon_t pokemon) {
 
     poner_cuadrado(bloque);
@@ -418,13 +455,17 @@ void bloque_pokemon (pantalla_t* bloque, pokemon_t pokemon) {
     texto_2_pantalla(bloque, pokemon.nombre, largo, coor);
 
     coor_t desfase = {2, 2};
-    bloque_estadistica(bloque, 'a', pokemon.ataque, desfase);
+    bloque_estadistica(bloque, "Ataque", pokemon.ataque, desfase);
     desfase.y = 8;
-    bloque_estadistica(bloque, 'd', pokemon.defensa, desfase);
+    bloque_estadistica(bloque, "Defensa", pokemon.defensa, desfase);
     desfase.y = 14;
-    bloque_estadistica(bloque, 'v', pokemon.velocidad, desfase);
+    bloque_estadistica(bloque, "Velocidad", pokemon.velocidad, desfase);
 }
 
+/*
+ * Muestar en forma de menu, los pokemones elegidos, con una frase
+ * encima que puede mostrar una pregunta
+ */
 void mostrar_intercambiar_pokemones(pokemon_t* pkm1, pokemon_t* pkm2, char* frase) {
 
     int cant_pokemones = 2 , ancho_pkm = 20, linea_inicial = 2;
@@ -459,6 +500,10 @@ void mostrar_intercambiar_pokemones(pokemon_t* pkm1, pokemon_t* pkm2, char* fras
     imprimir_pantalla(pantalla);
 }
 
+/*
+ * Devuelve una pantalla donde se tiene entre 6 y la cantidad de pokemones que
+ * haya en la lista, puesto en forma de pila
+ */
 void mostrar_pila_pokemones (pantalla_t* pantalla, lista_t pokemones, int cant_pokemones, int maximo, int desfase) {
 
     pantalla_t bloque;
@@ -516,6 +561,9 @@ void mostrar_principal(void* principal) {
     imprimir_pantalla(pantalla);
 }
 
+/*
+ * Muestra a un entrenador con su nombre y sus pokemones en una pila debajo
+ */
 void mostrar_columna_entrandor (pantalla_t* pantalla, entrenador_t entrenador, bool lider) {
 
     pantalla_t bloque;
@@ -537,6 +585,9 @@ void mostrar_columna_entrandor (pantalla_t* pantalla, entrenador_t entrenador, b
     }
 }
 
+/*
+ * Muestra al pokemon en mas detalle y con una imagen
+ */
 void bloque_pokebola (pantalla_t* pantalla, pokemon_t* pokemon) {
 
     pokemon_t pkm_vacio = {"Vacio", 0, 0, 0};
@@ -578,6 +629,10 @@ void bloque_pokebola (pantalla_t* pantalla, pokemon_t* pokemon) {
     }
 }
 
+/*
+ * Dada el archivo de una imagen, muetra por pantalla
+ * esa imagen
+ */
 void imprimir_imagen(char* ruta_archivo) {
     pantalla_t pantalla;
     pantalla.ancho = ANCHO, pantalla.alto = ALTO;
