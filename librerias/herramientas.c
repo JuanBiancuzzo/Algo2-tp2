@@ -18,7 +18,7 @@
 #define GANO_ENEMIGO -1
 
 int leer_pokemon(FILE* archivo, pokemon_t* pokemon) {
-    return fscanf(archivo, LEER_POKEMON, pokemon->nombre, &(pokemon->velocidad), &(pokemon->defensa), &(pokemon->ataque));
+    return fscanf(archivo, LEER_POKEMON, pokemon->nombre, &(pokemon->velocidad), &(pokemon->ataque), &(pokemon->defensa));
 }
 
 int leer_gimnasio (FILE* archivo, gimnasio_t* gimnasio) {
