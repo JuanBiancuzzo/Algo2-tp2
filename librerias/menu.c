@@ -79,7 +79,11 @@ void imprimir_pantalla (pantalla_t pantalla) {
     printf("\n");
     for (int i = 0; i < pantalla.alto; i++) {
         linea_blanca(2);
-        int largo = minimo((int) strlen(pantalla.display[i]), pantalla.ancho);
+        int largo;
+        if (pantalla.display[i])
+            largo = minimo((int) strlen(pantalla.display[i]), pantalla.ancho);
+        else
+            largo = pantalla.ancho;
 
         for (int j = 0; j < largo; j++)
             printf("%c", pantalla.display[i][j]);
@@ -128,6 +132,7 @@ int imagen_2_pantalla (pantalla_t* pantalla, char* ruta_imagen) {
             if (pantalla->display[i][j] == '.')
                 pantalla->display[i][j] = ' ';
     }
+    fclose(archivo);
     return EXITO;
 }
 
@@ -564,7 +569,7 @@ void mostrar_principal(void* principal) {
 /*
  * Muestra a un entrenador con su nombre y sus pokemones en una pila debajo
  */
-void mostrar_columna_entrandor (pantalla_t* pantalla, entrenador_t entrenador, bool lider) {
+void mostrar_columna_entrandor (pantalla_t* pantalla, entrenador_t entrenador) {
 
     pantalla_t bloque;
     bloque.ancho = pantalla->ancho, bloque.alto = pantalla->alto;
@@ -573,7 +578,7 @@ void mostrar_columna_entrandor (pantalla_t* pantalla, entrenador_t entrenador, b
     coor_t desfase = {0, 0};
     crear_titulo(pantalla, entrenador.nombre, desfase, pantalla->ancho);
 
-    if (lider) {
+    if (entrenador.lider) {
         desfase.x = 1;
         crear_titulo(pantalla, "(Lider)", desfase, pantalla->ancho);
     }
@@ -661,7 +666,7 @@ void pantalla_derrota(void* entrenador) {
 
         imagen_2_pantalla(&pantalla, "imagenes/imagen_perder.txt");
 
-        mostrar_columna_entrandor(&bloque, *(entrenador_t*)entrenador, false);
+        mostrar_columna_entrandor(&bloque, *(entrenador_t*)entrenador);
         coor_t coor = {2, 2};
         bloque_2_pantalla(&pantalla, bloque, coor);
         imprimir_pantalla(pantalla);
@@ -681,7 +686,7 @@ void pantalla_batalla(void* entrenador) {
 
         imagen_2_pantalla(&pantalla, "imagenes/imagen_batalla.txt");
 
-        mostrar_columna_entrandor(&bloque, *(entrenador_t*)entrenador, false);
+        mostrar_columna_entrandor(&bloque, *(entrenador_t*)entrenador);
         coor_t coor = {2, 2};
         bloque_2_pantalla(&pantalla, bloque, coor);
         imprimir_pantalla(pantalla);
@@ -715,7 +720,7 @@ void mostrar_entrenador(entrenador_t entrenador, bool lider, int iteracion) {
     inicializar_matriz(&bloque);
 
     bloque.ancho = ancho_pkm;
-    mostrar_columna_entrandor(&bloque, entrenador, lider);
+    mostrar_columna_entrandor(&bloque, entrenador);
 
     coor_t desfase = {1, 2};
     bloque_2_pantalla(&pantalla, bloque, desfase);
@@ -759,7 +764,7 @@ int mostrar_gimnasio(gimnasio_t gimnasio, int iteracion) {
         entrenador_t entrenador = *(entrenador_t*)lista_elemento_en_posicion(gimnasio.entrenadores, entrenador_posicion);
 
         bloque.ancho = ancho_pkm;
-        mostrar_columna_entrandor(&bloque, entrenador, i == 0);
+        mostrar_columna_entrandor(&bloque, entrenador);
 
         bloque_2_pantalla(&pantalla, bloque, desfase);
         desfase.y += ancho_entrenadores;
