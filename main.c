@@ -19,10 +19,12 @@
 #define CARPETA_GIMNASIO "gimnasios/"
 #define CARPETA_PRINCIPAL "principal/"
 
-#define ENTRENADOR_GANA -1
-#define PRINCIPAL_GANA 1
 #define GIMNASIOS_MINIMO 1
 #define POKEMONES_MINIMO 1
+#define GANO 1
+#define PIERDE -1
+#define TERMINA 0
+#define JUGANDO 2
 
 /*
  * Dado una letrar, devuelve true si esta en mayuscula o minuscula
@@ -341,7 +343,7 @@ void cambiar_pokemones(entrenador_t* principal) {
  */
 void mostrar_entrenador_principal(gimnasio_t* gimnasio) {
 
-    entrenador_t* entrenador = pelear_lider(gimnasio);
+    entrenador_t* entrenador = lider_del_gimnasio(gimnasio);
     char instrucciones[MAX_INSTRUC], respuesta;
     bool quedarse = true;
     int contador = 0;
@@ -463,7 +465,7 @@ char hub_derrota(entrenador_t* principal, entrenador_t* entrenador) {
  * El usuario es capaz de tomar prestado un pokemon del lider del gimnasio
  * entonces tiene que elegir uno de los pokemones del lider para quedarselo
  */
-void tomar_prestado_pokemon (entrenador_t* principal, entrenador_t* lider) {
+int tomar_prestado_pokemon (entrenador_t* principal, entrenador_t* lider) {
 
     CLEAR;
     char instrucciones[MAX_INSTRUC], respuesta;
@@ -497,8 +499,11 @@ void tomar_prestado_pokemon (entrenador_t* principal, entrenador_t* lider) {
         scanf(" %c", &respuesta);
     }
 
-    if (responder_caracter(AFIRMAR, respuesta))
-        tomar_prestado(principal, lider, id_pokemon);
+    if (responder_caracter(NEGAR, respuesta))
+        return ERROR;
+
+    tomar_prestado(principal, lider, id_pokemon);
+    return EXITO;
 }
 
 /*
@@ -515,8 +520,8 @@ char hub_victoria(entrenador_t* principal, entrenador_t* lider) {
 
         if (responder_caracter(TOMAR_PRESTADO, respuesta)) {
             if (!intercambio) {
-                tomar_prestado_pokemon(principal, lider);
-                intercambio = true;
+                if (tomar_prestado_pokemon(principal, lider) == EXITO)
+                    intercambio = true;
             } else {
                 CLEAR;
                 mostrar_informacion("Ya intercambiaste un pokemon con el lider");
@@ -541,6 +546,33 @@ void maestro_pokemon() {
     mostrar_informacion("Ahora sos maestro pokemon");
 }
 
+int pelear_gimnasio(gimnasio_t* gimnasio, entrenador_t** principal) {
+
+    funcion_batalla estilo = estilo_batalla(gimnasio->id_funcion);
+    int estado = JUGANDO;
+    char respuesta;
+
+    while (gimnasio->cant_entrenadores > 0 && estado == JUGANDO) {
+        entrenador_t* enemigo = entrenador_del_gimnasio(gimnasio);
+        estado = batalla_pokemon(*principal, enemigo, estilo);
+        CLEAR;
+
+        if (estado == GANO) {
+            hub_batalla(enemigo);
+            if (enemigo->lider)
+                hub_victoria(*principal, enemigo);
+            sacar_entrenador(gimnasio);
+            estado = JUGANDO;
+        } else {
+            respuesta = hub_derrota(*principal, enemigo);
+            if (responder_caracter(FINALIZAR, respuesta))
+                estado = TERMINA;
+        }
+    }
+
+    return (estado == JUGANDO) ? GANO : estado;
+}
+
 /*
  * En encarga de hacer toda la partida, haciendo que el usario
  * pelee contra todos los gimnasios, mostrandole al usuario todas
@@ -548,65 +580,28 @@ void maestro_pokemon() {
  */
 void comenzar_partida(mapa_t* mapa, entrenador_t* principal) {
 
-    gimnasio_t* gimnasio = pelar_gimnasio(mapa);
-    funcion_batalla estilo = estilo_batalla(gimnasio->id_funcion);
-    bool perdiste = false, termino = false, ganaste = false;
-    char respuesta;
+    gimnasio_t* gimnasio = gimnasio_del_mapa(mapa);
+    bool perdiste = false, termino = false;
 
     CLEAR;
-    respuesta = hub_gimnasio(principal, gimnasio);
+    hub_gimnasio(principal, gimnasio);
 
-    while ((mapa->cant_gimnasios >= 0 || perdiste) && !termino) {
+    while ((mapa->cant_gimnasios > 0 || perdiste) && !termino) {
         perdiste = false;
 
-        while (!perdiste && !ganaste) {
-            CLEAR;
-            entrenador_t* enemigo = pelear_entrenador(gimnasio);
-            int resultado_batalla = batalla_pokemon(principal, enemigo, estilo);
-
-            if (resultado_batalla == PRINCIPAL_GANA) {
-                hub_batalla(enemigo);
-                if (gimnasio->cant_entrenadores <= 1)
-                    ganaste = true;
-                else
-                    sacar_entrenador(gimnasio);
-            } else {
-                perdiste = true;
-                respuesta = hub_derrota(principal, enemigo);
-                if (responder_caracter(FINALIZAR, respuesta))
-                    termino = true;
-            }
-        }
-
-        if (ganaste) {
-            entrenador_t* lider = pelear_entrenador(gimnasio);
-            hub_victoria(principal, lider);
+        int resultado = pelear_gimnasio(gimnasio, &principal);
+        if (resultado == TERMINA) {
+            termino = true;
+        } else if (resultado == PIERDE){
+            perdiste = true;
+        } else {
             sacar_gimnasio(mapa);
-
-            gimnasio = pelar_gimnasio(mapa);
-            estilo = estilo_batalla(gimnasio->id_funcion);
+            gimnasio = gimnasio_del_mapa(mapa);
         }
     }
 
-    if (!perdiste)
+    if (!perdiste && !termino)
         maestro_pokemon();
-}
-
-/*
- * Si en la simulacion el usuario gana una pelear, se le debe informar
- * y cargar el siguiente gimnasio para pelar
- */
-void simular_victoria(mapa_t* mapa, gimnasio_t* gimnasio, funcion_batalla estilo) {
-
-    CLEAR;
-    pantalla_victoria(NULL);
-    mostrar_informacion("Yey, venciste este gimnasio");
-    sacar_gimnasio(mapa);
-
-    gimnasio = pelar_gimnasio(mapa);
-    estilo = estilo_batalla(gimnasio->id_funcion);
-    SLEEP;
-
 }
 
 /*
@@ -614,23 +609,33 @@ void simular_victoria(mapa_t* mapa, gimnasio_t* gimnasio, funcion_batalla estilo
  * usuario y aumentar la cantidad de entrenadores que el usuario les
  * gano
  */
-bool simular_batalla(gimnasio_t* gimnasio, int resultado) {
+int simular_gimnasio(entrenador_t* principal, gimnasio_t* gimnasio) {
 
-    char mensaje[MAX_FRASE];
-    entrenador_t enemigo = *pelear_entrenador(gimnasio);
-    if (resultado == PRINCIPAL_GANA) {
-        pantalla_batalla(&enemigo);
-        strcpy(mensaje, "Ganaste contra ");
-        sacar_entrenador(gimnasio);
-    } else {
-        pantalla_derrota(&enemigo);
-        strcpy(mensaje, "Perdiste contra ");
+    funcion_batalla estilo = estilo_batalla(gimnasio->id_funcion);
+
+    char mensaje[MAX_FRASE], nombre[MAX_NOMBRE];
+    int resultado = GANO;
+    while (gimnasio->cant_entrenadores > 0 && resultado == GANO) {
+
+        entrenador_t* enemigo = entrenador_del_gimnasio(gimnasio);
+        resultado = batalla_pokemon(principal, enemigo, estilo);
+
+        CLEAR;
+        strcpy(nombre, enemigo->nombre);
+        if (resultado == GANO) {
+            pantalla_batalla(enemigo);
+            strcpy(mensaje, "Ganaste contra ");
+            sacar_entrenador(gimnasio);
+        } else {
+            pantalla_derrota(enemigo);
+            strcpy(mensaje, "Perdiste contra ");
+        }
+        strcat(mensaje, nombre);
+        mostrar_informacion(mensaje);
+        SLEEP;
     }
-    strcat(mensaje, enemigo.nombre);
-    mostrar_informacion(mensaje);
-    SLEEP;
 
-    return !(resultado == PRINCIPAL_GANA);
+    return resultado;
 }
 
 /*
@@ -639,29 +644,29 @@ bool simular_batalla(gimnasio_t* gimnasio, int resultado) {
  */
 void simular_partida(mapa_t* mapa, entrenador_t* principal) {
 
-    gimnasio_t* gimnasio = pelar_gimnasio(mapa);
-    funcion_batalla estilo = estilo_batalla(gimnasio->id_funcion);
-    bool perdiste = false;
+    gimnasio_t* gimnasio = gimnasio_del_mapa(mapa);
+    int estado = GANO;
 
-    while (mapa->cant_gimnasios >= 0 && !perdiste) {
-        perdiste = false;
-
+    while (mapa->cant_gimnasios > 0 && estado == GANO) {
         CLEAR;
         mostrar_gimnasio(*gimnasio, 0);
         SLEEP;
 
-        while (gimnasio->cant_entrenadores > 0 && !perdiste) {
-            CLEAR;
-            entrenador_t* enemigo = pelear_entrenador(gimnasio);
-            int resultado_batalla = batalla_pokemon(principal, enemigo, estilo);
-            perdiste = simular_batalla(gimnasio, resultado_batalla);
-        }
+        CLEAR;
+        estado = simular_gimnasio(principal, gimnasio);
 
-        if (!perdiste) 
-            simular_victoria(mapa, gimnasio, estilo);
+        if (estado == GANO) {
+            CLEAR;
+            pantalla_victoria(NULL);
+            mostrar_informacion("Yey, venciste este gimnasio");
+            sacar_gimnasio(mapa);
+
+            gimnasio = gimnasio_del_mapa(mapa);
+            SLEEP;
+        }
     }
 
-    if (!perdiste)
+    if (estado == GANO)
         maestro_pokemon();
 }
 
@@ -670,7 +675,7 @@ void simular_partida(mapa_t* mapa, entrenador_t* principal) {
  * archivos predeterminados, y otro modo donde el primer argumento es el archivo del
  * personaje principal y el resto de los gimnasios
  */
-void valores_iniciales(int argc, char* argv[], mapa_t* mapa, entrenador_t* principal) {
+void valores_iniciales(int argc, char* argv[], mapa_t* mapa, entrenador_t** principal) {
     if (argc < 2)
         return;
 
@@ -680,7 +685,7 @@ void valores_iniciales(int argc, char* argv[], mapa_t* mapa, entrenador_t* princ
     if (strcmp(argv[1], "default") == 0) {
         entrenador = cargar_entrenador("ash.txt");
         if (entrenador)
-            principal = entrenador;
+            *principal = entrenador;
 
         gimnasio = cargar_gimnasio("ciudad_celeste.txt");
         if (gimnasio)
@@ -691,7 +696,7 @@ void valores_iniciales(int argc, char* argv[], mapa_t* mapa, entrenador_t* princ
 
     entrenador = cargar_entrenador(argv[1]);
     if (entrenador)
-        principal = entrenador;
+        *principal = entrenador;
 
     for (int i = 2; i < argc; i++) {
         gimnasio = cargar_gimnasio(argv[i]);
@@ -700,17 +705,12 @@ void valores_iniciales(int argc, char* argv[], mapa_t* mapa, entrenador_t* princ
     }
 }
 
-void inicializar_entrenador(entrenador_t* entrenador) {
-    entrenador->cant_pokemones = 0;
-    entrenador->lider = false;
-}
-
 int main(int argc, char* argv[]) {
 
     entrenador_t* principal = NULL;
     mapa_t* mapa = crear_mapa();
 
-    valores_iniciales(argc, argv, mapa, principal);
+    valores_iniciales(argc, argv, mapa, &principal);
     if (argc > 1) {
         CLEAR;
         if (principal_preparado(principal))
