@@ -114,6 +114,13 @@ void* heap_raiz(heap_t* heap) {
 
     if (!heap) return NULL;
 
+    return heap->elementos[0];
+}
+
+void heap_eliminar_raiz(heap_t* heap) {
+
+    if (!heap) return;
+
     void* primer_elemento = heap->elementos[0];
 
     heap->elementos[0] = heap->elementos[heap->cant_elementos-1];
@@ -121,7 +128,9 @@ void* heap_raiz(heap_t* heap) {
 
     heap_bajar(heap, 0);
 
-    return primer_elemento;
+    if (heap->destructor)
+        heap->destructor(primer_elemento);
+
 }
 
 void heap_destruir(heap_t* heap) {
