@@ -133,10 +133,7 @@ void probar_heap_raiz_con_un_elemento () {
     heap_insertar(heap, &elemento);
 
     pa2m_afirmar(elemento == *(int*)heap_raiz(heap),
-                 "Devuelve el valor correcto al eliminar con el heap de un elemento");
-
-    pa2m_afirmar(heap->cant_elementos == 0,
-                 "Vuelve el contador a 0 despues de eliminar con el heap de un elemento\n");
+                 "Devuelve el valor correcto con un heap de un elemento\n");
 
     heap_destruir(heap);
 }
@@ -152,13 +149,7 @@ void probar_heap_raiz_con_varios_elementos () {
     heap_insertar(heap, &elemento_uno);
 
     pa2m_afirmar(elemento_uno == *(int*)heap_raiz(heap),
-                 "Devuelve el valor correcto al eliminar con el heap de 3 elementos");
-
-    pa2m_afirmar(heap->cant_elementos == 2,
-                 "Vuelve el contador a 2 despues de eliminar con el heap de 3 elementos");
-
-    pa2m_afirmar(elemento_dos == *(int*)heap->elementos[0],
-                 "Actualiza correctamente la estructura despues de sacar la raiz\n");
+                 "Devuelve el valor correcto con un heap de 3 elementos\n");
 
     heap_destruir(heap);
 }
@@ -167,6 +158,47 @@ void probar_heap_raiz () {
     probar_heap_raiz_valores_invalidos();
     probar_heap_raiz_con_un_elemento();
     probar_heap_raiz_con_varios_elementos();
+}
+
+void probar_heap_eliminar_raiz_con_un_elemento () {
+    heap_comparador comparador = comparador_prueba;
+    heap_liberar_elemento destructor = destructor_prueba;
+    heap_t* heap = heap_crear(comparador, destructor);
+
+    int elemento = 11;
+    heap_insertar(heap, &elemento);
+    heap_eliminar_raiz(heap);
+
+    pa2m_afirmar(heap->cant_elementos == 0,
+                 "Vuelve el contador a 0 despues de eliminar el primer elemento del heap\n");
+
+    heap_destruir(heap);
+}
+
+void probar_heap_eliminar_raiz_con_varios_elementos () {
+    heap_comparador comparador = comparador_prueba;
+    heap_liberar_elemento destructor = destructor_prueba;
+    heap_t* heap = heap_crear(comparador, destructor);
+
+    int elemento_uno = 11, elemento_dos = 22, elemento_tres = 33;
+    heap_insertar(heap, &elemento_dos);
+    heap_insertar(heap, &elemento_tres);
+    heap_insertar(heap, &elemento_uno);
+
+    heap_eliminar_raiz(heap);
+
+    pa2m_afirmar(heap->cant_elementos == 2,
+                 "Vuelve el contador a 2 despues de eliminar el primer elemento con un heap de 3 elementos");
+
+    pa2m_afirmar(elemento_dos == *(int*)heap->elementos[0],
+                 "Actualiza correctamente la estructura despues de sacar la raiz\n");
+
+    heap_destruir(heap);
+}
+
+void probar_heap_eliminar_raiz () {
+    probar_heap_eliminar_raiz_con_un_elemento();
+    probar_heap_eliminar_raiz_con_varios_elementos();
 }
 
 int comparador_contador (void* elemento_uno, void* elemento_dos) {
@@ -218,7 +250,7 @@ void probar_heap_destruir () {
 void probar_archivo_2_personaje_principal_valores_invalidos () {
 
     char ruta_archivo[MAX_NOMBRE];
-    personaje_t personaje;
+    entrenador_t personaje;
 
     pa2m_afirmar(archivo_2_personaje_principal(NULL, &personaje) == ERROR,
                  "Detecta correctamente que la ruta del archivo es invalido");
@@ -233,7 +265,7 @@ void probar_archivo_2_personaje_principal_valores_invalidos () {
 
 void probar_archivo_2_personaje_principal_formato_invalidos_sin_entrenado () {
 
-    personaje_t* personaje = crear_personaje_principal();
+    entrenador_t* personaje = crear_entrenador();
 
     char ruta_archivo[MAX_NOMBRE];
     strcpy(ruta_archivo, "pruebas/per_principal_formato_invalido_sin_entrenador.txt");
@@ -241,12 +273,12 @@ void probar_archivo_2_personaje_principal_formato_invalidos_sin_entrenado () {
     pa2m_afirmar(archivo_2_personaje_principal(ruta_archivo, personaje) == ERROR,
                  "Reconoce que no hay entrenador y manda un error\n");
 
-    destruir_personaje_principal(personaje);
+    destruir_entrenador(personaje);
 }
 
 void probar_archivo_2_personaje_principal_formato_invalidos_sin_pokemones () {
 
-    personaje_t* personaje = crear_personaje_principal();
+    entrenador_t* personaje = crear_entrenador();
 
     char ruta_archivo[MAX_NOMBRE];
     strcpy(ruta_archivo, "pruebas/per_principal_formato_invalido_sin_pokemones.txt");
@@ -254,12 +286,12 @@ void probar_archivo_2_personaje_principal_formato_invalidos_sin_pokemones () {
     pa2m_afirmar(archivo_2_personaje_principal(ruta_archivo, personaje) == ERROR,
                  "Reconoce que no hay pokemones y manda un error\n");
 
-    destruir_personaje_principal(personaje);
+    destruir_entrenador(personaje);
 }
 
 void probar_archivo_2_personaje_principal_formato_invalidos_corrupto () {
 
-    personaje_t* personaje = crear_personaje_principal();
+    entrenador_t* personaje = crear_entrenador();
 
     char ruta_archivo[MAX_NOMBRE];
     strcpy(ruta_archivo, "pruebas/per_principal_formato_invalido_corrupto.txt");
@@ -270,12 +302,12 @@ void probar_archivo_2_personaje_principal_formato_invalidos_corrupto () {
     pa2m_afirmar(personaje->cant_pokemones == 2,
                  "La cantidad de pokemones es 2 al encontrar el tercer pokemon con un error\n");
 
-    destruir_personaje_principal(personaje);
+    destruir_entrenador(personaje);
 }
 
 void probar_archivo_2_personaje_principal_formato_validos () {
 
-    personaje_t* personaje = crear_personaje_principal();
+    entrenador_t* personaje = crear_entrenador();
     int cant_pokemones = 11;
 
     char ruta_archivo[MAX_NOMBRE];
@@ -296,7 +328,7 @@ void probar_archivo_2_personaje_principal_formato_validos () {
     pa2m_afirmar((int)lista_elementos(personaje->pokemones) == cant_pokemones,
                  "La cola tiene la cantidad correcta de pokemones\n");
 
-    destruir_personaje_principal(personaje);
+    destruir_entrenador(personaje);
 }
 
 void probar_archivo_2_personaje_principal () {
@@ -500,7 +532,7 @@ int batalla_prueba (void* pkm_1, void* pkm_2) {
 }
 
 void probar_batalla_pokemon_valores_invalidos () {
-    personaje_t personaje;
+    entrenador_t personaje;
     entrenador_t entrenador;
     funcion_batalla estilo = batalla_prueba;
 
@@ -516,7 +548,7 @@ void probar_batalla_pokemon_valores_invalidos () {
 }
 
 void probar_batalla_pokemon_principal_muchos_pokemones () {
-    personaje_t* personaje = crear_personaje_principal();
+    entrenador_t* personaje = crear_entrenador();
     gimnasio_t* gimnasio = crear_gimnasio();
     funcion_batalla estilo = batalla_prueba;
     char ruta_archivo[MAX_NOMBRE];
@@ -530,12 +562,12 @@ void probar_batalla_pokemon_principal_muchos_pokemones () {
     pa2m_afirmar(batalla_pokemon(personaje, (entrenador_t*)lista_elemento_en_posicion(gimnasio->entrenadores, 0), estilo) == GANO_PRINCIPAL,
                 "Gana correctamente el personaje principal porque tiene mas pokemones\n");
 
-    destruir_personaje_principal(personaje);
+    destruir_entrenador(personaje);
     destruir_gimnasio(gimnasio);
 }
 
 void probar_batalla_pokemon_enemigo_muchos_pokemones () {
-    personaje_t* personaje = crear_personaje_principal();
+    entrenador_t* personaje = crear_entrenador();
     gimnasio_t* gimnasio = crear_gimnasio();
     funcion_batalla estilo = batalla_prueba;
     char ruta_archivo[MAX_NOMBRE];
@@ -549,12 +581,12 @@ void probar_batalla_pokemon_enemigo_muchos_pokemones () {
     pa2m_afirmar(batalla_pokemon(personaje, (entrenador_t*)lista_elemento_en_posicion(gimnasio->entrenadores, 0), estilo) == GANO_ENEMIGO,
                 "Gana correctamente el enemigo porque tiene mas pokemones\n");
 
-    destruir_personaje_principal(personaje);
+    destruir_entrenador(personaje);
     destruir_gimnasio(gimnasio);
 }
 
 void probar_batalla_pokemon_dos_muchos_pokemones () {
-    personaje_t* personaje = crear_personaje_principal();
+    entrenador_t* personaje = crear_entrenador();
     gimnasio_t* gimnasio = crear_gimnasio();
     funcion_batalla estilo = batalla_prueba;
     char ruta_archivo[MAX_NOMBRE];
@@ -568,12 +600,12 @@ void probar_batalla_pokemon_dos_muchos_pokemones () {
     pa2m_afirmar(batalla_pokemon(personaje, (entrenador_t*)lista_elemento_en_posicion(gimnasio->entrenadores, 0), estilo) == GANO_PRINCIPAL,
                 "Gana correctamente el personaje principal aunque la misma cantidad de pokemones, el empieza ganando\n");
 
-    destruir_personaje_principal(personaje);
+    destruir_entrenador(personaje);
     destruir_gimnasio(gimnasio);
 }
 
 void probar_batalla_pokemon_dos_pocos_pokemones () {
-    personaje_t* personaje = crear_personaje_principal();
+    entrenador_t* personaje = crear_entrenador();
     gimnasio_t* gimnasio = crear_gimnasio();
     funcion_batalla estilo = batalla_prueba;
     char ruta_archivo[MAX_NOMBRE];
@@ -587,7 +619,7 @@ void probar_batalla_pokemon_dos_pocos_pokemones () {
     pa2m_afirmar(batalla_pokemon(personaje, (entrenador_t*)lista_elemento_en_posicion(gimnasio->entrenadores, 0), estilo) == GANO_PRINCIPAL,
                 "Gana correctamente el personaje principal aunque la misma cantidad de pokemones, el empieza ganando\n");
 
-    destruir_personaje_principal(personaje);
+    destruir_entrenador(personaje);
     destruir_gimnasio(gimnasio);
 }
 
@@ -606,7 +638,7 @@ void probar_batalla_pokemon () {
 void probar_tomar_prestado_valores_invalidos() {
     gimnasio_t* gimnasio = crear_gimnasio();
     char ruta_archivo[MAX_NOMBRE];
-    personaje_t principal;
+    entrenador_t principal;
     int id_pokemon = 5;
 
     strcpy(ruta_archivo, "pruebas/enemigo_pocos_pokemones.txt");
@@ -627,7 +659,7 @@ void probar_tomar_prestado_valores_invalidos() {
 }
 
 void probar_tomar_prestado_principal_pocos_pokemones () {
-    personaje_t* principal = crear_personaje_principal();
+    entrenador_t* principal = crear_entrenador();
     gimnasio_t* gimnasio = crear_gimnasio();
     char ruta_archivo[MAX_NOMBRE];
     int id_pokemon = 2;
@@ -650,12 +682,12 @@ void probar_tomar_prestado_principal_pocos_pokemones () {
     pa2m_afirmar(principal->cant_pokemones == 4,
                  "Aumento la cantidad de pokemones del personaje principal\n");
 
-    destruir_personaje_principal(principal);
+    destruir_entrenador(principal);
     destruir_gimnasio(gimnasio);
 }
 
 void probar_tomar_prestado_principal_muchos_pokemones () {
-    personaje_t* principal = crear_personaje_principal();
+    entrenador_t* principal = crear_entrenador();
     gimnasio_t* gimnasio = crear_gimnasio();
     char ruta_archivo[MAX_NOMBRE];
     int id_pokemon = 2;
@@ -671,14 +703,14 @@ void probar_tomar_prestado_principal_muchos_pokemones () {
     pa2m_afirmar(tomar_prestado(principal, enemigo, id_pokemon) == EXITO,
                  "Mensaje de exito al tomar prestado un pokemon");
 
-    pokemon_t* pokemon_prestado = lista_elemento_en_posicion(principal->pokemones, (size_t) MAX_POKE_COMBATE);
+    pokemon_t* pokemon_prestado = lista_elemento_en_posicion(principal->pokemones, (size_t) MAX_POKEMON_COMBATE);
     pa2m_afirmar(strcmp("Shellder", pokemon_prestado->nombre) == 0,
                  "Se presto el pokemon correcto ubicada como 7mo pokemon");
 
     pa2m_afirmar(principal->cant_pokemones == 8,
                  "Aumento la cantidad de pokemones del personaje principal\n");
 
-    destruir_personaje_principal(principal);
+    destruir_entrenador(principal);
     destruir_gimnasio(gimnasio);
 }
 
@@ -691,7 +723,7 @@ void probar_tomar_prestado () {
 }
 
 void probar_reordenar_pokemones_valores_invalido () {
-    personaje_t* principal = crear_personaje_principal();
+    entrenador_t* principal = crear_entrenador();
     char ruta_archivo[MAX_NOMBRE];
     int pkm_uno = 2, pkm_dos = 3;
 
@@ -710,11 +742,11 @@ void probar_reordenar_pokemones_valores_invalido () {
     pa2m_afirmar(reordenar_pokemones(principal->pokemones, pkm_uno, pkm_dos) == ERROR,
                  "Reconoce que el id del segundo pokemon es invalido\n");
 
-    destruir_personaje_principal(principal);
+    destruir_entrenador(principal);
 }
 
 void probar_reordenar_pokemones_intercambio () {
-    personaje_t* principal = crear_personaje_principal();
+    entrenador_t* principal = crear_entrenador();
     char ruta_archivo[MAX_NOMBRE];
     int pkm_uno = 1, pkm_dos = 2;
 
@@ -737,7 +769,7 @@ void probar_reordenar_pokemones_intercambio () {
     pa2m_afirmar(strcmp(pkm_uno_nombre, pokemon->nombre) == 0,
                  "Intercambia correctamente el pokemon\n");
 
-    destruir_personaje_principal(principal);
+    destruir_entrenador(principal);
 }
 
 void probar_reordenar_pokemones () {
