@@ -338,21 +338,16 @@ int gimnasio_2_mapa(mapa_t* mapa, gimnasio_t* gimnasio) {
     return EXITO;
 }
 
-gimnasio_t* pelar_gimnasio(mapa_t* mapa) {
-    gimnasio_t* gimnasio = heap_raiz(mapa->gimnasios);
-
-    if (gimnasio)
-        mapa->cant_gimnasios = mapa->gimnasios->cant_elementos;
-
-    return gimnasio;
+gimnasio_t* gimnasio_del_mapa(mapa_t* mapa) {
+    return heap_raiz(mapa->gimnasios);
 }
 
-entrenador_t* pelear_entrenador(gimnasio_t* gimnasio) {
-    return lista_elemento_en_posicion(gimnasio->entrenadores, 0);
-}
-
-entrenador_t* pelear_lider(gimnasio_t* gimnasio) {
+entrenador_t* lider_del_gimnasio(gimnasio_t* gimnasio) {
     return lista_elemento_en_posicion(gimnasio->entrenadores, (size_t) gimnasio->cant_entrenadores - 1);
+}
+
+entrenador_t* entrenador_del_gimnasio(gimnasio_t* gimnasio) {
+    return lista_elemento_en_posicion(gimnasio->entrenadores, 0);
 }
 
 void sacar_entrenador(gimnasio_t* gimnasio) {
