@@ -6,7 +6,7 @@
 
 #define MAX_NOMBRE 100
 #define MAX_FRASE 200
-#define MAX_POKE_COMBATE 6
+#define MAX_POKEMON_COMBATE 6
 #define MAX_LEVEL_UP 63
 #define IGNORAR 1
 #define EXITO 0
@@ -18,13 +18,6 @@
 #define ENTRENADOR 'E'
 
 typedef int (* funcion_batalla)(void*, void *);
-
-typedef struct pokemon{
-	char nombre[MAX_NOMBRE];
-	int velocidad;
-	int defensa;
-	int ataque;
-} pokemon_t;
 
 typedef struct mapa {
 	heap_t* gimnasios;
@@ -43,13 +36,21 @@ typedef struct entrenador {
 	char nombre[MAX_NOMBRE];
 	lista_t* pokemones; // es una lista
 	int cant_pokemones;
+	bool lider;
 } entrenador_t;
+
+typedef struct pokemon{
+	char nombre[MAX_NOMBRE];
+	int velocidad;
+	int defensa;
+	int ataque;
+} pokemon_t;
 
 /*
  * Se encarga de reservar memoria en el heap para el personaje principal
  * y devolver esa direccion, en caso de que no lo logre devuelve NULL
  */
-entrenador_t* crear_personaje_principal();
+entrenador_t* crear_entrenador(); // LISTO
 
 /*
  * Se encarga de reservar memoria en el heap para el gimnasio y devuelve
@@ -90,10 +91,28 @@ int gimnasio_2_mapa(mapa_t* mapa, gimnasio_t* gimnasio);
 gimnasio_t* pelar_gimnasio(mapa_t* mapa);
 
 /*
+ * Dado un gimnasio, devuelve al lider del gimnasio, si no hay
+ * devuelve NULL
+ */
+entrenador_t* pelear_lider(gimnasio_t* gimnasio);
+
+/*
  * Dado un gimnasio, devuelve el entrenador que tenga este primero
  * en la lista, en caso de error devuelve NULL
  */
-entrenador_t* pelear_entrenador(gimnasio_t* gimnasio, int posicion);
+entrenador_t* pelear_entrenador(gimnasio_t* gimnasio);
+
+/*
+ * Dado un gimnasio, saca al entrenador que este en el primer
+ * lugar
+ */
+void sacar_entrenador(gimnasio_t* gimnasio);
+
+/*
+ * Dado un gimnasio, saca al entrenador que este en el primer
+ * lugar
+ */
+void sacar_gimnasio(mapa_t* mapa);
 
 /*
  * Dado la posicion de un pokemon, devuelve el pokemon de la lista
@@ -129,7 +148,7 @@ int reordenar_pokemones(lista_t* pokemones, int pkm_uno, int pkm_dos);
  * Se encanrga de liberar toda la memoria necesaria que se utilizo al
  * crear el personaje, esto incluye todos sus pokemones
  */
-void destruir_personaje_principal(entrenador_t* principal);
+void destruir_entrenador(void* entrenador);
 
 /*
  * Se encanrga de liberar toda la memoria necesaria que se utilizo al
@@ -142,6 +161,6 @@ void destruir_gimnasio(void* gimnasio);
  * Se encanrga de liberar toda la memoria necesaria que se utilizo al
  * crear el mapa
  */
-void destruir_mapa(mapa_t* mapa);
+void destruir_mapa(void* mapa);
 
 #endif /* __HERRAMIENTAS_H__ */
