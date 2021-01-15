@@ -8,12 +8,14 @@ VFLAGS=--leak-check=full --track-origins=yes --show-reachable=yes
 build:
 	$(CC) $(CFLAGS) $(LIB) main.c -o $(NAME)
 
-exe:
+exe: build
 	./$(NAME)
 
-default:
+default: build
 	./$(NAME) default
 
-valgrind:
+build_v:
 	$(CC) $(CFLAGS) $(LIB) pruebas/pruebas.c -o $(NAME)
+
+valgrind: build_v
 	$(VAL) $(VFLAGS) ./$(NAME)
