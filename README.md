@@ -78,6 +78,38 @@ make default
 ## Detalles de implementación (librerías)
 
 ### TDA Heap
+El tipo de dato abstracto Heap, y en este caso mínimal, tiene una estructura donde almacena el vector de elementos, la cantidad de elementos, un comparador y un destructor. Las funciones con las que opera son dos administrativas (crear y destruir) e insertar, elemento en la raiz y eliminar la raiz
+
+##### Aclaracion
+El heap es un árbol casi completo, es decir que se completa de izquierda a derecha y por lo tanto se puede ir numerando cada elemento de izquierda a derecha, y de arriba hacia abajo, de forma secuencial, por lo que podemos hablar de un vector de elementos a la vez que estamos hablando de este árbol.
+
+#### Crear y destruir
+Para crear un heap, se reserva espacio en el heap y se agregan a la estructura del heap la función comparador, que es una función dado dos elementos te devuelve el 1 si el primero es más chico y -1 si el segundo es el más chico, y la función liberar elemento, donde cada vez que se tenga que eliminar se utiliza esta función por si se necesita hacer un proceso antes de elimiar dicho elemento.
+
+En la destrucción del heap, se elimina cada elemento del vector, usando la función liberar elemento para cada elemento, y luego se libera la memoria que estaba reservada para el heap.
+
+#### Insertar
+Para insertar agregamos el elemento al final del vector, y después comprobamos que cumpla los requisitos de un heap minimal, en el caso que los cumpla terminamos de insertar; pero si no los cumple tenemos que intercambiar con el padre y recalcular tanto el padre como si cumple los requisitos, y repetir hasta que se cumpla los requisitos o llegar a la posición 0 que es la raiz del heap.
+
+Para calcular la posición del padre de la posición actual, se le resta uno, y se lo divide por 2. Como el heap lo podemos pensar como un vector y un árbol, podemos ver como el padre tiene dos hijos, entonces por cada nivel del árbol se duplica la cantidad de nodos del árbol.
+
+Como ejemplo si tenemo un heap de 3 nodos, empezando por el 1, la raíz tiene posición 1 y sus hijos 2 y 3, que si dividimos en dos nos da 1 y 1,5 que redondeado hacia abajo es 1 y 1, la posición de su padre.
+
+Pero como los vectores empiezan en la posición 0, entonces, siguiendo el ejemplo, si estamos en la raíz le sumamos uno para empezar en 1 y después multiplicamos por dos para tener al hijo derecho, si hacemos el proceso contrario, restamos uno y después dividimos tenemos al padre.
+
+#### Elemento en la raiz
+Como el heap es un array, el primer elemento del heap es la raiz del heap, entonces se devuelve el primer elemento en el caso que exista el heap.
+
+#### Eliminar la raiz
+Para eliminar la raiz del heap, es utilizando el destructor (en el caso que lo tenga) para destruir los que se guardo en ese elemento y después se remplaza por el último elemento del array.
+
+De forma similar al insertar, se comprueba si cumple los requisitos de un heap minimal, se busca el hijo que sean menor, y se comprueba se cumple los requisitos.
+
+Veamos un ejemplo porque buscamos el hijo menor, tenemos un heap invalido de 3 elementos, donde la raiz es 8, el hijo izquierdo es 2 y el hijo derecho es 6. Ahora tenemos que modificar la raiz para si elegimos el hijo más grande (6) nos queda como raíz el 6, con 2 a la izquierda y 8 a la derecha, todavía no es un heap valido. Entonces elegimos siempre el menor porque así sabemos que si cambiamos el padre por el hijo menor, esos 3 nodos van a quedar en un heap valido.
+
+En el caso de que si se cumplan se termina la eliminación; pero si no se cumple, se intercambian y se recalcula el hijo y la comprobación, y repetir hasta que se cumpla los requisitos o hasta llegar a los últimos hijos del heap.
+
+Para calcular los hijos, tanto el hijo izquierdo como el derecho lo primero es multiplicar por dos, por el motivo que explique cuando estabamos insertando, y luego para el hijo izquierdo le sumamos uno y para el derecho le sumamos 2.
 
 ### Herramientas
 
