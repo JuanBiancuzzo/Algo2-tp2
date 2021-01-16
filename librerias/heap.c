@@ -65,8 +65,7 @@ int heap_insertar(heap_t* heap, void* elemento) {
     heap->elementos[heap->cant_elementos] = elemento;
     (heap->cant_elementos)++;
 
-    if ((heap->cant_elementos) - 1 > 0)
-        heap_subir(heap, (heap->cant_elementos) - 1);
+    heap_subir(heap, (heap->cant_elementos) - 1);
     return EXITO;
 }
 
@@ -121,15 +120,13 @@ void heap_eliminar_raiz(heap_t* heap) {
 
     if (!heap) return;
 
-    void* primer_elemento = heap->elementos[0];
+    if (heap->destructor)
+        heap->destructor(heap_raiz(heap));
 
     heap->elementos[0] = heap->elementos[heap->cant_elementos-1];
     (heap->cant_elementos)--;
 
     heap_bajar(heap, 0);
-
-    if (heap->destructor)
-        heap->destructor(primer_elemento);
 
 }
 
