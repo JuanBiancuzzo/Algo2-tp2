@@ -96,7 +96,7 @@ void probar_heap_insertar_varios_elementos () {
                  "Mensaje de exito al insertar el primer elemento");
 
     pa2m_afirmar(heap_insertar(heap, &elemento_dos) == EXITO,
-                 "Mensaje de exito al insertar el segunfo elemento");
+                 "Mensaje de exito al insertar el segundo elemento");
 
     pa2m_afirmar(heap_insertar(heap, &elemento_uno) == EXITO,
                  "Mensaje de exito al insertar el tercer elemento");
