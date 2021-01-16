@@ -203,10 +203,7 @@ int dato_esperado(FILE* archivo, gimnasio_t* gimnasio, entrenador_t* entrenador,
         else
             entrenador->lider = false;
     } else if (pokemon && *tipo == POKEMON) {
-        strcpy(pokemon->nombre, pokemon_aux.nombre);
-        pokemon->velocidad = pokemon_aux.velocidad;
-        pokemon->ataque = pokemon_aux.ataque;
-        pokemon->defensa = pokemon_aux.defensa;
+        *pokemon = pokemon_aux;
     }
 
     return resultado;
@@ -339,32 +336,39 @@ int gimnasio_2_mapa(mapa_t* mapa, gimnasio_t* gimnasio) {
 }
 
 gimnasio_t* gimnasio_del_mapa(mapa_t* mapa) {
+    if (!mapa) return NULL;
     return heap_raiz(mapa->gimnasios);
 }
 
 entrenador_t* lider_del_gimnasio(gimnasio_t* gimnasio) {
+    if (!gimnasio) return NULL;
     return lista_elemento_en_posicion(gimnasio->entrenadores, (size_t) gimnasio->cant_entrenadores - 1);
 }
 
 entrenador_t* entrenador_del_gimnasio(gimnasio_t* gimnasio) {
+    if (!gimnasio) return NULL;
     return lista_elemento_en_posicion(gimnasio->entrenadores, 0);
 }
 
 void sacar_entrenador(gimnasio_t* gimnasio) {
+    if (!gimnasio) return;
     lista_desapilar(gimnasio->entrenadores);
     gimnasio->cant_entrenadores = (int) gimnasio->entrenadores->cantidad;
 }
 
 void sacar_gimnasio(mapa_t* mapa) {
+    if (!mapa) return;
     heap_eliminar_raiz(mapa->gimnasios);
     mapa->cant_gimnasios = (int) mapa->gimnasios->cant_elementos;
 }
 
 pokemon_t* pokemon_en_lista(lista_t* pokemones, int posicion) {
+    if (!pokemones || posicion < 0) return NULL;
     return lista_elemento_en_posicion(pokemones, (size_t) posicion);
 }
 
 pokemon_t* elegir_pokemon(entrenador_t* principal, int posicion) {
+    if (!principal) return NULL;
     return pokemon_en_lista(principal->pokemones, posicion);
 }
 
