@@ -113,9 +113,31 @@ Para calcular los hijos, tanto el hijo izquierdo como el derecho lo primero es m
 
 ### Herramientas
 
-### Menú
+### Menús
 
 ### Batallas
 
 ## Pruebas
+Estas pruebas sobre el funcionamiento del heap, y las herramientas usadas en el trabajo, estan implementados como TDA independientes, por lo que estas pruebas muestran su correcto funcionamiento de ambas.
 
+### Compilar y ejecutar
+Para compilar las pruebas usamos la linea
+
+``` bash
+gcc -g -Wall -Wconversion -Wtype-limits -pedantic -Werror -std=c99 -O0 librerias/*.c pruebas/pruebas.c -o prueba 
+```
+y con ayuda del makefile podemos usar la linea
+
+``` bash
+make vbuild
+```
+para compilar, para ejecutar las pruebas, usamos valgrind con la linea
+
+``` bash
+valgrind --leak-check=full --track-origins=yes --show-reachable=yes ./prueba
+```
+y con el makefile es 
+
+``` bash
+make valgrind
+```
