@@ -1,9 +1,13 @@
 CC=gcc
 VAL=valgrind
+
 NAME=aventura
-LIB=librerias/*.c
+VNAME=prueba
+
 CFLAGS=-g -Wall -Wconversion -Wtype-limits -pedantic -Werror -std=c99 -O0
 VFLAGS=--leak-check=full --track-origins=yes --show-reachable=yes
+
+LIB=librerias/*.c
 
 build:
 	$(CC) $(CFLAGS) $(LIB) main.c -o $(NAME)
@@ -14,8 +18,8 @@ exe: build
 default: build
 	./$(NAME) default
 
-build_v:
-	$(CC) $(CFLAGS) $(LIB) pruebas/pruebas.c -o $(NAME)
+vbuild:
+	$(CC) $(CFLAGS) $(LIB) pruebas/pruebas.c -o $(VNAME)
 
-valgrind: build_v
-	$(VAL) $(VFLAGS) ./$(NAME)
+valgrind: vbuild
+	$(VAL) $(VFLAGS) ./$(VNAME)
