@@ -150,25 +150,40 @@ void destruir_mapa(void* mapa) {
     free(mapa);
 }
 
+/*
+ * Como cada dato tiene una cantidad de atributos en un archivo, esta
+ * funcion devuelve la cantidad de atributos tiene que tener dependiendo
+ * de que dato es
+ */
+int cantidad_esperada(char tipo) {
+    if (tipo == GIMNASIO)
+        return CANT_GIMNASIO;
+    if (tipo == LIDER || tipo == ENTRENADOR)
+        return CANT_ENTRENADOR;
+    if (tipo == POKEMON)
+        return CANT_POKEMON;
+    return ERROR;
+}
+
+/*
+ * Lee completamente una linea y dependiendo del dato que lee, lo guardara en el gimnasio,
+ * entrenador, o pokemon, y devolvera cuando leyo
+ */
 int leer_linea(FILE* archivo, gimnasio_t* gimnasio, entrenador_t* entrenador, pokemon_t* pokemon, char* tipo) {
     int leido = leer_id(archivo, tipo);
     if (leido != CANT_ID)
         return leido;
 
-    int cant_esperada;
     leer_linea_archivo leer_archivo;
     void* dato;
 
     if (*tipo == GIMNASIO) {
-        cant_esperada = CANT_GIMNASIO;
         leer_archivo = leer_gimnasio;
         dato = gimnasio;
     } else if (*tipo == LIDER || *tipo == ENTRENADOR) {
-        cant_esperada = CANT_ENTRENADOR;
         leer_archivo = leer_entrenador;
         dato = entrenador;
     } else if (*tipo == POKEMON) {
-        cant_esperada = CANT_POKEMON;
         leer_archivo = leer_pokemon;
         dato = pokemon;
     } else {
@@ -176,12 +191,19 @@ int leer_linea(FILE* archivo, gimnasio_t* gimnasio, entrenador_t* entrenador, po
     }
 
     leido = leer_archivo(archivo, dato);
-    if (leido != cant_esperada)
+    if (leido != cantidad_esperada(*tipo))
         return leido;
 
     return leido;
 }
 
+/*
+ * Como uno no puede saber que tipo de dato aparece en la siguiente linea hasta que
+ * lee la linea, y si se lee la linea y no se guarda lo leido se pierde la informacion.
+ * Esta funcion lee la linea y guarda lo que consigue, y dependiendo del valor que uno
+ * espera que aparezca lo recibe o ignora, mediante pasar como parametro o no el dato
+ * que uno quiere
+ */
 int dato_esperado(FILE* archivo, gimnasio_t* gimnasio, entrenador_t* entrenador, pokemon_t* pokemon, char* tipo) {
 
     gimnasio_t gimnasio_aux;
@@ -190,7 +212,7 @@ int dato_esperado(FILE* archivo, gimnasio_t* gimnasio, entrenador_t* entrenador,
 
     int resultado = leer_linea(archivo, &gimnasio_aux, &entrenador_aux, &pokemon_aux, tipo);
     if (resultado == EOF)
-        return resultado;
+        return EOF;
 
     if (gimnasio && *tipo == GIMNASIO) {
         strcpy(gimnasio->nombre, gimnasio_aux.nombre);
@@ -198,10 +220,7 @@ int dato_esperado(FILE* archivo, gimnasio_t* gimnasio, entrenador_t* entrenador,
         gimnasio->id_funcion = gimnasio_aux.id_funcion;
     } else if (entrenador && (*tipo == LIDER || *tipo == ENTRENADOR)) {
         strcpy(entrenador->nombre, entrenador_aux.nombre);
-        if (*tipo == LIDER)
-            entrenador->lider = true;
-        else
-            entrenador->lider = false;
+        entrenador->lider = (*tipo == LIDER) ? true : false;
     } else if (pokemon && *tipo == POKEMON) {
         *pokemon = pokemon_aux;
     }
@@ -209,6 +228,17 @@ int dato_esperado(FILE* archivo, gimnasio_t* gimnasio, entrenador_t* entrenador,
     return resultado;
 }
 
+/*
+ * Lee el nombre del entrenador si todavia no tiene y los pokemones
+ * siguiente, en el caso que se encuentra con un entrenador indicando
+ * el final del entrenador principal, se guarda su nombre y su tipo
+ *
+ * Si el parametro principal no es true, y se encuentran mas de 6 pokemones
+ * se leeran pero no se guardan
+ *
+ * Si se encuentra con un lider y se pasa como parametro que no es un lider
+ * se leeran todos los pokemones pero no se guardaran
+ */
 int archivo_2_entrenador (FILE* archivo, void* entrenador, void* entrenador_siguiente, bool principal, bool lider) {
     entrenador_t siguiente;
     pokemon_t pokemon;
