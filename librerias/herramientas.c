@@ -245,7 +245,7 @@ void agregar_pokemon(void* entrenador, pokemon_t pokemon) {
  * el proximo entrenador) el entrenador con su nombre y su categoria, en el caso de no
  * leer un pokemon o entrenador, dejara de leer 
  */
-int guardar_pokemones (FILE* archivo, void* entrenador, void* entrenador_siguiente, bool principal, bool guardar) {
+void guardar_pokemones (FILE* archivo, void* entrenador, void* entrenador_siguiente, bool principal, bool guardar) {
     entrenador_t siguiente;
     pokemon_t pokemon;
     int resultado;
@@ -309,41 +309,43 @@ int archivo_2_personaje_principal (char ruta_archivo[], void* principal) {
     return (cant_pokemones > 0) ? EXITO : ERROR;
 }
 
-int archivo_2_gimnasio (char ruta_archivo[], void* gimnasio) {
-    if (!ruta_archivo || !gimnasio)
-        return ERROR;
-
-    FILE* archivo = fopen(ruta_archivo, "r");
-    if (!archivo) return ERROR;
-
-    char tipo;
-    int resultado = dato_esperado(archivo, gimnasio, NULL, NULL, &tipo);
-    if (resultado == EOF || tipo != GIMNASIO) {
-        fclose(archivo);
-        return ERROR;
+/*
+ * Agrega al entrenador a la pila de entrenadores del gimnasio
+ * Devuelve EXITO si puede agregarlo, sino devuelve ERROR
+ */
+int agregar_entrenador(gimnasio_t* gimnasio, entrenador_t* entrenador) {
+    if (entrenador->cant_pokemones > 0) {
+        int resultado = lista_apilar(((gimnasio_t*)gimnasio)->entrenadores, entrenador);
+        return (resultado != ERROR) ? EXITO : ERROR;
     }
+    return ERROR;
+}
 
+/*
+ * Va leyendo el archivo y va agregando los entrenadores validos al
+ * gimnasio, donde el primer entrenador es un lider y el resto entrenadores.
+ * Si el primer entrenador no es un lider devuelve ERROR, si un entrenador
+ * tiene etiqueda de lider se ignora y no se agrega a la lista de entrenadores
+ * Devuelve la cantidad de entrenadores que pudo guardar, si no puede
+ * guardar nada manda ERROR
+ */
+int guardar_entrenadores (FILE* archivo, gimnasio_t* gimnasio) {
+
+    int resultado;
     entrenador_t* p_entrenador = crear_entrenador();
     entrenador_t entrenador_siguiente;
-    bool lider = true, principal = false;
     strcpy(entrenador_siguiente.nombre, NOMBRE_PENDIENTE);
 
-    int cant_pokemones = archivo_2_entrenador(archivo, p_entrenador, &entrenador_siguiente, principal, lider);
-    if (cant_pokemones <= 0) {
+    int cant_pokemones = archivo_2_entrenador(archivo, p_entrenador, &entrenador_siguiente, false, true);
+    if (cant_pokemones == ERROR) {
         destruir_entrenador(p_entrenador);
-        fclose(archivo);
         return ERROR;
     }
 
-    lider = false;
     while (entrenador_inicializado(p_entrenador) && cant_pokemones >= 0) {
-        if (cant_pokemones > 0) {
-            resultado = lista_apilar(((gimnasio_t*)gimnasio)->entrenadores, p_entrenador);
-            if (resultado == ERROR)
-                destruir_entrenador(p_entrenador);
-        } else {
+        resultado = agregar_entrenador(gimnasio, p_entrenador);
+        if (resultado == ERROR)
             destruir_entrenador(p_entrenador);
-        }
 
         p_entrenador = crear_entrenador();
         if (entrenador_inicializado(&entrenador_siguiente)) {
@@ -352,12 +354,29 @@ int archivo_2_gimnasio (char ruta_archivo[], void* gimnasio) {
         }
         strcpy(entrenador_siguiente.nombre, NOMBRE_PENDIENTE);
 
-        cant_pokemones = archivo_2_entrenador(archivo, p_entrenador, &entrenador_siguiente, principal, lider);
+        cant_pokemones = archivo_2_entrenador(archivo, p_entrenador, &entrenador_siguiente, false, false);
     }
 
     ((gimnasio_t*)gimnasio)->cant_entrenadores = (int) ((gimnasio_t*)gimnasio)->entrenadores->cantidad;
 
     destruir_entrenador(p_entrenador);
+    return EXITO;
+}
+
+int archivo_2_gimnasio (char ruta_archivo[], void* gimnasio) {
+    if (!ruta_archivo || !gimnasio)
+        return ERROR;
+
+    FILE* archivo = fopen(ruta_archivo, "r");
+    if (!archivo) return ERROR;
+
+    char tipo;
+    ((gimnasio_t*)gimnasio)->cant_entrenadores = 0;
+
+    int resultado = dato_esperado(archivo, gimnasio, NULL, NULL, &tipo);
+    if (tipo == GIMNASIO)
+        resultado = guardar_entrenadores(archivo, gimnasio);
+
     fclose(archivo);
     return (((gimnasio_t*)gimnasio)->cant_entrenadores > 0) ? EXITO : ERROR;
 }
