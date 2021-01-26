@@ -61,21 +61,19 @@ entrenador_t* crear_entrenador() {
     lista_liberar_elemento destructor = destruir_pokemon;
     entrenador_t entrenador;
 
+    entrenador.lider = false;
     entrenador.cant_pokemones = 0;
     strcpy(entrenador.nombre, NOMBRE_PENDIENTE);
     entrenador.pokemones = lista_crear(destructor);
-    entrenador.lider = false;
 
     if (!entrenador.pokemones) return NULL;
 
     entrenador_t* p_entrenador = calloc(1, sizeof(entrenador_t));
 
-    if (!p_entrenador) {
+    if (!p_entrenador)
         lista_destruir(entrenador.pokemones);
-        return NULL;
-    }
-
-    (*p_entrenador) = entrenador;
+    else
+        (*p_entrenador) = entrenador;
 
     return p_entrenador;
 }
@@ -151,21 +149,6 @@ void destruir_mapa(void* mapa) {
 }
 
 /*
- * Como cada dato tiene una cantidad de atributos en un archivo, esta
- * funcion devuelve la cantidad de atributos tiene que tener dependiendo
- * de que dato es
- */
-int cantidad_esperada(char tipo) {
-    if (tipo == GIMNASIO)
-        return CANT_GIMNASIO;
-    if (tipo == LIDER || tipo == ENTRENADOR)
-        return CANT_ENTRENADOR;
-    if (tipo == POKEMON)
-        return CANT_POKEMON;
-    return ERROR;
-}
-
-/*
  * Lee completamente una linea y dependiendo del dato que lee, lo guardara en el gimnasio,
  * entrenador, o pokemon, y devolvera cuando leyo
  */
@@ -190,11 +173,7 @@ int leer_linea(FILE* archivo, gimnasio_t* gimnasio, entrenador_t* entrenador, po
         return leido;
     }
 
-    leido = leer_archivo(archivo, dato);
-    if (leido != cantidad_esperada(*tipo))
-        return leido;
-
-    return leido;
+    return leer_archivo(archivo, dato);
 }
 
 /*
@@ -229,6 +208,69 @@ int dato_esperado(FILE* archivo, gimnasio_t* gimnasio, entrenador_t* entrenador,
 }
 
 /*
+ * Si el entrenador no tiene un nombre asignado se leera el archivo
+ * ignorando las lineas hasta encontrar el formato de un entrenador
+ * y de ahi leer el nombre
+ */
+int conseguir_nombre (FILE* archivo, entrenador_t* entrenador) {
+
+    int resultado = 0;
+    char tipo;
+
+    if (!entrenador_inicializado(entrenador)) {
+        resultado = dato_esperado(archivo, NULL, entrenador, NULL, &tipo);
+        while (resultado != EOF && (tipo != LIDER && tipo != ENTRENADOR))
+            resultado = dato_esperado(archivo, NULL, entrenador, NULL, &tipo);
+    }
+
+    return (resultado != EOF) ? EXITO : ERROR;
+}
+
+/*
+ * Agrega un pokemon a la lista de pokemones que tiene un entrenador
+ */
+void agregar_pokemon(void* entrenador, pokemon_t pokemon) {
+    pokemon_t* p_pokemon = crear_pokemon();
+    if (!p_pokemon) return;
+    *p_pokemon = pokemon;
+
+    int resultado = lista_insertar(((entrenador_t*)entrenador)->pokemones, p_pokemon);
+    if (resultado == ERROR)
+        destruir_pokemon(p_pokemon);
+}
+
+/*
+ * Va leyendo el archivo y va agregando los pokemones a la lista del entrenador, en caso
+ * de que lea un entrenador, devuelve (en el caso de que se le haya pasado por parametro
+ * el proximo entrenador) el entrenador con su nombre y su categoria, en el caso de no
+ * leer un pokemon o entrenador, dejara de leer 
+ */
+int guardar_pokemones (FILE* archivo, void* entrenador, void* entrenador_siguiente, bool principal, bool guardar) {
+    entrenador_t siguiente;
+    pokemon_t pokemon;
+    int resultado;
+    char tipo;
+
+    resultado = dato_esperado(archivo, NULL, &siguiente, &pokemon, &tipo);
+    while (resultado != EOF && tipo == POKEMON) {
+        if (guardar) 
+            agregar_pokemon(entrenador, pokemon);
+
+        if (((entrenador_t*)entrenador)->cant_pokemones >= MAX_POKEMON_COMBATE && !principal)
+            guardar = false;
+
+        resultado = dato_esperado(archivo, NULL, &siguiente, &pokemon, &tipo);
+    }
+
+    if (entrenador_siguiente && !entrenador_inicializado(entrenador)) {
+        strcpy(((entrenador_t*)entrenador_siguiente)->nombre, siguiente.nombre);
+        ((entrenador_t*)entrenador_siguiente)->lider = siguiente.lider;
+    }
+
+    ((entrenador_t*)entrenador)->cant_pokemones = (int) ((entrenador_t*)entrenador)->pokemones->cantidad;
+}
+
+/*
  * Lee el nombre del entrenador si todavia no tiene y los pokemones
  * siguiente, en el caso que se encuentra con un entrenador indicando
  * el final del entrenador principal, se guarda su nombre y su tipo
@@ -240,47 +282,16 @@ int dato_esperado(FILE* archivo, gimnasio_t* gimnasio, entrenador_t* entrenador,
  * se leeran todos los pokemones pero no se guardaran
  */
 int archivo_2_entrenador (FILE* archivo, void* entrenador, void* entrenador_siguiente, bool principal, bool lider) {
-    entrenador_t siguiente;
-    pokemon_t pokemon;
     bool guardar = true;
     int resultado;
-    char tipo;
 
-    if (!entrenador_inicializado(entrenador)) {
-        resultado = dato_esperado(archivo, NULL, entrenador, NULL, &tipo);
-        while (resultado != EOF && (tipo != LIDER && tipo != ENTRENADOR)) {
-            resultado = dato_esperado(archivo, NULL, entrenador, NULL, &tipo);
-        }
-
-        if (resultado == EOF) return ERROR;
-    }
+    resultado = conseguir_nombre(archivo, entrenador);
+    if (resultado == ERROR) return ERROR;
 
     if (!((entrenador_t*)entrenador)->lider && lider)
         guardar = false;
 
-    resultado = dato_esperado(archivo, NULL, &siguiente, &pokemon, &tipo);
-    while (resultado != EOF && tipo == POKEMON) {
-        if (guardar) {
-            pokemon_t* p_pokemon = crear_pokemon();
-            *p_pokemon = pokemon;
-
-            resultado = lista_insertar(((entrenador_t*)entrenador)->pokemones, p_pokemon);
-            if (resultado == ERROR)
-                destruir_pokemon(p_pokemon);
-        }
-
-        if (((entrenador_t*)entrenador)->cant_pokemones >= MAX_POKEMON_COMBATE && !principal)
-            guardar = false;
-
-        resultado = dato_esperado(archivo, NULL, &siguiente, &pokemon, &tipo);
-    }
-
-    if (entrenador_siguiente && resultado != EOF) {
-        strcpy(((entrenador_t*)entrenador_siguiente)->nombre, siguiente.nombre);
-        ((entrenador_t*)entrenador_siguiente)->lider = siguiente.lider;
-    }
-
-    ((entrenador_t*)entrenador)->cant_pokemones = (int) ((entrenador_t*)entrenador)->pokemones->cantidad;
+    guardar_pokemones(archivo, entrenador, entrenador_siguiente, principal, guardar);
 
     return ((entrenador_t*)entrenador)->cant_pokemones;
 }
