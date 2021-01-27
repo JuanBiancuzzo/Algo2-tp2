@@ -28,13 +28,13 @@ typedef struct gimnasio {
 	char nombre[MAX_NOMBRE];
 	int dificultad;
 	int id_funcion;
-	lista_t* entrenadores; // es una pila
+	lista_t* entrenadores; // una pila de entrenadores
 	int cant_entrenadores;
 } gimnasio_t;
 
 typedef struct entrenador {
 	char nombre[MAX_NOMBRE];
-	lista_t* pokemones; // es una lista
+	lista_t* pokemones; // una lista de pokemones
 	int cant_pokemones;
 	bool lider;
 } entrenador_t;
@@ -50,7 +50,7 @@ typedef struct pokemon{
  * Se encarga de reservar memoria en el heap para el personaje principal
  * y devolver esa direccion, en caso de que no lo logre devuelve NULL
  */
-entrenador_t* crear_entrenador(); // LISTO
+entrenador_t* crear_entrenador();
 
 /*
  * Se encarga de reservar memoria en el heap para el gimnasio y devuelve
