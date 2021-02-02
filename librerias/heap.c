@@ -62,10 +62,10 @@ int heap_insertar(heap_t* heap, void* elemento) {
 
     if (!heap) return ERROR;
 
-    heap->elementos[heap->cant_elementos] = elemento;
-    (heap->cant_elementos)++;
+    heap->elementos[heap->cantidad] = elemento;
+    (heap->cantidad)++;
 
-    heap_subir(heap, (heap->cant_elementos) - 1);
+    heap_subir(heap, (heap->cantidad) - 1);
     return EXITO;
 }
 
@@ -94,9 +94,9 @@ void heap_bajar(heap_t* heap, int padre) {
 
     int hijo = hijo_izq, comparacion;
 
-    if (hijo_izq > heap->cant_elementos) return;
+    if (hijo_izq > heap->cantidad) return;
 
-    if (hijo_der <= heap->cant_elementos) {
+    if (hijo_der <= heap->cantidad) {
         comparacion = heap->comparador(heap->elementos[hijo_izq], heap->elementos[hijo_der]);
         hijo = (comparacion > 0) ? hijo_der : hijo_izq;
     }
@@ -123,8 +123,8 @@ void heap_eliminar_raiz(heap_t* heap) {
     if (heap->destructor)
         heap->destructor(heap_raiz(heap));
 
-    heap->elementos[0] = heap->elementos[heap->cant_elementos-1];
-    (heap->cant_elementos)--;
+    heap->elementos[0] = heap->elementos[heap->cantidad-1];
+    (heap->cantidad)--;
 
     heap_bajar(heap, 0);
 
@@ -135,7 +135,7 @@ void heap_destruir(heap_t* heap) {
     if (!heap) return;
 
     if (heap->destructor)
-        for (int i = 0; i < heap->cant_elementos; i++)
+        for (int i = 0; i < heap->cantidad; i++)
             heap->destructor(heap->elementos[i]);
 
     free(heap);

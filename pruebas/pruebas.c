@@ -46,7 +46,7 @@ void probar_heap_crear_inicializacion () {
     pa2m_afirmar((heap = heap_crear(comparador, destructor)) != NULL,
                  "Mensaje de creacion correcta al crear el arbol");
 
-    pa2m_afirmar(heap->cant_elementos == 0,
+    pa2m_afirmar(heap->cantidad == 0,
                  "La cantidad de elementos se inicializan correctamente");
 
     pa2m_afirmar(heap->comparador == comparador,
@@ -169,7 +169,7 @@ void probar_heap_eliminar_raiz_con_un_elemento () {
     heap_insertar(heap, &elemento);
     heap_eliminar_raiz(heap);
 
-    pa2m_afirmar(heap->cant_elementos == 0,
+    pa2m_afirmar(heap->cantidad == 0,
                  "Vuelve el contador a 0 despues de eliminar el primer elemento del heap\n");
 
     heap_destruir(heap);
@@ -187,7 +187,7 @@ void probar_heap_eliminar_raiz_con_varios_elementos () {
 
     heap_eliminar_raiz(heap);
 
-    pa2m_afirmar(heap->cant_elementos == 2,
+    pa2m_afirmar(heap->cantidad == 2,
                  "Vuelve el contador a 2 despues de eliminar el primer elemento con un heap de 3 elementos");
 
     pa2m_afirmar(elemento_dos == *(int*)heap->elementos[0],
@@ -249,28 +249,26 @@ void probar_heap_destruir () {
 
 void probar_archivo_2_personaje_principal_valores_invalidos () {
 
-    char ruta_archivo[MAX_NOMBRE];
-    entrenador_t personaje;
+    entrenador_t* personaje;
 
-    pa2m_afirmar(archivo_2_personaje_principal(NULL, &personaje) == ERROR,
+    pa2m_afirmar((personaje = archivo_2_personaje_principal(NULL)) == NULL,
                  "Detecta correctamente que la ruta del archivo es invalido");
 
-    pa2m_afirmar(archivo_2_personaje_principal(ruta_archivo, NULL) == ERROR,
-                 "Detecta correctamente que la direccion del personaje es invalido");
+    destruir_entrenador(personaje);
 
-    pa2m_afirmar(archivo_2_personaje_principal("algo_random.txt", &personaje) == ERROR,
+    pa2m_afirmar((personaje = archivo_2_personaje_principal("algo_random.txt")) == NULL,
                  "Detecta correctamente que la ruta del archivo no lleva a ningun lado\n");
 
+    destruir_entrenador(personaje);
 }
 
 void probar_archivo_2_personaje_principal_formato_invalidos_sin_entrenado () {
 
-    entrenador_t* personaje = crear_entrenador();
+    entrenador_t* personaje;
 
-    char ruta_archivo[MAX_NOMBRE];
-    strcpy(ruta_archivo, "pruebas/per_principal_formato_invalido_sin_entrenador.txt");
+    char ruta_archivo[MAX_NOMBRE] = "pruebas/per_principal_formato_invalido_sin_entrenador.txt";
 
-    pa2m_afirmar(archivo_2_personaje_principal(ruta_archivo, personaje) == ERROR,
+    pa2m_afirmar((personaje = archivo_2_personaje_principal(ruta_archivo)) == NULL,
                  "Reconoce que no hay entrenador y manda un error\n");
 
     destruir_entrenador(personaje);
@@ -278,12 +276,11 @@ void probar_archivo_2_personaje_principal_formato_invalidos_sin_entrenado () {
 
 void probar_archivo_2_personaje_principal_formato_invalidos_sin_pokemones () {
 
-    entrenador_t* personaje = crear_entrenador();
+    entrenador_t* personaje;
 
-    char ruta_archivo[MAX_NOMBRE];
-    strcpy(ruta_archivo, "pruebas/per_principal_formato_invalido_sin_pokemones.txt");
+    char ruta_archivo[MAX_NOMBRE] = "pruebas/per_principal_formato_invalido_sin_pokemones.txt";
 
-    pa2m_afirmar(archivo_2_personaje_principal(ruta_archivo, personaje) == ERROR,
+    pa2m_afirmar((personaje = archivo_2_personaje_principal(ruta_archivo)) == NULL,
                  "Reconoce que no hay pokemones y manda un error\n");
 
     destruir_entrenador(personaje);
@@ -291,15 +288,15 @@ void probar_archivo_2_personaje_principal_formato_invalidos_sin_pokemones () {
 
 void probar_archivo_2_personaje_principal_formato_invalidos_corrupto () {
 
-    entrenador_t* personaje = crear_entrenador();
+    entrenador_t* personaje;
 
     char ruta_archivo[MAX_NOMBRE];
     strcpy(ruta_archivo, "pruebas/per_principal_formato_invalido_corrupto.txt");
 
-    pa2m_afirmar(archivo_2_personaje_principal(ruta_archivo, personaje) == EXITO,
+    pa2m_afirmar((personaje = archivo_2_personaje_principal(ruta_archivo)),
                  "Mensaje de exito en un archivo donde en el medio de los pokemones hay un error");
 
-    pa2m_afirmar(personaje->cant_pokemones == 2,
+    pa2m_afirmar(personaje->pokemones->cantidad == 2,
                  "La cantidad de pokemones es 2 al encontrar el tercer pokemon con un error\n");
 
     destruir_entrenador(personaje);
@@ -307,26 +304,25 @@ void probar_archivo_2_personaje_principal_formato_invalidos_corrupto () {
 
 void probar_archivo_2_personaje_principal_formato_validos () {
 
-    entrenador_t* personaje = crear_entrenador();
+    entrenador_t* personaje;
     int cant_pokemones = 11;
 
-    char ruta_archivo[MAX_NOMBRE];
-    strcpy(ruta_archivo, "pruebas/per_principal_formato_valido.txt");
+    char ruta_archivo[MAX_NOMBRE] = "pruebas/per_principal_formato_valido.txt";
 
-    pa2m_afirmar(archivo_2_personaje_principal(ruta_archivo, personaje) == EXITO,
+    pa2m_afirmar((personaje = archivo_2_personaje_principal(ruta_archivo)),
                  "Mensaje de exito al convertir el archivo a personaje");
 
     pa2m_afirmar(strcmp(personaje->nombre, "Ash") == 0,
                  "Reconoce correctamente el nombre del personaje principal");
 
-    pa2m_afirmar(personaje->cant_pokemones == cant_pokemones,
+    pa2m_afirmar(personaje->pokemones->cantidad == (size_t) cant_pokemones,
                  "Reconoce la cantidad correcta de pokemones");
 
     pa2m_afirmar(personaje->pokemones,
-                 "Crea una cola con los pokemones");
+                 "Crea una lista con los pokemones");
 
     pa2m_afirmar((int)lista_elementos(personaje->pokemones) == cant_pokemones,
-                 "La cola tiene la cantidad correcta de pokemones\n");
+                 "La lista tiene la cantidad correcta de pokemones\n");
 
     destruir_entrenador(personaje);
 }
@@ -345,28 +341,26 @@ void probar_archivo_2_personaje_principal () {
 
 void probar_archivo_2_gimnasio_valores_invalidos () {
 
-    char ruta_archivo[MAX_NOMBRE];
-    gimnasio_t gimnasio;
+    gimnasio_t* gimnasio;
 
-    pa2m_afirmar(archivo_2_gimnasio(NULL, &gimnasio) == ERROR,
+    pa2m_afirmar((gimnasio = archivo_2_gimnasio(NULL)) == NULL,
                  "Detecta correctamente que la ruta del archivo es invalido");
 
-    pa2m_afirmar(archivo_2_gimnasio(ruta_archivo, NULL) == ERROR,
-                 "Detecta correctamente que la direccion del gimnasio es invalido");
+    destruir_gimnasio(gimnasio);
 
-    pa2m_afirmar(archivo_2_gimnasio("algo_random.txt", &gimnasio) == ERROR,
+    pa2m_afirmar((gimnasio = archivo_2_gimnasio("algo_random.txt")) == NULL,
                  "Detecta correctamente que la ruta del archivo no lleva a ningun lado\n");
 
+    destruir_gimnasio(gimnasio);
 }
 
 void probar_archivo_2_gimnasio_formato_invalidos_sin_gimnasio () {
 
-    gimnasio_t* gimnasio = crear_gimnasio();
+    gimnasio_t* gimnasio;
 
-    char ruta_archivo[MAX_NOMBRE];
-    strcpy(ruta_archivo, "pruebas/gimnasio_formato_invalido_sin_gimnasio.txt");
+    char ruta_archivo[MAX_NOMBRE] = "pruebas/gimnasio_formato_invalido_sin_gimnasio.txt";
 
-    pa2m_afirmar(archivo_2_gimnasio(ruta_archivo, gimnasio) == ERROR,
+    pa2m_afirmar((gimnasio = archivo_2_gimnasio(ruta_archivo)) == NULL,
                  "Reconoce que no hay gimnasio y manda un error\n");
 
     destruir_gimnasio(gimnasio);
@@ -374,12 +368,11 @@ void probar_archivo_2_gimnasio_formato_invalidos_sin_gimnasio () {
 
 void probar_archivo_2_gimnasio_formato_invalidos_sin_lider () {
 
-    gimnasio_t* gimnasio = crear_gimnasio();
+    gimnasio_t* gimnasio;
 
-    char ruta_archivo[MAX_NOMBRE];
-    strcpy(ruta_archivo, "pruebas/gimnasio_formato_invalido_sin_lider.txt");
+    char ruta_archivo[MAX_NOMBRE] = "pruebas/gimnasio_formato_invalido_sin_lider.txt";
 
-    pa2m_afirmar(archivo_2_gimnasio(ruta_archivo, gimnasio) == ERROR,
+    pa2m_afirmar((gimnasio = archivo_2_gimnasio(ruta_archivo)) == NULL,
                  "Reconoce que el gimnasio no tiene lider y manda un error\n");
 
     destruir_gimnasio(gimnasio);
@@ -387,12 +380,11 @@ void probar_archivo_2_gimnasio_formato_invalidos_sin_lider () {
 
 void probar_archivo_2_gimnasio_formato_invalidos_lider_sin_pokemon () {
 
-    gimnasio_t* gimnasio = crear_gimnasio();
+    gimnasio_t* gimnasio;
 
-    char ruta_archivo[MAX_NOMBRE];
-    strcpy(ruta_archivo, "pruebas/gimnasio_formato_invalido_lider_sin_pokemon.txt");
+    char ruta_archivo[MAX_NOMBRE] = "pruebas/gimnasio_formato_invalido_lider_sin_pokemon.txt";
 
-    pa2m_afirmar(archivo_2_gimnasio(ruta_archivo, gimnasio) == ERROR,
+    pa2m_afirmar((gimnasio = archivo_2_gimnasio(ruta_archivo)) == NULL,
                  "Reconoce que el lider no tiene pokemones, por lo que no tiene un lider valido y manda un error\n");
 
     destruir_gimnasio(gimnasio);
@@ -400,16 +392,15 @@ void probar_archivo_2_gimnasio_formato_invalidos_lider_sin_pokemon () {
 
 void probar_archivo_2_gimnasio_formato_invalidos_entrenador_sin_pokemon () {
 
-    gimnasio_t* gimnasio = crear_gimnasio();
+    gimnasio_t* gimnasio;
     int cant_entrenadores = 2;
 
-    char ruta_archivo[MAX_NOMBRE];
-    strcpy(ruta_archivo, "pruebas/gimnasio_formato_invalido_entrenador_sin_pokemon.txt");
+    char ruta_archivo[MAX_NOMBRE] = "pruebas/gimnasio_formato_invalido_entrenador_sin_pokemon.txt";
 
-    pa2m_afirmar(archivo_2_gimnasio(ruta_archivo, gimnasio) == EXITO,
-                 "Aunque haya un entrenador invalido, lo ignora y sigue leyendo");
+    pa2m_afirmar((gimnasio = archivo_2_gimnasio(ruta_archivo)),
+                 "Aunque haya un entrenador invalido, lo ignora y sigue leyendo, y no manda error");
 
-    pa2m_afirmar(gimnasio->cant_entrenadores == cant_entrenadores,
+    pa2m_afirmar(gimnasio->entrenadores->cantidad == (size_t)cant_entrenadores,
                  "Devuelve la cantidad correcta de entrenadores\n");
 
     destruir_gimnasio(gimnasio);
@@ -417,26 +408,22 @@ void probar_archivo_2_gimnasio_formato_invalidos_entrenador_sin_pokemon () {
 
 void probar_archivo_2_gimnasio_formato_validos () {
 
-    gimnasio_t* gimnasio = crear_gimnasio();
+    gimnasio_t* gimnasio;
     int cant_entrenadores = 3;
 
-    char ruta_archivo[MAX_NOMBRE];
-    strcpy(ruta_archivo, "pruebas/gimnasio_formato_valido.txt");
+    char ruta_archivo[MAX_NOMBRE] = "pruebas/gimnasio_formato_valido.txt";
 
-    pa2m_afirmar(archivo_2_gimnasio(ruta_archivo, gimnasio) == EXITO,
+    pa2m_afirmar((gimnasio = archivo_2_gimnasio(ruta_archivo)),
                  "Mensaje de exito al convertir el archivo a un gimnasio");
 
     pa2m_afirmar(strcmp(gimnasio->nombre, "Gimnasio de Ciudad Celeste") == 0,
                  "Reconoce correctamente el nombre del gimnasio");
 
-    pa2m_afirmar(gimnasio->cant_entrenadores == cant_entrenadores,
+    pa2m_afirmar(gimnasio->entrenadores->cantidad == (size_t) cant_entrenadores,
                  "Reconoce la cantidad correcta de entrenadores");
 
     pa2m_afirmar(gimnasio->entrenadores,
                  "Crea una pila con los entrenadores");
-
-    pa2m_afirmar((int)lista_elementos(gimnasio->entrenadores) == cant_entrenadores,
-                 "La pila tiene la cantidad correcta de entrenadores\n");
 
     destruir_gimnasio(gimnasio);
 }
@@ -456,13 +443,10 @@ void probar_archivo_2_gimnasio () {
 }
 
 void probar_gimnasio_2_mapa_valores_invalidos () {
+
     mapa_t* mapa = crear_mapa();
-
-    gimnasio_t* gimnasio = crear_gimnasio();
-
-    char ruta_archivo[MAX_NOMBRE];
-    strcpy(ruta_archivo, "pruebas/gimnasio_formato_valido.txt");
-    archivo_2_gimnasio (ruta_archivo, gimnasio);
+    char ruta_archivo[MAX_NOMBRE] = "pruebas/gimnasio_formato_valido.txt";
+    gimnasio_t* gimnasio = archivo_2_gimnasio (ruta_archivo);
 
     pa2m_afirmar(gimnasio_2_mapa(NULL, gimnasio) == ERROR,
                  "Detecta correctamente que el mapa es invalido");
@@ -475,13 +459,10 @@ void probar_gimnasio_2_mapa_valores_invalidos () {
 }
 
 void probar_gimnasio_2_mapa_gimnasio_valido () {
-     mapa_t* mapa = crear_mapa();
 
-    gimnasio_t* gimnasio = crear_gimnasio();
-
-    char ruta_archivo[MAX_NOMBRE];
-    strcpy(ruta_archivo, "pruebas/gimnasio_formato_valido.txt");
-    archivo_2_gimnasio (ruta_archivo, gimnasio);
+    mapa_t* mapa = crear_mapa();
+    char ruta_archivo[MAX_NOMBRE] = "pruebas/gimnasio_formato_valido.txt";
+    gimnasio_t* gimnasio = archivo_2_gimnasio (ruta_archivo);
 
     pa2m_afirmar(gimnasio_2_mapa(mapa, gimnasio) == EXITO,
                  "Mensaje de exito al agregar un gimnasio al mapa");
@@ -496,15 +477,11 @@ void probar_gimnasio_2_mapa_gimnasio_valido () {
 }
 
 void probar_gimnasio_2_mapa_varios_gimnasios_validos () {
-     mapa_t* mapa = crear_mapa();
 
-    gimnasio_t* gimnasio_uno = crear_gimnasio();
-    gimnasio_t* gimnasio_dos = crear_gimnasio();
-
-    char ruta_archivo[MAX_NOMBRE];
-    strcpy(ruta_archivo, "pruebas/gimnasio_formato_valido.txt");
-    archivo_2_gimnasio (ruta_archivo, gimnasio_uno);
-    archivo_2_gimnasio (ruta_archivo, gimnasio_dos);
+    mapa_t* mapa = crear_mapa();
+    char ruta_archivo[MAX_NOMBRE] = "pruebas/gimnasio_formato_valido.txt";
+    gimnasio_t* gimnasio_uno = archivo_2_gimnasio (ruta_archivo);
+    gimnasio_t* gimnasio_dos = archivo_2_gimnasio (ruta_archivo);
 
     pa2m_afirmar(gimnasio_2_mapa(mapa, gimnasio_uno) == EXITO,
                  "Mensaje de exito al agregar el primer gimnasio al mapa");
@@ -548,16 +525,13 @@ void probar_batalla_pokemon_valores_invalidos () {
 }
 
 void probar_batalla_pokemon_principal_muchos_pokemones () {
-    entrenador_t* personaje = crear_entrenador();
-    gimnasio_t* gimnasio = crear_gimnasio();
     funcion_batalla estilo = batalla_prueba;
-    char ruta_archivo[MAX_NOMBRE];
 
-    strcpy(ruta_archivo, "pruebas/principal_muchos_pokemones.txt");
-    archivo_2_personaje_principal (ruta_archivo, personaje);
+    char ruta_archivo[MAX_NOMBRE] = "pruebas/principal_muchos_pokemones.txt";
+    entrenador_t* personaje = archivo_2_personaje_principal (ruta_archivo);
 
     strcpy(ruta_archivo, "pruebas/enemigo_pocos_pokemones.txt");
-    archivo_2_gimnasio (ruta_archivo, gimnasio);
+    gimnasio_t* gimnasio = archivo_2_gimnasio (ruta_archivo);
 
     pa2m_afirmar(batalla_pokemon(personaje, (entrenador_t*)lista_elemento_en_posicion(gimnasio->entrenadores, 0), estilo) == GANO_PRINCIPAL,
                 "Gana correctamente el personaje principal porque tiene mas pokemones\n");
@@ -567,16 +541,13 @@ void probar_batalla_pokemon_principal_muchos_pokemones () {
 }
 
 void probar_batalla_pokemon_enemigo_muchos_pokemones () {
-    entrenador_t* personaje = crear_entrenador();
-    gimnasio_t* gimnasio = crear_gimnasio();
     funcion_batalla estilo = batalla_prueba;
-    char ruta_archivo[MAX_NOMBRE];
 
-    strcpy(ruta_archivo, "pruebas/principal_pocos_pokemones.txt");
-    archivo_2_personaje_principal (ruta_archivo, personaje);
+    char ruta_archivo[MAX_NOMBRE] = "pruebas/principal_pocos_pokemones.txt";
+    entrenador_t* personaje = archivo_2_personaje_principal (ruta_archivo);
 
     strcpy(ruta_archivo, "pruebas/enemigo_muchos_pokemones.txt");
-    archivo_2_gimnasio (ruta_archivo, gimnasio);
+    gimnasio_t* gimnasio = archivo_2_gimnasio (ruta_archivo);
 
     pa2m_afirmar(batalla_pokemon(personaje, (entrenador_t*)lista_elemento_en_posicion(gimnasio->entrenadores, 0), estilo) == GANO_ENEMIGO,
                 "Gana correctamente el enemigo porque tiene mas pokemones\n");
@@ -586,16 +557,13 @@ void probar_batalla_pokemon_enemigo_muchos_pokemones () {
 }
 
 void probar_batalla_pokemon_dos_muchos_pokemones () {
-    entrenador_t* personaje = crear_entrenador();
-    gimnasio_t* gimnasio = crear_gimnasio();
     funcion_batalla estilo = batalla_prueba;
-    char ruta_archivo[MAX_NOMBRE];
 
-    strcpy(ruta_archivo, "pruebas/principal_muchos_pokemones.txt");
-    archivo_2_personaje_principal (ruta_archivo, personaje);
+    char ruta_archivo[MAX_NOMBRE] = "pruebas/principal_muchos_pokemones.txt";
+    entrenador_t* personaje = archivo_2_personaje_principal (ruta_archivo);
 
     strcpy(ruta_archivo, "pruebas/enemigo_muchos_pokemones.txt");
-    archivo_2_gimnasio (ruta_archivo, gimnasio);
+    gimnasio_t* gimnasio = archivo_2_gimnasio (ruta_archivo);
 
     pa2m_afirmar(batalla_pokemon(personaje, (entrenador_t*)lista_elemento_en_posicion(gimnasio->entrenadores, 0), estilo) == GANO_PRINCIPAL,
                 "Gana correctamente el personaje principal aunque la misma cantidad de pokemones, el empieza ganando\n");
@@ -605,16 +573,14 @@ void probar_batalla_pokemon_dos_muchos_pokemones () {
 }
 
 void probar_batalla_pokemon_dos_pocos_pokemones () {
-    entrenador_t* personaje = crear_entrenador();
-    gimnasio_t* gimnasio = crear_gimnasio();
     funcion_batalla estilo = batalla_prueba;
     char ruta_archivo[MAX_NOMBRE];
 
     strcpy(ruta_archivo, "pruebas/principal_pocos_pokemones.txt");
-    archivo_2_personaje_principal (ruta_archivo, personaje);
+    entrenador_t* personaje = archivo_2_personaje_principal (ruta_archivo);
 
     strcpy(ruta_archivo, "pruebas/enemigo_pocos_pokemones.txt");
-    archivo_2_gimnasio (ruta_archivo, gimnasio);
+    gimnasio_t* gimnasio = archivo_2_gimnasio (ruta_archivo);
 
     pa2m_afirmar(batalla_pokemon(personaje, (entrenador_t*)lista_elemento_en_posicion(gimnasio->entrenadores, 0), estilo) == GANO_PRINCIPAL,
                 "Gana correctamente el personaje principal aunque la misma cantidad de pokemones, el empieza ganando\n");
@@ -636,13 +602,11 @@ void probar_batalla_pokemon () {
 }
 
 void probar_tomar_prestado_valores_invalidos() {
-    gimnasio_t* gimnasio = crear_gimnasio();
-    char ruta_archivo[MAX_NOMBRE];
     entrenador_t principal;
     int id_pokemon = 5;
 
-    strcpy(ruta_archivo, "pruebas/enemigo_pocos_pokemones.txt");
-    archivo_2_gimnasio (ruta_archivo, gimnasio);
+    char ruta_archivo[MAX_NOMBRE] = "pruebas/enemigo_pocos_pokemones.txt";
+    gimnasio_t* gimnasio = archivo_2_gimnasio (ruta_archivo);
 
     entrenador_t* enemigo = (entrenador_t*)lista_elemento_en_posicion(gimnasio->entrenadores, 0);
 
@@ -659,27 +623,24 @@ void probar_tomar_prestado_valores_invalidos() {
 }
 
 void probar_tomar_prestado_principal_pocos_pokemones () {
-    entrenador_t* principal = crear_entrenador();
-    gimnasio_t* gimnasio = crear_gimnasio();
-    char ruta_archivo[MAX_NOMBRE];
+
+    char ruta_archivo[MAX_NOMBRE] = "pruebas/principal_pocos_pokemones.txt";
+    entrenador_t* principal = archivo_2_personaje_principal (ruta_archivo);
     int id_pokemon = 2;
 
-    strcpy(ruta_archivo, "pruebas/principal_pocos_pokemones.txt");
-    archivo_2_personaje_principal (ruta_archivo, principal);
-
     strcpy(ruta_archivo, "pruebas/enemigo_pocos_pokemones.txt");
-    archivo_2_gimnasio (ruta_archivo, gimnasio);
+    gimnasio_t* gimnasio = archivo_2_gimnasio (ruta_archivo);
 
     entrenador_t* enemigo = (entrenador_t*)lista_elemento_en_posicion(gimnasio->entrenadores, 0);
 
     pa2m_afirmar(tomar_prestado(principal, enemigo, id_pokemon) == EXITO,
                  "Mensaje de exito al tomar prestado un pokemon");
 
-    pokemon_t* pokemon_prestado = lista_elemento_en_posicion(principal->pokemones, (size_t) (principal->cant_pokemones - 1));
+    pokemon_t* pokemon_prestado = lista_elemento_en_posicion(principal->pokemones, (size_t) (principal->pokemones->cantidad - 1));
     pa2m_afirmar(strcmp("Shellder", pokemon_prestado->nombre) == 0,
                  "Se presto el pokemon correcto ubicada en la ultima posicion");
 
-    pa2m_afirmar(principal->cant_pokemones == 4,
+    pa2m_afirmar(principal->pokemones->cantidad == 4,
                  "Aumento la cantidad de pokemones del personaje principal\n");
 
     destruir_entrenador(principal);
@@ -687,16 +648,13 @@ void probar_tomar_prestado_principal_pocos_pokemones () {
 }
 
 void probar_tomar_prestado_principal_muchos_pokemones () {
-    entrenador_t* principal = crear_entrenador();
-    gimnasio_t* gimnasio = crear_gimnasio();
-    char ruta_archivo[MAX_NOMBRE];
+
+    char ruta_archivo[MAX_NOMBRE] = "pruebas/principal_muchos_pokemones.txt";
+    entrenador_t* principal = archivo_2_personaje_principal (ruta_archivo);
     int id_pokemon = 2;
 
-    strcpy(ruta_archivo, "pruebas/principal_muchos_pokemones.txt");
-    archivo_2_personaje_principal (ruta_archivo, principal);
-
     strcpy(ruta_archivo, "pruebas/enemigo_pocos_pokemones.txt");
-    archivo_2_gimnasio (ruta_archivo, gimnasio);
+    gimnasio_t* gimnasio = archivo_2_gimnasio (ruta_archivo);
 
     entrenador_t* enemigo = (entrenador_t*)lista_elemento_en_posicion(gimnasio->entrenadores, 0);
 
@@ -707,7 +665,7 @@ void probar_tomar_prestado_principal_muchos_pokemones () {
     pa2m_afirmar(strcmp("Shellder", pokemon_prestado->nombre) == 0,
                  "Se presto el pokemon correcto ubicada como 7mo pokemon");
 
-    pa2m_afirmar(principal->cant_pokemones == 8,
+    pa2m_afirmar(principal->pokemones->cantidad == 8,
                  "Aumento la cantidad de pokemones del personaje principal\n");
 
     destruir_entrenador(principal);
@@ -723,12 +681,10 @@ void probar_tomar_prestado () {
 }
 
 void probar_reordenar_pokemones_valores_invalido () {
-    entrenador_t* principal = crear_entrenador();
-    char ruta_archivo[MAX_NOMBRE];
-    int pkm_uno = 2, pkm_dos = 3;
 
-    strcpy(ruta_archivo, "pruebas/principal_muchos_pokemones.txt");
-    archivo_2_personaje_principal (ruta_archivo, principal);
+    char ruta_archivo[MAX_NOMBRE] = "pruebas/principal_muchos_pokemones.txt";
+    entrenador_t* principal = archivo_2_personaje_principal (ruta_archivo);
+    int pkm_uno = 2, pkm_dos = 3;
 
     pa2m_afirmar(reordenar_pokemones(NULL, pkm_uno, pkm_dos) == ERROR,
                  "Reconoce que no tiene una lista de pokemones");
@@ -746,12 +702,10 @@ void probar_reordenar_pokemones_valores_invalido () {
 }
 
 void probar_reordenar_pokemones_intercambio () {
-    entrenador_t* principal = crear_entrenador();
-    char ruta_archivo[MAX_NOMBRE];
-    int pkm_uno = 1, pkm_dos = 2;
 
-    strcpy(ruta_archivo, "pruebas/principal_muchos_pokemones.txt");
-    archivo_2_personaje_principal (ruta_archivo, principal);
+    char ruta_archivo[MAX_NOMBRE] = "pruebas/principal_muchos_pokemones.txt";
+    entrenador_t* principal  = archivo_2_personaje_principal (ruta_archivo);
+    int pkm_uno = 1, pkm_dos = 2;
 
     char pkm_uno_nombre[MAX_NOMBRE], pkm_dos_nombre[MAX_NOMBRE];
 
