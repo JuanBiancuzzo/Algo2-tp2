@@ -163,7 +163,7 @@ gimnasio_t* cargar_gimnasio(char* ruta) {
  *
  * En caso de que no quiera ese personaje principal, no se guardara
  */
-entrenador_t* inicializar_personaje(entrenador_t* anterior) {
+void inicializar_personaje(entrenador_t** principal) {
 
     char nombre_archivo[MAX_NOMBRE], respuesta;
 
@@ -177,22 +177,20 @@ entrenador_t* inicializar_personaje(entrenador_t* anterior) {
 
         preguntar_archivo(CARPETA_PRINCIPAL, nombre_archivo);
         entrenador = cargar_entrenador(nombre_archivo);
-
     }
 
     CLEAR;
     respuesta = mostrar_menu(mostrar_principal, entrenador, menu_confirmacion, "Este es el personaje que queres usar?");
     CLEAR;
     if (responder_caracter(AFIRMAR, respuesta)) {
-        destruir_entrenador(anterior);
+        destruir_entrenador(*principal);
+        *principal = entrenador;
         mostrar_informacion("Se guardo correctamente el personaje principal");
     } else {
         destruir_entrenador(entrenador);
-        entrenador = anterior;
         mostrar_informacion("No se guardara ese personaje principal");
     }
     SLEEP;
-    return entrenador;
 }
 
 /*
@@ -248,24 +246,23 @@ void inicializar_mapa(mapa_t* mapa) {
  * el menu_inicio y no se podra avanzar hasta que el mapa como el personaje
  * principal esten listos
  */
-char hub_principal (mapa_t* mapa, entrenador_t* principal) {
+char hub_principal (mapa_t* mapa, entrenador_t** principal) {
     char respuesta;
 
     do {
         CLEAR;
         respuesta = mostrar_menu(pantalla_titulo, NULL, menu_inicio, NULL);
-        if (responder_caracter(INGRESAR_ARCHIVO, respuesta)) {
-            principal = inicializar_personaje(principal);
-        }
+        if (responder_caracter(INGRESAR_ARCHIVO, respuesta))
+            inicializar_personaje(principal);
         if (responder_caracter(AGREGAR_GIMNASIO, respuesta))
             inicializar_mapa(mapa);
 
         if ((responder_caracter(COMENZAR_PARTIDA, respuesta) ||         \
              responder_caracter(SIMULAR_PARTIDA, respuesta)) &&         \
-             !juego_preparado(mapa, principal)) {
+             !juego_preparado(mapa, *principal)) {
 
             CLEAR;
-            if (!principal_preparado(principal))
+            if (!principal_preparado(*principal))
                 mostrar_informacion("El personaje principal todavia no esta listo");
             if (!mapa_preparado(mapa))
                 mostrar_informacion("No se ingreso ningun gimnasio");
@@ -274,7 +271,7 @@ char hub_principal (mapa_t* mapa, entrenador_t* principal) {
 
     } while ((!responder_caracter(COMENZAR_PARTIDA, respuesta) && \
               !responder_caracter(SIMULAR_PARTIDA, respuesta)) ||  \
-              !juego_preparado(mapa, principal));
+              !juego_preparado(mapa, *principal));
 
     return respuesta;
 }
@@ -702,7 +699,7 @@ int main(int argc, char* argv[]) {
         SLEEP;
     }
 
-    char respuesta = hub_principal(mapa, principal);
+    char respuesta = hub_principal(mapa, &principal);
     if (responder_caracter(COMENZAR_PARTIDA, respuesta))
         comenzar_partida(mapa, principal);
     else if (responder_caracter(SIMULAR_PARTIDA, respuesta))
