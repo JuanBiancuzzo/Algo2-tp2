@@ -63,16 +63,20 @@ gimnasio_t* crear_gimnasio();
 mapa_t* crear_mapa();
 
 /*
- * Apartir del ruta del archivo y un personaje vacio, carga al personaje
- * con los datos del archivo y devuelve EXITO si los cargo correctamente,
- * y ERROR si no lo logra
+ * Apartir de la ruta del archivo, carga el personaje principal con los
+ * datos que encuentra en el archivo, si el personaje que logra leer es
+ * valido (es del tipo entrenador, tiene nombre, tiene por lo menos un
+ * pokemon), devuelve la direccion de este, en caso de no serlo, o
+ * encontrar algun otro problema devuelve NULL
  */
 void* archivo_2_personaje_principal (char ruta_archivo[]);
 
 /*
- * Apartir del ruta del archivo y un gimnasio vacio, carga el gimnasio
- * con los datos del archivo y devuelve EXITO si los cargo correctamente,
- * y ERROR si no lo logra
+ * Apartir de la ruta del archivo, carga el gimnasio con los datos que
+ * encuentra en el archivo, si el gimnasio que logra leer es valido
+ * (es del tipo gimnasio, tiene nombre, el primer entrenador es un lider,
+ * y ese lider es valido), devuelve la direccion de este, en caso de no
+ * serlo, o encontrar algun otro problema devuelve NULL
  */
 void* archivo_2_gimnasio (char ruta_archivo[]);
 
