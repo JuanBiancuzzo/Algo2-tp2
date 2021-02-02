@@ -174,17 +174,31 @@ pantalla_t cambiar_pantalla(pantalla_t pantalla, int ancho, int alto) {
     return pantalla;
 }
 
+void menu_generico(pantalla_t* pantalla, char instrucciones[], char* items[MAX_INSTRUC][MAX_LINEAS], int cant_instrucciones, int cant_lineas, int desfase) {
+
+    int linea_inicial = desfase;
+    pantalla_t bloque;
+    bloque.ancho = pantalla->ancho / cant_instrucciones;
+    bloque.alto = pantalla->alto - 2;
+
+    inicializar_matriz(pantalla);
+    inicializar_matriz(&bloque);
+
+    for (int i = 0; i < cant_instrucciones; i++) {
+        crear_instruccion(&bloque, instrucciones[i], items[i], cant_lineas, bloque.ancho);
+        coor_t coor = {linea_inicial, bloque.ancho * i};
+        bloque_2_pantalla(pantalla, bloque, coor);
+        inicializar_matriz(&bloque);
+    }
+
+
+}
+
 void menu_inicio(char* instrucciones, void* auxilear) {
 
-    int cant_instrucciones = 4, cant_lineas = 3, linea_inicial = 1;
-    pantalla_t pantalla, bloque;
-    pantalla.ancho = ANCHO;
-    pantalla.alto = 6;
-    bloque.ancho = pantalla.ancho / cant_instrucciones;
-    bloque.alto = pantalla.alto - 2;
-
-    inicializar_matriz(&pantalla);
-    inicializar_matriz(&bloque);
+    int cant_instrucciones = 4, cant_lineas = 3;
+    pantalla_t pantalla;
+    pantalla.ancho = ANCHO, pantalla.alto = 6;
 
     char instruc[5] = {INGRESAR_ARCHIVO, AGREGAR_GIMNASIO, COMENZAR_PARTIDA, SIMULAR_PARTIDA};
     strcpy(instrucciones, instruc);
@@ -194,27 +208,15 @@ void menu_inicio(char* instrucciones, void* auxilear) {
                                             {"Comenzar", "partida" , " "}, \
                                             {"Simular" , "partida" , " "} };
 
-    for (int i = 0; i < cant_instrucciones; i++) {
-        crear_instruccion(&bloque, instruc[i], items[i], cant_lineas, bloque.ancho);
-        coor_t coor = {linea_inicial, bloque.ancho * i};
-        bloque_2_pantalla(&pantalla, bloque, coor);
-        inicializar_matriz(&bloque);
-    }
-
+    menu_generico(&pantalla, instruc, items, cant_instrucciones, cant_lineas, 1);
     imprimir_pantalla(pantalla);
 }
 
 void menu_gimnasio(char instrucciones[], void* auxilear) {
 
-    int cant_instrucciones = 4, cant_lineas = 3, linea_inicial = 1;
-    pantalla_t pantalla, bloque;
-    pantalla.ancho = ANCHO;
-    pantalla.alto = 6;
-    bloque.ancho = pantalla.ancho / cant_instrucciones;
-    bloque.alto = pantalla.alto - 2;
-
-    inicializar_matriz(&pantalla);
-    inicializar_matriz(&bloque);
+    int cant_instrucciones = 4, cant_lineas = 3;
+    pantalla_t pantalla;
+    pantalla.ancho = ANCHO, pantalla.alto = 6;
 
     char instruc[5] = {MOSTRAR_ENTRENADOR, MOSTRAR_GIMNASIO, CAMBIAR_POKEMONES, PROXIMA_BATALLA};
     strcpy(instrucciones, instruc);
@@ -224,54 +226,30 @@ void menu_gimnasio(char instrucciones[], void* auxilear) {
                                             {"Cambiar el", "orden de tus" , "pokemones"}, \
                                             {"Proxima" , "batalla" , " "} };
 
-    for (int i = 0; i < cant_instrucciones; i++) {
-        crear_instruccion(&bloque, instruc[i], items[i], cant_lineas, bloque.ancho);
-        coor_t coor = {linea_inicial, bloque.ancho * i};
-        bloque_2_pantalla(&pantalla, bloque, coor);
-        inicializar_matriz(&bloque);
-    }
-
+    menu_generico(&pantalla, instruc, items, cant_instrucciones, cant_lineas, 1);
     imprimir_pantalla(pantalla);
 }
 
 void menu_batalla(char instrucciones[], void* auxilear) {
 
-    int cant_instrucciones = 1, cant_lineas = 2, linea_inicial = 1;
-    pantalla_t pantalla, bloque;
-    pantalla.ancho = ANCHO;
-    pantalla.alto = 5;
-    bloque.ancho = pantalla.ancho / cant_instrucciones;
-    bloque.alto = pantalla.alto - 2;
-
-    inicializar_matriz(&pantalla);
-    inicializar_matriz(&bloque);
+    int cant_instrucciones = 1, cant_lineas = 2;
+    pantalla_t pantalla;
+    pantalla.ancho = ANCHO, pantalla.alto = 5;
 
     char instruc[2] = {PROXIMO_COMBATE};
     strcpy(instrucciones, instruc);
 
     char* items[MAX_INSTRUC][MAX_LINEAS] = {{"Proximo", "combate"}};
 
-    for (int i = 0; i < cant_instrucciones; i++) {
-        crear_instruccion(&bloque, instruc[i], items[i], cant_lineas, bloque.ancho);
-        coor_t coor = {linea_inicial, bloque.ancho * i};
-        bloque_2_pantalla(&pantalla, bloque, coor);
-        inicializar_matriz(&bloque);
-    }
-
+    menu_generico(&pantalla, instruc, items, cant_instrucciones, cant_lineas, 1);
     imprimir_pantalla(pantalla);
 }
 
 void menu_victoria(char instrucciones[], void* auxilear) {
 
-    int cant_instrucciones = 3, cant_lineas = 3, linea_inicial = 1;
-    pantalla_t pantalla, bloque;
-    pantalla.ancho = ANCHO;
-    pantalla.alto = 6;
-    bloque.ancho = pantalla.ancho / cant_instrucciones;
-    bloque.alto = pantalla.alto - 2;
-
-    inicializar_matriz(&pantalla);
-    inicializar_matriz(&bloque);
+    int cant_instrucciones = 3, cant_lineas = 3;
+    pantalla_t pantalla;
+    pantalla.ancho = ANCHO, pantalla.alto = 6;
 
     char instruc[4] = {TOMAR_PRESTADO, CAMBIAR_POKEMONES, PROXIMO_GIMNASIO};
     strcpy(instrucciones, instruc);
@@ -280,27 +258,16 @@ void menu_victoria(char instrucciones[], void* auxilear) {
                                             {"Cambiar el"    , "orden de tus" , "pokemones"}, \
                                             {"Proximo"       , "gimnasio"     , " "} };
 
-    for (int i = 0; i < cant_instrucciones; i++) {
-        crear_instruccion(&bloque, instruc[i], items[i], cant_lineas, bloque.ancho);
-        coor_t coor = {linea_inicial, bloque.ancho * i};
-        bloque_2_pantalla(&pantalla, bloque, coor);
-        inicializar_matriz(&bloque);
-    }
 
+    menu_generico(&pantalla, instruc, items, cant_instrucciones, cant_lineas, 1);
     imprimir_pantalla(pantalla);
 }
 
 void menu_derrota(char instrucciones[], void* auxilear) {
 
-    int cant_instrucciones = 3, cant_lineas = 3, linea_inicial = 1;
-    pantalla_t pantalla, bloque;
-    pantalla.ancho = ANCHO;
-    pantalla.alto = 6;
-    bloque.ancho = pantalla.ancho / cant_instrucciones;
-    bloque.alto = pantalla.alto - 2;
-
-    inicializar_matriz(&pantalla);
-    inicializar_matriz(&bloque);
+    int cant_instrucciones = 3, cant_lineas = 3;
+    pantalla_t pantalla;
+    pantalla.ancho = ANCHO, pantalla.alto = 6;
 
     char instruc[4] = {CAMBIAR_POKEMONES, REINTENTAR, FINALIZAR};
     strcpy(instrucciones, instruc);
@@ -309,57 +276,35 @@ void menu_derrota(char instrucciones[], void* auxilear) {
                                             {"Reintentar", "gimnasio" , " "}, \
                                             {"Finalizar" , "partida" , " "} };
 
-    for (int i = 0; i < cant_instrucciones; i++) {
-        crear_instruccion(&bloque, instruc[i], items[i], cant_lineas, bloque.ancho);
-        coor_t coor = {linea_inicial, bloque.ancho * i};
-        bloque_2_pantalla(&pantalla, bloque, coor);
-        inicializar_matriz(&bloque);
-    }
-
+    menu_generico(&pantalla, instruc, items, cant_instrucciones, cant_lineas, 1);
     imprimir_pantalla(pantalla);
 }
 
 void menu_confirmacion(char instrucciones[], void* frase) {
 
-    int cant_instrucciones = 2, cant_lineas = 1, linea_inicial = 2;
-    pantalla_t pantalla, bloque;
+    int cant_instrucciones = 2, cant_lineas = 1;
+    pantalla_t pantalla;
     pantalla.ancho = ANCHO, pantalla.alto = 5;
-    bloque.ancho = pantalla.ancho, bloque.alto = pantalla.alto;
 
-    inicializar_matriz(&pantalla);
-    inicializar_matriz(&bloque);
-
-    coor_t desfase = {1, 0};
-    crear_titulo(&pantalla, (char*) frase, desfase, pantalla.ancho);
-
-    bloque.ancho = pantalla.ancho / cant_instrucciones, bloque.alto = pantalla.alto - 2;
     char instruc[3] = {AFIRMAR, NEGAR};
     strcpy(instrucciones, instruc);
 
     char* items[MAX_INSTRUC][MAX_LINEAS] = {{"Afirmar"}, \
                                             {"Negar"} };
 
-    for (int i = 0; i < cant_instrucciones; i++) {
-        crear_instruccion(&bloque, instruc[i], items[i], cant_lineas, bloque.ancho);
-        coor_t coor = {linea_inicial, bloque.ancho * i};
-        bloque_2_pantalla(&pantalla, bloque, coor);
-        inicializar_matriz(&bloque);
-    }
+    menu_generico(&pantalla, instruc, items, cant_instrucciones, cant_lineas, 2);
+
+    coor_t desfase = {1, 0};
+    crear_titulo(&pantalla, (char*) frase, desfase, pantalla.ancho);
 
     imprimir_pantalla(pantalla);
 }
 
 void menu_avanzar_retroceder(char instrucciones[], void* auxilear) {
 
-    int cant_instrucciones = 3, cant_lineas = 1, linea_inicial = 1;
-    pantalla_t pantalla, bloque;
-    pantalla.ancho = ANCHO;
-    pantalla.alto = 4;
-    bloque.ancho = pantalla.ancho / cant_instrucciones;
-    bloque.alto = pantalla.alto - 2;
-
-    inicializar_matriz(&pantalla);
-    inicializar_matriz(&bloque);
+    int cant_instrucciones = 3, cant_lineas = 1;
+    pantalla_t pantalla;
+    pantalla.ancho = ANCHO, pantalla.alto = 4;
 
     char instruc[4] = {VOLVER, ANTERIOR, SIGUIENTE};
     strcpy(instrucciones, instruc);
@@ -368,13 +313,7 @@ void menu_avanzar_retroceder(char instrucciones[], void* auxilear) {
                                             {"Anterior"}, \
                                             {"Siguiente"} };
 
-    for (int i = 0; i < cant_instrucciones; i++) {
-        crear_instruccion(&bloque, instruc[i], items[i], cant_lineas, bloque.ancho);
-        coor_t coor = {linea_inicial, bloque.ancho * i};
-        bloque_2_pantalla(&pantalla, bloque, coor);
-        inicializar_matriz(&bloque);
-    }
-
+    menu_generico(&pantalla, instruc, items, cant_instrucciones, cant_lineas, 1);
     imprimir_pantalla(pantalla);
 }
 
@@ -544,7 +483,7 @@ void mostrar_principal(void* principal) {
     crear_titulo(&pantalla, ((entrenador_t*)principal)->nombre, coor, pantalla.ancho);
     crear_titulo(&pantalla, "Pokemones para luchar", coor, ancho_pkm + maximo.x);
 
-    mostrar_pila_pokemones(&bloque, *(((entrenador_t*)principal)->pokemones), ((entrenador_t*)principal)->cant_pokemones, maximo.x, 0);
+    mostrar_pila_pokemones(&bloque, *(((entrenador_t*)principal)->pokemones), (int) ((entrenador_t*)principal)->pokemones->cantidad, maximo.x, 0);
 
     coor_t desfase = {3, 3};
     bloque_2_pantalla(&pantalla, bloque, desfase);
@@ -553,12 +492,14 @@ void mostrar_principal(void* principal) {
     int separacion = desfase.y * 2 + ancho_pkm;
     poner_lado_vertical(&pantalla, separacion);
 
-    int limite = minimo(((entrenador_t*)principal)->cant_pokemones/maximo.x, 4);
+    int cant_pokemones = (int) ((entrenador_t*)principal)->pokemones->cantidad;
+
+    int limite = minimo(cant_pokemones/maximo.x, 4);
     desfase.y = separacion + 4;
 
     for (int i = 0; i < limite; i++) {
         inicializar_matriz(&bloque);
-        mostrar_pila_pokemones(&bloque, *(((entrenador_t*)principal)->pokemones), ((entrenador_t*)principal)->cant_pokemones, maximo.x, maximo.x * (1+i));
+        mostrar_pila_pokemones(&bloque, *(((entrenador_t*)principal)->pokemones), cant_pokemones, maximo.x, maximo.x * (1+i));
         bloque_2_pantalla(&pantalla, bloque, desfase);
         desfase.y += ancho_pkm + 3;
     }
@@ -584,7 +525,7 @@ void mostrar_columna_entrandor (pantalla_t* pantalla, entrenador_t entrenador) {
     }
 
     if (entrenador.pokemones) {
-        mostrar_pila_pokemones(&bloque, *(entrenador.pokemones), entrenador.cant_pokemones, 6, 0);
+        mostrar_pila_pokemones(&bloque, *(entrenador.pokemones), (int) entrenador.pokemones->cantidad, 6, 0);
         desfase.x = 2;
         bloque_2_pantalla(pantalla, bloque, desfase);
     }
@@ -654,43 +595,34 @@ void pantalla_victoria(void* auxilear) {
     imprimir_imagen("imagenes/imagen_ganar.txt");
 }
 
-void pantalla_derrota(void* entrenador) {
-    if (!entrenador) {
-        imprimir_imagen("imagenes/imagen_perder.txt");
-    } else {
-        pantalla_t pantalla, bloque;
-        pantalla.ancho = ANCHO, pantalla.alto = ALTO;
-        bloque.ancho = ANCHO_POKEMON, bloque.alto = ALTO;
-        inicializar_matriz(&pantalla);
-        inicializar_matriz(&bloque);
+void mostrar_entrenador_imagen(char* ruta, entrenador_t* entrenador) {
+    pantalla_t pantalla, bloque;
+    pantalla.ancho = ANCHO, pantalla.alto = ALTO;
+    bloque.ancho = ANCHO_POKEMON, bloque.alto = ALTO;
+    inicializar_matriz(&pantalla);
+    inicializar_matriz(&bloque);
 
-        imagen_2_pantalla(&pantalla, "imagenes/imagen_perder.txt");
+    imagen_2_pantalla(&pantalla, ruta);
 
-        mostrar_columna_entrandor(&bloque, *(entrenador_t*)entrenador);
-        coor_t coor = {2, 2};
-        bloque_2_pantalla(&pantalla, bloque, coor);
-        imprimir_pantalla(pantalla);
-    }
+    mostrar_columna_entrandor(&bloque, *entrenador);
+    coor_t coor = {2, 2};
+    bloque_2_pantalla(&pantalla, bloque, coor);
+    imprimir_pantalla(pantalla);
 
 }
 
+void pantalla_derrota(void* entrenador) {
+    if (entrenador)
+        mostrar_entrenador_imagen("imagenes/imagen_perder.txt", entrenador);
+    else
+        imprimir_imagen("imagenes/imagen_perder.txt");
+}
+
 void pantalla_batalla(void* entrenador) {
-    if (!entrenador) {
+     if (entrenador)
+        mostrar_entrenador_imagen("imagenes/imagen_batalla.txt", entrenador);
+    else
         imprimir_imagen("imagenes/imagen_batalla.txt");
-    } else {
-        pantalla_t pantalla, bloque;
-        pantalla.ancho = ANCHO, pantalla.alto = ALTO;
-        bloque.ancho = ANCHO_POKEMON, bloque.alto = ALTO;
-        inicializar_matriz(&pantalla);
-        inicializar_matriz(&bloque);
-
-        imagen_2_pantalla(&pantalla, "imagenes/imagen_batalla.txt");
-
-        mostrar_columna_entrandor(&bloque, *(entrenador_t*)entrenador);
-        coor_t coor = {2, 2};
-        bloque_2_pantalla(&pantalla, bloque, coor);
-        imprimir_pantalla(pantalla);
-    }
 }
 
 void pantalla_maestro_pokemon(void* auxilear) {
@@ -754,13 +686,13 @@ int mostrar_gimnasio(gimnasio_t gimnasio, int iteracion) {
     crear_titulo(&pantalla, gimnasio.nombre, coor, pantalla.ancho);
 
     int maximo = MAX_ENTRENADORES + iteracion;
-    int cant_entrenadores = minimo(gimnasio.cant_entrenadores, maximo);
+    int cant_entrenadores = minimo((int) gimnasio.entrenadores->cantidad, maximo);
     int ancho_entrenadores = pantalla.ancho / (cant_entrenadores - iteracion);
 
     coor_t desfase = {3, (ancho_entrenadores - ancho_pkm) / 2};
 
     for (int i = iteracion; i < cant_entrenadores; i++) {
-        size_t entrenador_posicion = (size_t) (gimnasio.cant_entrenadores - (i+1));
+        size_t entrenador_posicion = (size_t) ((int) gimnasio.entrenadores->cantidad - (i+1));
         entrenador_t entrenador = *(entrenador_t*)lista_elemento_en_posicion(gimnasio.entrenadores, entrenador_posicion);
 
         bloque.ancho = ancho_pkm;
