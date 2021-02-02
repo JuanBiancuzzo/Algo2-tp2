@@ -29,13 +29,11 @@ typedef struct gimnasio {
 	int dificultad;
 	int id_funcion;
 	lista_t* entrenadores; // una pila de entrenadores
-	int cant_entrenadores;
 } gimnasio_t;
 
 typedef struct entrenador {
 	char nombre[MAX_NOMBRE];
 	lista_t* pokemones; // una lista de pokemones
-	int cant_pokemones;
 	bool lider;
 } entrenador_t;
 
@@ -69,14 +67,14 @@ mapa_t* crear_mapa();
  * con los datos del archivo y devuelve EXITO si los cargo correctamente,
  * y ERROR si no lo logra
  */
-int archivo_2_personaje_principal (char ruta_archivo[], void* principal);
+void* archivo_2_personaje_principal (char ruta_archivo[]);
 
 /*
  * Apartir del ruta del archivo y un gimnasio vacio, carga el gimnasio
  * con los datos del archivo y devuelve EXITO si los cargo correctamente,
  * y ERROR si no lo logra
  */
-int archivo_2_gimnasio (char ruta_archivo[], void* gimnasio);
+void* archivo_2_gimnasio (char ruta_archivo[]);
 
 /*
  * Agrega el gimnasio al mapa, que va a posicionarse de menor

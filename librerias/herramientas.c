@@ -46,7 +46,9 @@ int leer_id (FILE* archivo, void* id) {
 }
 
 bool entrenador_inicializado(entrenador_t* entrenador) {
-    return (strcmp(((entrenador_t*)entrenador)->nombre, NOMBRE_PENDIENTE) != 0);
+    if (!entrenador)
+        return false;
+    return (strcmp(entrenador->nombre, NOMBRE_PENDIENTE) != 0);
 }
 
 pokemon_t* crear_pokemon() {
@@ -62,7 +64,6 @@ entrenador_t* crear_entrenador() {
     entrenador_t entrenador;
 
     entrenador.lider = false;
-    entrenador.cant_pokemones = 0;
     strcpy(entrenador.nombre, NOMBRE_PENDIENTE);
     entrenador.pokemones = lista_crear(destructor);
 
@@ -91,7 +92,6 @@ gimnasio_t* crear_gimnasio() {
 
     gimnasio.id_funcion = 0;
     gimnasio.dificultad = 0;
-    gimnasio.cant_entrenadores = 0;
     gimnasio.entrenadores = lista_crear(destructor);
 
     if (!gimnasio.entrenadores) return NULL;
@@ -215,13 +215,11 @@ int dato_esperado(FILE* archivo, gimnasio_t* gimnasio, entrenador_t* entrenador,
 int conseguir_nombre (FILE* archivo, entrenador_t* entrenador) {
 
     int resultado = 0;
-    char tipo;
+    char tipo = NADA;
 
-    if (!entrenador_inicializado(entrenador)) {
+    resultado = dato_esperado(archivo, NULL, entrenador, NULL, &tipo);
+    while (resultado != EOF && (tipo != LIDER && tipo != ENTRENADOR))
         resultado = dato_esperado(archivo, NULL, entrenador, NULL, &tipo);
-        while (resultado != EOF && (tipo != LIDER && tipo != ENTRENADOR))
-            resultado = dato_esperado(archivo, NULL, entrenador, NULL, &tipo);
-    }
 
     return (resultado != EOF) ? EXITO : ERROR;
 }
@@ -247,6 +245,7 @@ void agregar_pokemon(void* entrenador, pokemon_t pokemon) {
  */
 void guardar_pokemones (FILE* archivo, void* entrenador, void* entrenador_siguiente, bool principal, bool guardar) {
     entrenador_t siguiente;
+    strcpy(siguiente.nombre, NOMBRE_PENDIENTE);
     pokemon_t pokemon;
     int resultado;
     char tipo;
@@ -256,18 +255,17 @@ void guardar_pokemones (FILE* archivo, void* entrenador, void* entrenador_siguie
         if (guardar) 
             agregar_pokemon(entrenador, pokemon);
 
-        if (((entrenador_t*)entrenador)->cant_pokemones >= MAX_POKEMON_COMBATE && !principal)
+        if (((entrenador_t*)entrenador)->pokemones->cantidad >= MAX_POKEMON_COMBATE && !principal)
             guardar = false;
 
         resultado = dato_esperado(archivo, NULL, &siguiente, &pokemon, &tipo);
     }
 
-    if (entrenador_siguiente && !entrenador_inicializado(entrenador)) {
+    if (entrenador_siguiente && entrenador_inicializado(&siguiente)) {
         strcpy(((entrenador_t*)entrenador_siguiente)->nombre, siguiente.nombre);
         ((entrenador_t*)entrenador_siguiente)->lider = siguiente.lider;
     }
 
-    ((entrenador_t*)entrenador)->cant_pokemones = (int) ((entrenador_t*)entrenador)->pokemones->cantidad;
 }
 
 /*
@@ -281,32 +279,44 @@ void guardar_pokemones (FILE* archivo, void* entrenador, void* entrenador_siguie
  * Si se encuentra con un lider y se pasa como parametro que no es un lider
  * se leeran todos los pokemones pero no se guardaran
  */
-int archivo_2_entrenador (FILE* archivo, void* entrenador, void* entrenador_siguiente, bool principal, bool lider) {
+entrenador_t* archivo_2_entrenador (FILE* archivo, entrenador_t* entrenador_siguiente, bool principal, bool lider) {
+    entrenador_t* entrenador = crear_entrenador();
     bool guardar = true;
-    int resultado;
 
-    resultado = conseguir_nombre(archivo, entrenador);
-    if (resultado == ERROR) return ERROR;
+    if (entrenador_inicializado(entrenador_siguiente)) {
+        strcpy(entrenador->nombre, entrenador_siguiente->nombre);
+        entrenador->lider = entrenador_siguiente->lider;
+        strcpy(entrenador_siguiente->nombre, NOMBRE_PENDIENTE);
+    } else {
+        int resultado = conseguir_nombre(archivo, entrenador);
+        if (resultado == ERROR) {
+            destruir_entrenador(entrenador);
+            return NULL;
+        }
+    }
 
-    if (!((entrenador_t*)entrenador)->lider && lider)
+    if (!entrenador->lider && lider)
         guardar = false;
 
     guardar_pokemones(archivo, entrenador, entrenador_siguiente, principal, guardar);
 
-    return ((entrenador_t*)entrenador)->cant_pokemones;
+    if (entrenador->pokemones->cantidad > 0)
+        return entrenador;
+    destruir_entrenador(entrenador);
+    return NULL;
 }
 
-int archivo_2_personaje_principal (char ruta_archivo[], void* principal) {
-    if (!ruta_archivo || !principal)
-        return ERROR;
+void* archivo_2_personaje_principal (char ruta_archivo[]) {
+    if (!ruta_archivo)
+        return NULL;
 
     FILE* archivo = fopen(ruta_archivo, "r");
-    if (!archivo) return ERROR;
+    if (!archivo) return NULL;
 
-    int cant_pokemones = archivo_2_entrenador (archivo, ((entrenador_t*)principal), NULL, true, false);
+    entrenador_t* entrenador = archivo_2_entrenador (archivo, NULL, true, false);
 
     fclose(archivo);
-    return (cant_pokemones > 0) ? EXITO : ERROR;
+    return entrenador;
 }
 
 /*
@@ -314,7 +324,9 @@ int archivo_2_personaje_principal (char ruta_archivo[], void* principal) {
  * Devuelve EXITO si puede agregarlo, sino devuelve ERROR
  */
 int agregar_entrenador(gimnasio_t* gimnasio, entrenador_t* entrenador) {
-    if (entrenador->cant_pokemones > 0) {
+    if (!gimnasio || !entrenador)
+        return ERROR;
+    if (entrenador->pokemones->cantidad > 0) {
         int resultado = lista_apilar(((gimnasio_t*)gimnasio)->entrenadores, entrenador);
         return (resultado != ERROR) ? EXITO : ERROR;
     }
@@ -332,53 +344,48 @@ int agregar_entrenador(gimnasio_t* gimnasio, entrenador_t* entrenador) {
 int guardar_entrenadores (FILE* archivo, gimnasio_t* gimnasio) {
 
     int resultado;
-    entrenador_t* p_entrenador = crear_entrenador();
     entrenador_t entrenador_siguiente;
     strcpy(entrenador_siguiente.nombre, NOMBRE_PENDIENTE);
 
-    int cant_pokemones = archivo_2_entrenador(archivo, p_entrenador, &entrenador_siguiente, false, true);
-    if (cant_pokemones == ERROR) {
+    entrenador_t* p_entrenador = archivo_2_entrenador(archivo, &entrenador_siguiente, false, true);
+    resultado = agregar_entrenador(gimnasio, p_entrenador);
+
+    if (resultado == ERROR) {
         destruir_entrenador(p_entrenador);
         return ERROR;
     }
 
-    while (entrenador_inicializado(p_entrenador) && cant_pokemones >= 0) {
-        resultado = agregar_entrenador(gimnasio, p_entrenador);
-        if (resultado == ERROR)
-            destruir_entrenador(p_entrenador);
+    while (entrenador_inicializado(&entrenador_siguiente)) {
 
-        p_entrenador = crear_entrenador();
-        if (entrenador_inicializado(&entrenador_siguiente)) {
-            strcpy(p_entrenador->nombre, entrenador_siguiente.nombre);
-            p_entrenador->lider = entrenador_siguiente.lider;
-        }
-        strcpy(entrenador_siguiente.nombre, NOMBRE_PENDIENTE);
+        p_entrenador = archivo_2_entrenador(archivo, &entrenador_siguiente, false, false);
+        if (p_entrenador)
+            agregar_entrenador(gimnasio, p_entrenador);
 
-        cant_pokemones = archivo_2_entrenador(archivo, p_entrenador, &entrenador_siguiente, false, false);
     }
 
-    ((gimnasio_t*)gimnasio)->cant_entrenadores = (int) ((gimnasio_t*)gimnasio)->entrenadores->cantidad;
-
-    destruir_entrenador(p_entrenador);
-    return EXITO;
+    return (int) ((gimnasio_t*)gimnasio)->entrenadores->cantidad;
 }
 
-int archivo_2_gimnasio (char ruta_archivo[], void* gimnasio) {
-    if (!ruta_archivo || !gimnasio)
-        return ERROR;
+void* archivo_2_gimnasio (char ruta_archivo[]) {
+    if (!ruta_archivo)
+        return NULL;
 
     FILE* archivo = fopen(ruta_archivo, "r");
-    if (!archivo) return ERROR;
+    if (!archivo) return NULL;
 
     char tipo;
-    ((gimnasio_t*)gimnasio)->cant_entrenadores = 0;
+    int resultado = ERROR;
+    gimnasio_t* gimnasio = crear_gimnasio();
 
-    int resultado = dato_esperado(archivo, gimnasio, NULL, NULL, &tipo);
+    dato_esperado(archivo, gimnasio, NULL, NULL, &tipo);
     if (tipo == GIMNASIO)
         resultado = guardar_entrenadores(archivo, gimnasio);
 
     fclose(archivo);
-    return (((gimnasio_t*)gimnasio)->cant_entrenadores > 0) ? EXITO : ERROR;
+    if (resultado > 0)
+        return gimnasio;
+    destruir_gimnasio(gimnasio);
+    return NULL;
 }
 
 int gimnasio_2_mapa(mapa_t* mapa, gimnasio_t* gimnasio) {
@@ -402,7 +409,7 @@ gimnasio_t* gimnasio_del_mapa(mapa_t* mapa) {
 
 entrenador_t* lider_del_gimnasio(gimnasio_t* gimnasio) {
     if (!gimnasio) return NULL;
-    return lista_elemento_en_posicion(gimnasio->entrenadores, (size_t) gimnasio->cant_entrenadores - 1);
+    return lista_elemento_en_posicion(gimnasio->entrenadores, (size_t) gimnasio->entrenadores->cantidad - 1);
 }
 
 entrenador_t* entrenador_del_gimnasio(gimnasio_t* gimnasio) {
@@ -413,13 +420,12 @@ entrenador_t* entrenador_del_gimnasio(gimnasio_t* gimnasio) {
 void sacar_entrenador(gimnasio_t* gimnasio) {
     if (!gimnasio) return;
     lista_desapilar(gimnasio->entrenadores);
-    gimnasio->cant_entrenadores = (int) gimnasio->entrenadores->cantidad;
 }
 
 void sacar_gimnasio(mapa_t* mapa) {
     if (!mapa) return;
     heap_eliminar_raiz(mapa->gimnasios);
-    mapa->cant_gimnasios = (int) mapa->gimnasios->cant_elementos;
+    mapa->cant_gimnasios = (int) mapa->gimnasios->cantidad;
 }
 
 pokemon_t* pokemon_en_lista(lista_t* pokemones, int posicion) {
@@ -460,7 +466,7 @@ int level_up(pokemon_t* pokemon) {
  * de 6 pokemones ya no puede pelear, pero si desde el principio
  * tenia menos pokemones, si llega a esa cantidad ya no puede pelear
  */
-bool condicion_pelea (int pokemones_derrotados, int pokemones_para_pelea) {
+bool condicion_pelea (size_t pokemones_derrotados, size_t pokemones_para_pelea) {
     return (pokemones_derrotados < MAX_POKEMON_COMBATE && pokemones_derrotados < pokemones_para_pelea);
 }
 
@@ -468,24 +474,24 @@ int batalla_pokemon(entrenador_t* principal, entrenador_t* enemigo, funcion_bata
 
     if (!principal || !enemigo || !estilo) return 0;
 
-    int contador_principal = 0, contador_enemigo = 0;
+    size_t contador_principal = 0, contador_enemigo = 0;
 
-    while (condicion_pelea(contador_principal, principal->cant_pokemones) \
-           && condicion_pelea(contador_enemigo, enemigo->cant_pokemones)) {
+    while (condicion_pelea(contador_principal, principal->pokemones->cantidad) \
+           && condicion_pelea(contador_enemigo, enemigo->pokemones->cantidad)) {
 
-        int resultado = pelea_pokemon(elegir_pokemon(principal, contador_principal), \
-                                      elegir_pokemon(enemigo, contador_enemigo), \
+        int resultado = pelea_pokemon(elegir_pokemon(principal, (int) contador_principal), \
+                                      elegir_pokemon(enemigo, (int) contador_enemigo), \
                                       estilo);
 
         if (resultado == GANO_PRINCIPAL) {
-            level_up(elegir_pokemon(principal, contador_principal));
+            level_up(elegir_pokemon(principal, (int) contador_principal));
             contador_enemigo++;
         } else {
             contador_principal++;
         }
     }
 
-    return condicion_pelea(contador_principal, principal->cant_pokemones) ? GANO_PRINCIPAL : GANO_ENEMIGO;
+    return condicion_pelea(contador_principal, principal->pokemones->cantidad) ? GANO_PRINCIPAL : GANO_ENEMIGO;
 }
 
 int tomar_prestado(entrenador_t* principal, entrenador_t* enemigo, int id_pokemon) {
@@ -505,7 +511,6 @@ int tomar_prestado(entrenador_t* principal, entrenador_t* enemigo, int id_pokemo
         return ERROR;
     }
 
-    (principal->cant_pokemones)++;
     return EXITO;
 }
 
