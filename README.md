@@ -117,6 +117,8 @@ Para calcular los hijos, tanto el hijo izquierdo como el derecho lo primero es m
 
 ### Batallas
 
+### Lista
+
 ## Pruebas
 Estas pruebas sobre el funcionamiento del heap, y las herramientas usadas en el trabajo, estan implementados como TDA independientes, por lo que estas pruebas muestran su correcto funcionamiento de ambas.
 
