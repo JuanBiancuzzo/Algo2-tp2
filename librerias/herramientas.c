@@ -71,10 +71,10 @@ entrenador_t* crear_entrenador() {
 
     entrenador_t* p_entrenador = calloc(1, sizeof(entrenador_t));
 
-    if (!p_entrenador)
-        lista_destruir(entrenador.pokemones);
-    else
+    if (p_entrenador)
         (*p_entrenador) = entrenador;
+    else
+        lista_destruir(entrenador.pokemones);
 
     return p_entrenador;
 }
@@ -127,7 +127,6 @@ mapa_t* crear_mapa() {
     heap_liberar_elemento destructor = destruir_gimnasio;
     mapa_t mapa;
 
-    mapa.cant_gimnasios = 0;
     mapa.gimnasios = heap_crear(comparador, destructor);
     if (!mapa.gimnasios) return NULL;
 
@@ -396,10 +395,7 @@ int gimnasio_2_mapa(mapa_t* mapa, gimnasio_t* gimnasio) {
 
     int resultado = heap_insertar(mapa->gimnasios, gimnasio);
 
-    if (resultado == ERROR) return ERROR;
-    (mapa->cant_gimnasios)++;
-
-    return EXITO;
+    return (resultado == ERROR) ? ERROR : EXITO;
 }
 
 gimnasio_t* gimnasio_del_mapa(mapa_t* mapa) {
@@ -425,7 +421,6 @@ void sacar_entrenador(gimnasio_t* gimnasio) {
 void sacar_gimnasio(mapa_t* mapa) {
     if (!mapa) return;
     heap_eliminar_raiz(mapa->gimnasios);
-    mapa->cant_gimnasios = (int) mapa->gimnasios->cantidad;
 }
 
 pokemon_t* pokemon_en_lista(lista_t* pokemones, int posicion) {

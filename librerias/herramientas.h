@@ -17,11 +17,10 @@
 #define POKEMON 'P'
 #define ENTRENADOR 'E'
 
-typedef int (* funcion_batalla)(void*, void *);
+typedef int (*funcion_batalla)(void*, void *);
 
 typedef struct mapa {
 	heap_t* gimnasios;
-	int cant_gimnasios;
 } mapa_t;
 
 typedef struct gimnasio {

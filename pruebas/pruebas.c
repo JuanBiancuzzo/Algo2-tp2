@@ -470,7 +470,7 @@ void probar_gimnasio_2_mapa_gimnasio_valido () {
     pa2m_afirmar(mapa->gimnasios,
                  "Crea el heap de gimnasios");
 
-    pa2m_afirmar(mapa->cant_gimnasios == 1,
+    pa2m_afirmar(mapa->gimnasios->cantidad == 1,
                  "La cantidad de gimnasios es 1\n");
 
     destruir_mapa(mapa);
@@ -492,7 +492,7 @@ void probar_gimnasio_2_mapa_varios_gimnasios_validos () {
     pa2m_afirmar(mapa->gimnasios,
                  "Crea el heap de gimnasios");
 
-    pa2m_afirmar(mapa->cant_gimnasios == 2,
+    pa2m_afirmar(mapa->gimnasios->cantidad == 2,
                  "La cantidad de gimnasios es 2\n");
 
     destruir_mapa(mapa);
