@@ -130,6 +130,12 @@ void heap_eliminar_raiz(heap_t* heap) {
 
 }
 
+size_t heap_elementos(heap_t* heap) {
+    if (!heap)
+        return 0;
+    return heap->cantidad;
+}
+
 void heap_destruir(heap_t* heap) {
 
     if (!heap) return;

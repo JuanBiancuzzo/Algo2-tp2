@@ -48,7 +48,16 @@ int heap_insertar(heap_t* heap, void* elemento);
  */
 void* heap_raiz(heap_t* heap);
 
+/*
+ * Elimina al raiz y reordena el heap para que sea 
+ * un heap valido
+ */
 void heap_eliminar_raiz(heap_t* heap);
+
+/*
+ * Devuelve la cantidad de elementos almacenados en el heap
+ */
+size_t heap_elementos(heap_t* heap);
 
 /*
  * Destruye el heap liberando la memoria que se reservo
