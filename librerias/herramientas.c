@@ -393,14 +393,33 @@ gimnasio_t* gimnasio_del_mapa(mapa_t* mapa) {
     return heap_raiz(mapa->gimnasios);
 }
 
+bool encontrar_lider (void* entrenador, void* aux) {
+    if (((entrenador_t*)entrenador)->lider) {
+        aux = entrenador;
+        return false;
+    }
+    return true;
+}
+
 entrenador_t* lider_del_gimnasio(gimnasio_t* gimnasio) {
     if (!gimnasio) return NULL;
-    return lista_elemento_en_posicion(gimnasio->entrenadores, (size_t) gimnasio->entrenadores->cantidad - 1);
+    bool (*funcion_encontrar)(void*, void*) = encontrar_lider;
+    entrenador_t* entrenador = NULL;
+    lista_con_cada_elemento(gimnasio->entrenadores, funcion_encontrar, entrenador);
+    return entrenador;
+}
+
+bool encontrar_entrenador (void* entrenador, void* aux) {
+    aux = entrenador;
+    return false;
 }
 
 entrenador_t* entrenador_del_gimnasio(gimnasio_t* gimnasio) {
     if (!gimnasio) return NULL;
-    return lista_elemento_en_posicion(gimnasio->entrenadores, 0);
+    bool (*funcion_encontrar)(void*, void*) = encontrar_entrenador;
+    entrenador_t* entrenador = NULL;
+    lista_con_cada_elemento(gimnasio->entrenadores, funcion_encontrar, entrenador);
+    return entrenador;
 }
 
 void sacar_entrenador(gimnasio_t* gimnasio) {
@@ -496,6 +515,7 @@ int tomar_prestado(entrenador_t* principal, entrenador_t* enemigo, int id_pokemo
         return ERROR;
     }
 
+    lista_borrar_de_posicion(enemigo->pokemones, (size_t) id_pokemon);
     return EXITO;
 }
 
