@@ -112,6 +112,14 @@ En el caso de que si se cumplan se termina la eliminación; pero si no se cumple
 Para calcular los hijos, tanto el hijo izquierdo como el derecho lo primero es multiplicar por dos, por el motivo que explique cuando estabamos insertando, y luego para el hijo izquierdo le sumamos uno y para el derecho le sumamos 2.
 
 ### Herramientas
+Primero expliquemos las estructuras que creamos al principio del herramientas.h
+#### Estructuras
+Empecemos por lo mas simple, tenemos una estructura de un pokemon, este tiene su nombre y 3 atributos, velocidad, defensa y ataque.
+Despues tenemos la estructura de un entrenado, este tiene nombre, una indicacion si es lider, y una lista de pokemones.
+El siguiente paso son la estructura del gimnasio, que tiene su nombre, la dificultad, un id para el estilo de pelea entre pokemones, y una pila de entrenadores.
+Por ultimo tenemos la estructura del mapa, que principalmente tiene el rol de tener el heap de los gimnasios, y para saber cuantos gimnasios se tiene, se puede acceder atraves del heap a la cantidad de elementos que tiene
+
+
 
 ### Menús
 
