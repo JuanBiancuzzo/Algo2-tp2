@@ -339,8 +339,8 @@ void guardar_entrenadores (FILE* archivo, gimnasio_t* gimnasio) {
     strcpy(entrenador_siguiente.nombre, NOMBRE_PENDIENTE);
 
     entrenador_t* p_entrenador = archivo_2_entrenador(archivo, &entrenador_siguiente, false, true);
-    resultado = agregar_entrenador(gimnasio, p_entrenador);
 
+    resultado = agregar_entrenador(gimnasio, p_entrenador);
     if (resultado == ERROR) {
         destruir_entrenador(p_entrenador);
         return;
