@@ -115,16 +115,24 @@ Para calcular los hijos, tanto el hijo izquierdo como el derecho lo primero es m
 Primero expliquemos las estructuras que creamos al principio del herramientas.h
 #### Estructuras
 Empecemos por lo mas simple, tenemos una estructura de un pokemon, este tiene su nombre y 3 atributos, velocidad, defensa y ataque.
+
 Despues tenemos la estructura de un entrenado, este tiene nombre, una indicacion si es lider, y una lista de pokemones.
+
 El siguiente paso son la estructura del gimnasio, que tiene su nombre, la dificultad, un id para el estilo de pelea entre pokemones, y una pila de entrenadores.
 Por ultimo tenemos la estructura del mapa, que principalmente tiene el rol de tener el heap de los gimnasios, y para saber cuantos gimnasios se tiene, se puede acceder atraves del heap a la cantidad de elementos que tiene
 
 #### Crear
 En este apartado tenemos crear un entrenador, crear un gimnasio y crear un mapa. En los tres casos se repite el mismo formato. 
+
 Primero creamos una estructura en el stack, donde inicializamos esa estructura, en este proceso tendremos que crear un heap para el mapa, una pila para el gimansio o una lista para los entrenadores. En el caso de que salga mal, devolvemos NULL. En caso de que salga bien, creamos la estructura en el heap y en el caso de que el puntero sea valido, pasamos todos los datos de la estructura que esta en el stack a esta nueva estructura y devolvemos su puntero.
+
 La idea de primero crear una estructura en el stack es para retrasar lo maximo posible reservar memoria en el heap, porque cuando uno reserva memoria, si sucede algo como que no pudiste crear una lista, tenes que liberar esa memoria. Entonces lo mejor es retrasarlo asi tenes menos momentos para manejar memoria y por lo tanto posibles errores
 
 #### Destruir
+Por como esta estructurado, cada estructura (pokemon, entrenador, gimnasio, mapa) esta claramente dividida en niveles, donde tenemos el pokemon en el nivel mas bajo, y el mapa en el nivel mas alto. 
+
+Esto no ayuda a la forma de destruir porque lo podemos pensar *casi* de una forma recursiva, la funcion base es destruir un pokemon que es liberar el puntero a ese pokemon. Y despues destruir entrenador, gimnasio, y mapa es destruir la estructura que usan, el entrenador destruye la lista de pokemones, el gimnasio destruye la pila de entrenadores, y el mapa el heap de gimnasios. Entonces cada estructura tiene un destructor que usa la funcion de un nivel mas abajo, de esa forma ahorrandonos tener que hacerlo nosotros
+
 
 
 
