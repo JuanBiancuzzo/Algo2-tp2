@@ -97,12 +97,11 @@ gimnasio_t* crear_gimnasio() {
     if (!gimnasio.entrenadores) return NULL;
 
     gimnasio_t* p_gimnasio = calloc(1, sizeof(gimnasio_t));
-    if (!p_gimnasio) {
-        lista_destruir(gimnasio.entrenadores);
-        return NULL;
-    }
 
-    (*p_gimnasio) = gimnasio;
+    if (p_gimnasio) 
+        (*p_gimnasio) = gimnasio;
+    else 
+        lista_destruir(gimnasio.entrenadores);
 
     return p_gimnasio;
 }
@@ -131,12 +130,12 @@ mapa_t* crear_mapa() {
     if (!mapa.gimnasios) return NULL;
 
     mapa_t* p_mapa = calloc(1, sizeof(mapa_t));
-    if (!p_mapa) {
-        heap_destruir(mapa.gimnasios);
-        return NULL;
-    }
-    (*p_mapa) = mapa;
 
+    if (p_mapa) 
+        (*p_mapa) = mapa;
+    else 
+        heap_destruir(mapa.gimnasios);
+    
     return p_mapa;
 }
 
