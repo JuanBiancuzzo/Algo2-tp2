@@ -133,8 +133,28 @@ Por como esta estructurado, cada estructura (pokemon, entrenador, gimnasio, mapa
 
 Esto no ayuda a la forma de destruir porque lo podemos pensar *casi* de una forma recursiva, la funcion base es destruir un pokemon que es liberar el puntero a ese pokemon. Y despues destruir entrenador, gimnasio, y mapa es destruir la estructura que usan, el entrenador destruye la lista de pokemones, el gimnasio destruye la pila de entrenadores, y el mapa el heap de gimnasios. Entonces cada estructura tiene un destructor que usa la funcion de un nivel mas abajo, de esa forma ahorrandonos tener que hacerlo nosotros
 
+#### De un archivo a una estructura
+Vamos a ver cada caso en particular, porque son suficientemente diferentes para necesitar que se expliquen por separado 
 
+##### De un archivo al personaje principal
+Primero intentamos abril el archivo, si no se puede entonces devolvemos NULL, pero si se puede empezamos el proceso de leer el archivo.
 
+Usando al funcion archivo_2_entrenador, que necesita el archivo, un entrenador mas, determinar si es el personaje principal y/o lider. 
+
+Usamos un entrenador mas para solucionar el problema leer las lineas de un archivo sin poder volver para atras; donde para saber si uno tiene que dejar de leer, tiene que leer la proxima linea y por lo tanto perder la informacion si no esta preparado para guardarla. Entonces usamos un entrenador mas por si anteriormente se guardo informacion en este y asi pasarsela al entrenador actual, y para guardar la informacion para la siguiente lectura
+
+Entonces lo primero que se hace es crear un entrenador, y despues se comprueba si habiamos leido algo antes, pero como es el personaje principal no tiene informacion, por lo que tenemos que buscar el nombre, y va intentar conseguir un nombre ignorando todas las lineas que esten en el medio, si llega al final del archivo sin encontrar un nombre devuelve NULL para indicar que no encontro nada ningun entrenador
+
+Ahora vamos a guardar los pokemones del entrenador, usando la funcion guardar_pokemones, que va leyendo cada linea y guardando los pokemones, si es un entrenador cualquiera este solo puede guardar 6 pokemones entonces cuando llegue a ese numero de pokemones dejara de leer, pero si es el personaje principal este seguira leyendo hasta que termine el archivo o encontrar un entrenador. 
+
+Para leer las lineas y en caso de encontrar un entrenador guardarlo, se usa la funcion dato_esperado donde esta preparado para leer un gimnasio, entrenador o pokemon. Entonces cuando estamos leyendo, pasamos a la funcion el entrenador de mas y un pokemon, si lee un pokemon lo guardamos, si lee un entrenador lo guarda, y de esa forma en la funcion de guardar pokemones sabemos cuando frenar.
+
+Y despues de hacer todo esto, ya tenemos el personaje principal, con todos sus pokemones. En caso de que este personaje principal no tenga pokemones se destruye el puntero en el heap, y se devuelve NULL
+
+##### De un archivo al gimnasio
+Primer leemos el archivo, y creamos un gimnasio. En este caso no podemos evitar crear el gimnasio al principio porque lo necesitamos para guardar los entrenadores. 
+
+Para guardar los entrenadores usamos la funcion (nombrada de forma muy original) como guardar_entrenadores. Esta primero lee usando la funcion que habiamos mencionado para leer entrenadores (archivo_2_entrenador) el lider del gimnasio, en caso de que no este sale, pero si hay entonces vamos a empezar a leer entrenadores y agregandolos a la pila de entrenadores que tiene el gimnasio
 
 ### Menús
 
