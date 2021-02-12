@@ -159,6 +159,7 @@ Para guardar los entrenadores usamos la funcion (nombrada de forma muy original)
 ### Menús
 
 ### Batallas
+Principalmente se encarga de definir los estilos de pelea, que puede usar gimnasio
 
 ### Lista
 El TDA Lista ya tiene su propia documentacion por lo que no se explicara aca como es su funcionamiento
