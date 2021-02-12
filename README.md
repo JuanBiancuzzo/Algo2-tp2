@@ -119,6 +119,13 @@ Despues tenemos la estructura de un entrenado, este tiene nombre, una indicacion
 El siguiente paso son la estructura del gimnasio, que tiene su nombre, la dificultad, un id para el estilo de pelea entre pokemones, y una pila de entrenadores.
 Por ultimo tenemos la estructura del mapa, que principalmente tiene el rol de tener el heap de los gimnasios, y para saber cuantos gimnasios se tiene, se puede acceder atraves del heap a la cantidad de elementos que tiene
 
+#### Crear
+En este apartado tenemos crear un entrenador, crear un gimnasio y crear un mapa. En los tres casos se repite el mismo formato. 
+Primero creamos una estructura en el stack, donde inicializamos esa estructura, en este proceso tendremos que crear un heap para el mapa, una pila para el gimansio o una lista para los entrenadores. En el caso de que salga mal, devolvemos NULL. En caso de que salga bien, creamos la estructura en el heap y en el caso de que el puntero sea valido, pasamos todos los datos de la estructura que esta en el stack a esta nueva estructura y devolvemos su puntero.
+La idea de primero crear una estructura en el stack es para retrasar lo maximo posible reservar memoria en el heap, porque cuando uno reserva memoria, si sucede algo como que no pudiste crear una lista, tenes que liberar esa memoria. Entonces lo mejor es retrasarlo asi tenes menos momentos para manejar memoria y por lo tanto posibles errores
+
+#### Destruir
+
 
 
 ### Menús
