@@ -161,6 +161,7 @@ Para guardar los entrenadores usamos la funcion (nombrada de forma muy original)
 ### Batallas
 
 ### Lista
+El TDA Lista ya tiene su propia documentacion por lo que no se explicara aca como es su funcionamiento
 
 ## Pruebas
 Estas pruebas sobre el funcionamiento del heap, y las herramientas usadas en el trabajo, estan implementados como TDA independientes, por lo que estas pruebas muestran su correcto funcionamiento de ambas.
