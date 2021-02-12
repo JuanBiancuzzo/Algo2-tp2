@@ -332,7 +332,7 @@ int agregar_entrenador(gimnasio_t* gimnasio, entrenador_t* entrenador) {
  * Devuelve la cantidad de entrenadores que pudo guardar, si no puede
  * guardar nada manda ERROR
  */
-int guardar_entrenadores (FILE* archivo, gimnasio_t* gimnasio) {
+void guardar_entrenadores (FILE* archivo, gimnasio_t* gimnasio) {
 
     int resultado;
     entrenador_t entrenador_siguiente;
@@ -343,7 +343,7 @@ int guardar_entrenadores (FILE* archivo, gimnasio_t* gimnasio) {
 
     if (resultado == ERROR) {
         destruir_entrenador(p_entrenador);
-        return ERROR;
+        return;
     }
 
     while (entrenador_inicializado(&entrenador_siguiente)) {
@@ -353,8 +353,6 @@ int guardar_entrenadores (FILE* archivo, gimnasio_t* gimnasio) {
             agregar_entrenador(gimnasio, p_entrenador);
 
     }
-
-    return (int) ((gimnasio_t*)gimnasio)->entrenadores->cantidad;
 }
 
 void* archivo_2_gimnasio (char ruta_archivo[]) {
@@ -365,19 +363,19 @@ void* archivo_2_gimnasio (char ruta_archivo[]) {
     if (!archivo) return NULL;
 
     char tipo;
-    int resultado = ERROR;
     gimnasio_t* gimnasio = crear_gimnasio();
 
     dato_esperado(archivo, gimnasio, NULL, NULL, &tipo);
     if (tipo == GIMNASIO)
-        resultado = guardar_entrenadores(archivo, gimnasio);
+        guardar_entrenadores(archivo, gimnasio);
 
     fclose(archivo);
-    if (resultado > 0)
+    if (gimnasio->entrenadores->cantidad > 0)
         return gimnasio;
     destruir_gimnasio(gimnasio);
     return NULL;
 }
+
 
 int gimnasio_2_mapa(mapa_t* mapa, gimnasio_t* gimnasio) {
 
