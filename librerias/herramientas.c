@@ -135,7 +135,7 @@ mapa_t* crear_mapa() {
         (*p_mapa) = mapa;
     else 
         heap_destruir(mapa.gimnasios);
-    
+
     return p_mapa;
 }
 
@@ -235,33 +235,29 @@ void agregar_pokemon(void* entrenador, pokemon_t pokemon) {
         destruir_pokemon(p_pokemon);
 }
 
+
+bool seguir_leyendo_pokemones (entrenador_t* entrenador, bool principal) {
+    return (entrenador->pokemones->cantidad < MAX_POKEMON_COMBATE || principal);
+}
+
 /*
  * Va leyendo el archivo y va agregando los pokemones a la lista del entrenador, en caso
  * de que lea un entrenador, devuelve (en el caso de que se le haya pasado por parametro
  * el proximo entrenador) el entrenador con su nombre y su categoria, en el caso de no
  * leer un pokemon o entrenador, dejara de leer 
  */
-void guardar_pokemones (FILE* archivo, void* entrenador, void* entrenador_siguiente, bool principal, bool guardar) {
-    entrenador_t siguiente;
-    strcpy(siguiente.nombre, NOMBRE_PENDIENTE);
+void guardar_pokemones (FILE* archivo, void* entrenador, void* entrenador_siguiente, bool principal) {
+    
+    if (entrenador_siguiente)
+        strcpy(((entrenador_t*)entrenador_siguiente)->nombre, NOMBRE_PENDIENTE);
     pokemon_t pokemon;
     int resultado;
     char tipo;
 
-    resultado = dato_esperado(archivo, NULL, &siguiente, &pokemon, &tipo);
-    while (resultado != EOF && tipo == POKEMON) {
-        if (guardar) 
-            agregar_pokemon(entrenador, pokemon);
-
-        if (((entrenador_t*)entrenador)->pokemones->cantidad >= MAX_POKEMON_COMBATE && !principal)
-            guardar = false;
-
-        resultado = dato_esperado(archivo, NULL, &siguiente, &pokemon, &tipo);
-    }
-
-    if (entrenador_siguiente && entrenador_inicializado(&siguiente)) {
-        strcpy(((entrenador_t*)entrenador_siguiente)->nombre, siguiente.nombre);
-        ((entrenador_t*)entrenador_siguiente)->lider = siguiente.lider;
+    resultado = dato_esperado(archivo, NULL, entrenador_siguiente, &pokemon, &tipo);
+    while (resultado != EOF && tipo == POKEMON && seguir_leyendo_pokemones(entrenador, principal)) {
+        agregar_pokemon(entrenador, pokemon);
+        resultado = dato_esperado(archivo, NULL, entrenador_siguiente, &pokemon, &tipo);
     }
 
 }
@@ -279,7 +275,6 @@ void guardar_pokemones (FILE* archivo, void* entrenador, void* entrenador_siguie
  */
 entrenador_t* archivo_2_entrenador (FILE* archivo, entrenador_t* entrenador_siguiente, bool principal, bool lider) {
     entrenador_t* entrenador = crear_entrenador();
-    bool guardar = true;
 
     if (entrenador_inicializado(entrenador_siguiente)) {
         strcpy(entrenador->nombre, entrenador_siguiente->nombre);
@@ -293,10 +288,8 @@ entrenador_t* archivo_2_entrenador (FILE* archivo, entrenador_t* entrenador_sigu
         }
     }
 
-    if (!entrenador->lider && lider)
-        guardar = false;
-
-    guardar_pokemones(archivo, entrenador, entrenador_siguiente, principal, guardar);
+    if (entrenador->lider == lider)
+        guardar_pokemones(archivo, entrenador, entrenador_siguiente, principal);
 
     if (entrenador->pokemones->cantidad > 0)
         return entrenador;
