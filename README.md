@@ -192,7 +192,44 @@ Esto se repite hasta que uno de los dos no cumpla las condiciones para pelear, y
 ### Menús
 El concepto general es usar una matriz de caracteres, y despues mostrarla por pantalla. Esto puede representar la pantallas como el menu.
 
-#### 
+// explicar como hago para imprimir por pantalla
+
+#### Pantallas por accion
+Lo que llamo pantallas por accion me refiero a que muestran al usuario la respuesta del juego debido a sus acciones. 
+
+* En estas tenemos pantalla_titulo, donde el usuario empezo el juego
+* pantalla_batalla, donde gana en una batalla contra un entrenador
+* pantalla_derrota, donde pierde contra un entrenador
+* pantalla_victoria, donde gana un gimnasio
+* pantalla_maestro_pokemon, donde gana el juego
+
+En pantalla_titulo, pantalla_victoria y pantalla_maestro_pokemon, imprimimos una "imagen", lo que realmente es leer un archivo y pasarlo a la matriz de caracteres.
+Para pantalla_derrota y pantalla_batalla queria mostrar contra quien perdieron o ganaron, por lo que uso una combinacion entre usar una imagen y mostrar el entrenador, que veremos mas adelante como funciona (el apartado Mostrar)
+
+#### Menus por accion
+En los menus, todos siguen el mismo formato, lo que cambia es el contenido del menu. Primero, veamos lo que se tiene que mostrar. 
+
+Tenemos que mostrar la letra que el usuario tiene que apretar, una explicacion breve debajo de esta, y despues que todas las opciones estan razonablemente equidistante de los bordes como de ellas.
+
+Para hacer eso, hice la funcion menu_generico, donde toma los caracteres que el usuario tiene que apretar, despues un matriz de strings, que van a ser las explicaciones breves de cada instruccion, y ademas de la cantidad de lineas que tiene las instrucciones, la cantidad de instrucciones. Esta funcion devuelve la matriz de caracteres que se tiene que mostrar por pantalla
+
+Tambien que hay que aclarar, que todas tiene una variable void* auxilear, que es por si se quiere pasar algo, como el menu_confirmacion, que se le pasa una frase para aclarar al usuario que es lo que tiene que afirmar
+
+#### Mostrar
+##### Mostrar informacion
+Esta funcion es bastante simple, simplemente agregamos el string en la matriz de caracteres, y despues imprimirla
+
+##### Mostrar el intercambio de pokemones
+Muestra los dos pokemones, con sus estadisticas, esta pensado para mostrar al usuario que pokemones esta eligiendo
+
+##### Mostrar el personaje principal, el entrenador y el gimnasio
+En los tres caso muestra el contenido principal de la estructura, el personaje principal y el entrenador muestran sus pokemones mientras que el gimnasio muestra los entrenadores.
+
+Mostrar el personaje principal muestra todos los pokemones que tiene, ya que no necesariamente tiene menos o igual que 6 pokemones. Pero los pokemones estan divididos, los primeros 6 estan visualmente separados del resto, ya que estos van a ser los que el usuario va a terminar usando
+
+Mostrar el entrenador tiene un parametro de iteracion, el motivo de este se puede entender cuando entendemos que es lo que muestra el entrenador, este muestra todos sus pokemones en una columna al mismo tiempo muestra un unico pokemon de forma mas visual. La iteracion es para ir cambiando cual es ese unico pokemon que aparece
+
+Mostrar gimnasio tambien tiene un iteracion, pero el motivo de este es para poder mostrar todos sus entrenadores, ya que no necesariamente todos van a entrar en la pantalla con todos sus pokemones, porque solo se muestran 4 entrenadores como maximo. Entonces con la iteracion se pueden ver los siguientes 4 entrenadores en el caso que los tenga
 
 ### Batallas
 Principalmente se encarga de definir los estilos de pelea, que puede usar gimnasio
