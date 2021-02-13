@@ -671,28 +671,10 @@ void mostrar_entrenador(entrenador_t entrenador, bool lider, int iteracion) {
     imprimir_pantalla(pantalla);
 }
 
-entrenador_t* entrenador_en_posicion(lista_t* entrenadores, size_t posicion) {
-    if (!entrenadores || posicion > lista_elementos(entrenadores))
+entrenador_t* entrenador_en_posicion(lista_t* entrenadores, int posicion) {
+    if (!entrenadores || posicion < 0)
         return NULL;
-
-    lista_iterador_t* it = lista_iterador_crear(entrenadores);
-    entrenador_t* entrenador = NULL;
-    bool termino = false;
-    size_t contador = 0;
-
-    while (contador < lista_elementos(entrenadores) && !termino) {
-        if (contador == posicion) {
-            entrenador = lista_iterador_elemento_actual(it);
-            termino = true;
-        }
-
-        if (!lista_iterador_avanzar(it))
-            termino = true;
-        contador++;
-    }
-
-    lista_iterador_destruir(it);
-    return entrenador;
+    return lista_elemento_en_posicion(entrenadores, (size_t)posicion);
 }
 
 int mostrar_gimnasio(gimnasio_t gimnasio, int iteracion) {
@@ -715,7 +697,7 @@ int mostrar_gimnasio(gimnasio_t gimnasio, int iteracion) {
     coor_t desfase = {3, (ancho_entrenadores - ancho_pkm) / 2};
 
     for (int i = iteracion; i < cant_entrenadores; i++) {
-        size_t entrenador_posicion = (size_t) ((int) lista_elementos(gimnasio.entrenadores) - (i+1));
+        int entrenador_posicion = (int) lista_elementos(gimnasio.entrenadores) - (i+1);
         entrenador_t entrenador = *entrenador_en_posicion(gimnasio.entrenadores, entrenador_posicion);
 
         bloque.ancho = ancho_pkm;
