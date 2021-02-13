@@ -311,6 +311,10 @@ void cambiar_pokemones(entrenador_t* principal) {
 
         pkm[i] = elegir_pokemon(principal, posicion[i]);
     }
+    CLEAR;
+        mostrar_principal(principal);
+        mostrar_intercambiar_pokemones(pkm[0], pkm[1], "Estos son los pokemones que elegiste");
+    SLEEP;
 
     reordenar_pokemones(principal->pokemones, posicion[0], posicion[1]);
 

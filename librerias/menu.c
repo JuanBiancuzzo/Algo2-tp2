@@ -586,14 +586,10 @@ void imprimir_imagen(char* ruta_archivo) {
     imprimir_pantalla(pantalla);
 }
 
-void pantalla_titulo(void* auxilear) {
-    imprimir_imagen("imagenes/imagen_principal.txt");
-}
-
-void pantalla_victoria(void* auxilear) {
-    imprimir_imagen("imagenes/imagen_ganar.txt");
-}
-
+/*
+ * Agrega al lado de la imagen al entrenador que se le 
+ * le pase como parametro
+ */
 void mostrar_entrenador_imagen(char* ruta, entrenador_t* entrenador) {
     pantalla_t pantalla, bloque;
     pantalla.ancho = ANCHO, pantalla.alto = ALTO;
@@ -609,6 +605,15 @@ void mostrar_entrenador_imagen(char* ruta, entrenador_t* entrenador) {
     imprimir_pantalla(pantalla);
 
 }
+
+void pantalla_titulo(void* auxilear) {
+    imprimir_imagen("imagenes/imagen_principal.txt");
+}
+
+void pantalla_victoria(void* auxilear) {
+    imprimir_imagen("imagenes/imagen_ganar.txt");
+}
+
 
 void pantalla_derrota(void* entrenador) {
     if (entrenador)
