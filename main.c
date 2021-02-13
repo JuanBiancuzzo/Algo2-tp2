@@ -536,7 +536,7 @@ int pelear_gimnasio(gimnasio_t* gimnasio, entrenador_t** principal) {
     int estado = JUGANDO;
     char respuesta;
 
-    while (lista_elementos(gimnasio->entrenador) > 0 && estado == JUGANDO) {
+    while (lista_elementos(gimnasio->entrenadores) > 0 && estado == JUGANDO) {
         entrenador_t* enemigo = entrenador_del_gimnasio(gimnasio);
         estado = batalla_pokemon(*principal, enemigo, estilo);
         CLEAR;
