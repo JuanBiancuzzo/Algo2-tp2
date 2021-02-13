@@ -83,6 +83,12 @@ void menu_derrota(char instrucciones[], void* auxilear);
 void menu_avanzar_retroceder(char instrucciones[], void* auxilear);
 
 /*
+ * Mostrarle al usuario que tiene la opcion de afirmar o de
+ * negar lo que se le pregunta
+ */
+void menu_confirmacion(char instrucciones[], void* frase);
+
+/*
  * Muestra el titulo del juego en la pantalla, esta pensado para
  * cuando no hay algo especifico para mostrar
  */
@@ -108,12 +114,6 @@ void pantalla_batalla(void* entrenador);
  * ahora es un maestro pokemon
  */
 void pantalla_maestro_pokemon(void* auxilear);
-
-/*
- * Mostrarle al usuario que tiene la opcion de afirmar o de
- * negar lo que se le pregunta
- */
-void menu_confirmacion(char instrucciones[], void* frase);
 
 /*
  * En la estructura del menu, muestra informacion que es util para
