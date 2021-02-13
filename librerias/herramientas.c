@@ -237,7 +237,7 @@ void agregar_pokemon(void* entrenador, pokemon_t pokemon) {
 
 
 bool seguir_leyendo_pokemones (entrenador_t* entrenador, bool principal) {
-    return (entrenador->pokemones->cantidad < MAX_POKEMON_COMBATE || principal);
+    return (lista_elementos(entrenador->pokemones) < MAX_POKEMON_COMBATE || principal);
 }
 
 /*
@@ -291,7 +291,7 @@ entrenador_t* archivo_2_entrenador (FILE* archivo, entrenador_t* entrenador_sigu
     if (entrenador->lider == lider)
         guardar_pokemones(archivo, entrenador, entrenador_siguiente, principal);
 
-    if (entrenador->pokemones->cantidad > 0)
+    if (lista_elementos(entrenador->pokemones) > 0)
         return entrenador;
     destruir_entrenador(entrenador);
     return NULL;
@@ -317,7 +317,7 @@ void* archivo_2_personaje_principal (char ruta_archivo[]) {
 int agregar_entrenador(gimnasio_t* gimnasio, entrenador_t* entrenador) {
     if (!gimnasio || !entrenador)
         return ERROR;
-    if (entrenador->pokemones->cantidad > 0) {
+    if (lista_elementos(entrenador->pokemones) > 0) {
         int resultado = lista_apilar(((gimnasio_t*)gimnasio)->entrenadores, entrenador);
         return (resultado != ERROR) ? EXITO : ERROR;
     }
@@ -370,7 +370,7 @@ void* archivo_2_gimnasio (char ruta_archivo[]) {
         guardar_entrenadores(archivo, gimnasio);
 
     fclose(archivo);
-    if (gimnasio->entrenadores->cantidad > 0)
+    if (lista_elementos(gimnasio->entrenadores) > 0)
         return gimnasio;
     destruir_gimnasio(gimnasio);
     return NULL;
@@ -480,8 +480,8 @@ int batalla_pokemon(entrenador_t* principal, entrenador_t* enemigo, funcion_bata
 
     size_t contador_principal = 0, contador_enemigo = 0;
 
-    while (condicion_pelea(contador_principal, principal->pokemones->cantidad) \
-           && condicion_pelea(contador_enemigo, enemigo->pokemones->cantidad)) {
+    while (condicion_pelea(contador_principal, lista_elementos(principal->pokemones)) \
+           && condicion_pelea(contador_enemigo, lista_elementos(enemigo->pokemones))) {
 
         int resultado = pelea_pokemon(elegir_pokemon(principal, (int) contador_principal), \
                                       elegir_pokemon(enemigo, (int) contador_enemigo), \
@@ -495,7 +495,7 @@ int batalla_pokemon(entrenador_t* principal, entrenador_t* enemigo, funcion_bata
         }
     }
 
-    return condicion_pelea(contador_principal, principal->pokemones->cantidad) ? GANO_PRINCIPAL : GANO_ENEMIGO;
+    return condicion_pelea(contador_principal, lista_elementos(principal->pokemones)) ? GANO_PRINCIPAL : GANO_ENEMIGO;
 }
 
 int tomar_prestado(entrenador_t* principal, entrenador_t* enemigo, int id_pokemon) {

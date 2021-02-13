@@ -483,7 +483,7 @@ void mostrar_principal(void* principal) {
     crear_titulo(&pantalla, ((entrenador_t*)principal)->nombre, coor, pantalla.ancho);
     crear_titulo(&pantalla, "Pokemones para luchar", coor, ancho_pkm + maximo.x);
 
-    mostrar_pila_pokemones(&bloque, *(((entrenador_t*)principal)->pokemones), (int) ((entrenador_t*)principal)->pokemones->cantidad, maximo.x, 0);
+    mostrar_pila_pokemones(&bloque, *(((entrenador_t*)principal)->pokemones), (int) lista_elementos(((entrenador_t*)principal)->pokemones), maximo.x, 0);
 
     coor_t desfase = {3, 3};
     bloque_2_pantalla(&pantalla, bloque, desfase);
@@ -492,8 +492,7 @@ void mostrar_principal(void* principal) {
     int separacion = desfase.y * 2 + ancho_pkm;
     poner_lado_vertical(&pantalla, separacion);
 
-    int cant_pokemones = (int) ((entrenador_t*)principal)->pokemones->cantidad;
-
+    int cant_pokemones = (int) lista_elementos(((entrenador_t*)principal)->pokemones);
     int limite = minimo(cant_pokemones/maximo.x, 4);
     desfase.y = separacion + 4;
 
@@ -525,7 +524,7 @@ void mostrar_columna_entrandor (pantalla_t* pantalla, entrenador_t entrenador) {
     }
 
     if (entrenador.pokemones) {
-        mostrar_pila_pokemones(&bloque, *(entrenador.pokemones), (int) entrenador.pokemones->cantidad, 6, 0);
+        mostrar_pila_pokemones(&bloque, *(entrenador.pokemones), (int) lista_elementos(entrenador.pokemones), 6, 0);
         desfase.x = 2;
         bloque_2_pantalla(pantalla, bloque, desfase);
     }
@@ -686,13 +685,14 @@ int mostrar_gimnasio(gimnasio_t gimnasio, int iteracion) {
     crear_titulo(&pantalla, gimnasio.nombre, coor, pantalla.ancho);
 
     int maximo = MAX_ENTRENADORES + iteracion;
-    int cant_entrenadores = minimo((int) gimnasio.entrenadores->cantidad, maximo);
+    int cant_entrenadores = minimo((int) lista_elementos(gimnasio.entrenadores), maximo);
     int ancho_entrenadores = pantalla.ancho / (cant_entrenadores - iteracion);
 
     coor_t desfase = {3, (ancho_entrenadores - ancho_pkm) / 2};
 
+    // cambiar porque esta mal usar lista_elemento en posicion con una pila
     for (int i = iteracion; i < cant_entrenadores; i++) {
-        size_t entrenador_posicion = (size_t) ((int) gimnasio.entrenadores->cantidad - (i+1));
+        size_t entrenador_posicion = (size_t) ((int) heap_elementos(gimnasio.entrenadores) - (i+1));
         entrenador_t entrenador = *(entrenador_t*)lista_elemento_en_posicion(gimnasio.entrenadores, entrenador_posicion);
 
         bloque.ancho = ancho_pkm;

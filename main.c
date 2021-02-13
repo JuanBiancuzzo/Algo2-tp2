@@ -52,7 +52,7 @@ bool responder_opciones (char opciones[], char respuesta) {
 bool mapa_preparado(mapa_t* mapa) {
     if (!mapa)
         return false;
-    return mapa->gimnasios->cantidad >= GIMNASIOS_MINIMO;
+    return heap_elementos(mapa->gimnasios) >= GIMNASIOS_MINIMO;
 }
 
 /*
@@ -62,7 +62,7 @@ bool mapa_preparado(mapa_t* mapa) {
 bool principal_preparado(entrenador_t* principal) {
     if (!principal)
         return false;
-    return principal->pokemones->cantidad >= POKEMONES_MINIMO;
+    return lista_elementos(principal->pokemones) >= POKEMONES_MINIMO;
 }
 
 bool juego_preparado(mapa_t* mapa, entrenador_t* principal) {
@@ -293,18 +293,18 @@ void cambiar_pokemones(entrenador_t* principal) {
 
         printf("Contando de arriba a abajo, y de izquierda a derecha, ");
         printf("el primero es %s y el segundo %s\n", elegir_pokemon(principal, 0)->nombre,  elegir_pokemon(principal, 1)->nombre);
-        printf("Elegi un numero de 1 al %i: ", (int) principal->pokemones->cantidad);
+        printf("Elegi un numero de 1 al %i: ", (int) lista_elementos(principal->pokemones));
         scanf("%i", posicion+i);
         posicion[i]--;
 
-        while (posicion[i] < 0 || posicion[i] >= (int) principal->pokemones->cantidad) {
+        while (posicion[i] < 0 || posicion[i] >= (int) lista_elementos(principal->pokemones)) {
             CLEAR;
             mostrar_principal(principal);
             mostrar_intercambiar_pokemones(pkm[0], pkm[1], "Estos son los pokemones que elegiste");
 
             printf("Elegiste un numero no valido, contando de arriba a abajo, y de izquierda a derecha\n");
             printf("El primero es %s y el segundo %s\n", elegir_pokemon(principal, 0)->nombre,  elegir_pokemon(principal, 1)->nombre);
-            printf("Elegi un numero de 1 al %i: ", (int) principal->pokemones->cantidad);
+            printf("Elegi un numero de 1 al %i: ", (int) lista_elementos(principal->pokemones));
             scanf("%i", posicion+i);
             posicion[i]--;
         }
@@ -327,23 +327,23 @@ void cambiar_pokemones(entrenador_t* principal) {
  */
 void mostrar_entrenador_principal(gimnasio_t* gimnasio) {
 
-    entrenador_t* entrenador = lider_del_gimnasio(gimnasio);
+    entrenador_t* lider = lider_del_gimnasio(gimnasio);
     char instrucciones[MAX_INSTRUC], respuesta;
     bool quedarse = true;
     int contador = 0;
 
     while (quedarse) {
         CLEAR;
-        if (contador >= (int) entrenador->pokemones->cantidad) contador--;
+        if (contador >= (int) lista_elementos(lider->pokemones)) contador--;
         if (contador < 0) contador = 0;
 
-        mostrar_entrenador(*entrenador, true, contador);
+        mostrar_entrenador(*lider, true, contador);
         menu_avanzar_retroceder(instrucciones, NULL);
         scanf(" %c", &respuesta);
 
         while (!responder_opciones(instrucciones, respuesta)) {
             CLEAR;
-            mostrar_entrenador(*entrenador, true, contador);
+            mostrar_entrenador(*lider, true, contador);
             menu_avanzar_retroceder(instrucciones, NULL);
             printf("Tenes que elegir una de las opciones\n");
             scanf(" %c", &respuesta);
@@ -367,7 +367,7 @@ void mostrar_gimnasio_actual (gimnasio_t* gimnasio) {
 
     while (quedarse) {
         CLEAR;
-        if ((int) gimnasio->entrenadores->cantidad - cant_entrenadores <= 0) cant_entrenadores -= maximo;
+        if ((int) lista_elementos(gimnasio->entrenadores) - cant_entrenadores <= 0) cant_entrenadores -= maximo;
         if (cant_entrenadores < 0) cant_entrenadores = 0;
 
         mostrar_gimnasio(*gimnasio, cant_entrenadores);
@@ -455,16 +455,16 @@ int tomar_prestado_pokemon (entrenador_t* principal, entrenador_t* lider) {
     char instrucciones[MAX_INSTRUC], respuesta;
     int id_pokemon = 0;
     mostrar_entrenador(*lider, true, id_pokemon);
-    printf("Elegir el pokemon, del numero 1 al %i, de arriba a abajo: ", (int) lider->pokemones->cantidad);
+    printf("Elegir el pokemon, del numero 1 al %i, de arriba a abajo: ", (int) lista_elementos(lider->pokemones));
     scanf("%i", &id_pokemon);
 
     id_pokemon--;
-    while (id_pokemon < 0 || id_pokemon >= (int) lider->pokemones->cantidad) {
+    while (id_pokemon < 0 || id_pokemon >= (int) lista_elementos(lider->pokemones)) {
         id_pokemon = 0;
         CLEAR;
         mostrar_entrenador(*lider, true, id_pokemon);
         printf("Elegiste un numero invalido, tenes que ");
-        printf("elegir el pokemon, del numero 1 al %i, de arriba a abajo: ", (int) lider->pokemones->cantidad);
+        printf("elegir el pokemon, del numero 1 al %i, de arriba a abajo: ", (int) lista_elementos(lider->pokemones));
         scanf("%i", &id_pokemon);
 
         id_pokemon--;
@@ -536,7 +536,7 @@ int pelear_gimnasio(gimnasio_t* gimnasio, entrenador_t** principal) {
     int estado = JUGANDO;
     char respuesta;
 
-    while (gimnasio->entrenadores->cantidad > 0 && estado == JUGANDO) {
+    while (lista_elementos(gimnasio->entrenador) > 0 && estado == JUGANDO) {
         entrenador_t* enemigo = entrenador_del_gimnasio(gimnasio);
         estado = batalla_pokemon(*principal, enemigo, estilo);
         CLEAR;
@@ -570,7 +570,7 @@ void comenzar_partida(mapa_t* mapa, entrenador_t* principal) {
     CLEAR;
     hub_gimnasio(principal, gimnasio);
 
-    while ((mapa->gimnasios->cantidad > 0 || perdiste) && !termino) {
+    while ((heap_elementos(mapa->gimnasios) > 0 || perdiste) && !termino) {
         perdiste = false;
 
         int resultado = pelear_gimnasio(gimnasio, &principal);
@@ -599,7 +599,7 @@ int simular_gimnasio(entrenador_t* principal, gimnasio_t* gimnasio) {
 
     char mensaje[MAX_FRASE], nombre[MAX_NOMBRE];
     int resultado = GANO;
-    while (gimnasio->entrenadores->cantidad > 0 && resultado == GANO) {
+    while (lista_elementos(gimnasio->entrenadores) > 0 && resultado == GANO) {
 
         entrenador_t* enemigo = entrenador_del_gimnasio(gimnasio);
         resultado = batalla_pokemon(principal, enemigo, estilo);
@@ -631,7 +631,7 @@ void simular_partida(mapa_t* mapa, entrenador_t* principal) {
     gimnasio_t* gimnasio = gimnasio_del_mapa(mapa);
     int estado = GANO;
 
-    while (mapa->gimnasios->cantidad > 0 && estado == GANO) {
+    while (heap_elementos(mapa->gimnasios) > 0 && estado == GANO) {
         CLEAR;
         mostrar_gimnasio(*gimnasio, 0);
         SLEEP;
@@ -694,7 +694,7 @@ int main(int argc, char* argv[]) {
         CLEAR;
         if (principal_preparado(principal))
             mostrar_informacion("Se ingreso correctamente el personaje principal");
-        for (int i = 0; i < mapa->gimnasios->cantidad; i++)
+        for (int i = 0; i < heap_elementos(mapa->gimnasios); i++)
             mostrar_informacion("Se ingreso correctamente un gimnasio");
         SLEEP;
     }
