@@ -192,7 +192,15 @@ Esto se repite hasta que uno de los dos no cumpla las condiciones para pelear, y
 ### Menús
 El concepto general es usar una matriz de caracteres, y despues mostrarla por pantalla. Esto puede representar la pantallas como el menu.
 
-// explicar como hago para imprimir por pantalla
+Para imprimir esa matriz de caracteres, se usa la funcion imprimir_pantalla, esta se encarga de ponerle un borde a la matriz. Usamos el cambio de colores del fondo del texto, con un texto vacio para crear un borde, de esta forma
+
+``` c
+printf("\033[0;47;32m" " " "\033[0m");
+```
+
+consiguiendo asi un bloque blanco que podemos repetir por todo el perimetro de la matriz. 
+
+Tambien usamos el ancho y el alto de la matriz para conseguir el perimetro, porque no siempre esta inicializado los caracteres entonces para conseguir siempre un rectangulo. Entonces cada vez que mencione imprimir por pantalla me refiero a este proceso.
 
 #### Pantallas por accion
 Lo que llamo pantallas por accion me refiero a que muestran al usuario la respuesta del juego debido a sus acciones. 
