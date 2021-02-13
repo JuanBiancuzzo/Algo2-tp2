@@ -692,7 +692,7 @@ int mostrar_gimnasio(gimnasio_t gimnasio, int iteracion) {
 
     // cambiar porque esta mal usar lista_elemento en posicion con una pila
     for (int i = iteracion; i < cant_entrenadores; i++) {
-        size_t entrenador_posicion = (size_t) ((int) heap_elementos(gimnasio.entrenadores) - (i+1));
+        size_t entrenador_posicion = (size_t) ((int) lista_elementos(gimnasio.entrenadores) - (i+1));
         entrenador_t entrenador = *(entrenador_t*)lista_elemento_en_posicion(gimnasio.entrenadores, entrenador_posicion);
 
         bloque.ancho = ancho_pkm;

@@ -46,7 +46,7 @@ void probar_heap_crear_inicializacion () {
     pa2m_afirmar((heap = heap_crear(comparador, destructor)) != NULL,
                  "Mensaje de creacion correcta al crear el arbol");
 
-    pa2m_afirmar(heap->cantidad == 0,
+    pa2m_afirmar(heap_elementos(heap) == 0,
                  "La cantidad de elementos se inicializan correctamente");
 
     pa2m_afirmar(heap->comparador == comparador,
@@ -169,7 +169,7 @@ void probar_heap_eliminar_raiz_con_un_elemento () {
     heap_insertar(heap, &elemento);
     heap_eliminar_raiz(heap);
 
-    pa2m_afirmar(heap->cantidad == 0,
+    pa2m_afirmar(heap_elementos(heap) == 0,
                  "Vuelve el contador a 0 despues de eliminar el primer elemento del heap\n");
 
     heap_destruir(heap);
@@ -187,7 +187,7 @@ void probar_heap_eliminar_raiz_con_varios_elementos () {
 
     heap_eliminar_raiz(heap);
 
-    pa2m_afirmar(heap->cantidad == 2,
+    pa2m_afirmar(heap_elementos(heap) == 2,
                  "Vuelve el contador a 2 despues de eliminar el primer elemento con un heap de 3 elementos");
 
     pa2m_afirmar(elemento_dos == *(int*)heap->elementos[0],
@@ -199,6 +199,49 @@ void probar_heap_eliminar_raiz_con_varios_elementos () {
 void probar_heap_eliminar_raiz () {
     probar_heap_eliminar_raiz_con_un_elemento();
     probar_heap_eliminar_raiz_con_varios_elementos();
+}
+
+void probar_heap_elementos_valores_validos() {
+    pa2m_afirmar(heap_elementos(NULL) == 0,
+       "Detecta correctamente que el heap es invalido\n");
+}
+
+void probar_heap_elementos_heap_un_elemento() {
+    heap_comparador comparador = comparador_prueba;
+    heap_liberar_elemento destructor = destructor_prueba;
+    heap_t* heap = heap_crear(comparador, destructor);
+
+    int elemento = 11;
+    heap_insertar(heap, &elemento);    
+
+    pa2m_afirmar(heap_elementos(heap) == 1,
+                 "Devuelve que solo tiene un elemento\n");
+
+    heap_destruir(heap);
+}
+
+void probar_heap_elementos_heap_muchos_elementos() {
+    heap_comparador comparador = comparador_prueba;
+    heap_liberar_elemento destructor = destructor_prueba;
+    heap_t* heap = heap_crear(comparador, destructor);
+
+    int elemento_uno = 11;
+    heap_insertar(heap, &elemento_uno);    
+    int elemento_dos = 12;
+    heap_insertar(heap, &elemento_dos); 
+    int elemento_tres = 13;
+    heap_insertar(heap, &elemento_tres); 
+
+    pa2m_afirmar(heap_elementos(heap) == 3,
+                 "Devuelve que tiene 3 elementos\n");
+
+    heap_destruir(heap);
+}
+
+void probar_heap_elementos () {
+    probar_heap_elementos_valores_validos();
+    probar_heap_elementos_heap_un_elemento();
+    probar_heap_elementos_heap_muchos_elementos();
 }
 
 int comparador_contador (void* elemento_uno, void* elemento_dos) {
@@ -296,7 +339,7 @@ void probar_archivo_2_personaje_principal_formato_invalidos_corrupto () {
     pa2m_afirmar((personaje = archivo_2_personaje_principal(ruta_archivo)),
                  "Mensaje de exito en un archivo donde en el medio de los pokemones hay un error");
 
-    pa2m_afirmar(personaje->pokemones->cantidad == 2,
+    pa2m_afirmar(lista_elementos(personaje->pokemones) == 2,
                  "La cantidad de pokemones es 2 al encontrar el tercer pokemon con un error\n");
 
     destruir_entrenador(personaje);
@@ -315,7 +358,7 @@ void probar_archivo_2_personaje_principal_formato_validos () {
     pa2m_afirmar(strcmp(personaje->nombre, "Ash") == 0,
                  "Reconoce correctamente el nombre del personaje principal");
 
-    pa2m_afirmar(personaje->pokemones->cantidad == (size_t) cant_pokemones,
+    pa2m_afirmar(lista_elementos(personaje->pokemones) == (size_t) cant_pokemones,
                  "Reconoce la cantidad correcta de pokemones");
 
     pa2m_afirmar(personaje->pokemones,
@@ -400,7 +443,7 @@ void probar_archivo_2_gimnasio_formato_invalidos_entrenador_sin_pokemon () {
     pa2m_afirmar((gimnasio = archivo_2_gimnasio(ruta_archivo)),
                  "Aunque haya un entrenador invalido, lo ignora y sigue leyendo, y no manda error");
 
-    pa2m_afirmar(gimnasio->entrenadores->cantidad == (size_t)cant_entrenadores,
+    pa2m_afirmar(lista_elementos(gimnasio->entrenadores) == (size_t)cant_entrenadores,
                  "Devuelve la cantidad correcta de entrenadores\n");
 
     destruir_gimnasio(gimnasio);
@@ -419,7 +462,7 @@ void probar_archivo_2_gimnasio_formato_validos () {
     pa2m_afirmar(strcmp(gimnasio->nombre, "Gimnasio de Ciudad Celeste") == 0,
                  "Reconoce correctamente el nombre del gimnasio");
 
-    pa2m_afirmar(gimnasio->entrenadores->cantidad == (size_t) cant_entrenadores,
+    pa2m_afirmar(lista_elementos(gimnasio->entrenadores) == (size_t) cant_entrenadores,
                  "Reconoce la cantidad correcta de entrenadores");
 
     pa2m_afirmar(gimnasio->entrenadores,
@@ -470,7 +513,7 @@ void probar_gimnasio_2_mapa_gimnasio_valido () {
     pa2m_afirmar(mapa->gimnasios,
                  "Crea el heap de gimnasios");
 
-    pa2m_afirmar(mapa->gimnasios->cantidad == 1,
+    pa2m_afirmar(heap_elementos(mapa->gimnasios) == 1,
                  "La cantidad de gimnasios es 1\n");
 
     destruir_mapa(mapa);
@@ -492,7 +535,7 @@ void probar_gimnasio_2_mapa_varios_gimnasios_validos () {
     pa2m_afirmar(mapa->gimnasios,
                  "Crea el heap de gimnasios");
 
-    pa2m_afirmar(mapa->gimnasios->cantidad == 2,
+    pa2m_afirmar(heap_elementos(mapa->gimnasios) == 2,
                  "La cantidad de gimnasios es 2\n");
 
     destruir_mapa(mapa);
@@ -636,11 +679,11 @@ void probar_tomar_prestado_principal_pocos_pokemones () {
     pa2m_afirmar(tomar_prestado(principal, enemigo, id_pokemon) == EXITO,
                  "Mensaje de exito al tomar prestado un pokemon");
 
-    pokemon_t* pokemon_prestado = lista_elemento_en_posicion(principal->pokemones, (size_t) (principal->pokemones->cantidad - 1));
+    pokemon_t* pokemon_prestado = lista_elemento_en_posicion(principal->pokemones, (size_t) ((int) lista_elementos(principal->pokemones) - 1));
     pa2m_afirmar(strcmp("Shellder", pokemon_prestado->nombre) == 0,
                  "Se presto el pokemon correcto ubicada en la ultima posicion");
 
-    pa2m_afirmar(principal->pokemones->cantidad == 4,
+    pa2m_afirmar(lista_elementos(principal->pokemones) == 4,
                  "Aumento la cantidad de pokemones del personaje principal\n");
 
     destruir_entrenador(principal);
@@ -665,7 +708,7 @@ void probar_tomar_prestado_principal_muchos_pokemones () {
     pa2m_afirmar(strcmp("Shellder", pokemon_prestado->nombre) == 0,
                  "Se presto el pokemon correcto ubicada como 7mo pokemon");
 
-    pa2m_afirmar(principal->pokemones->cantidad == 8,
+    pa2m_afirmar(lista_elementos(principal->pokemones) == 8,
                  "Aumento la cantidad de pokemones del personaje principal\n");
 
     destruir_entrenador(principal);
@@ -740,6 +783,10 @@ int main () {
     probar_heap_insertar();
     printf("\n * Heap raiz:\n");
     probar_heap_raiz();
+    printf("\n * Heap eliminar raiz:\n");
+    probar_heap_eliminar_raiz();
+    printf("\n * Heap elementos:\n");
+    probar_heap_elementos();
     printf("\n * Heap destruir:\n");
     probar_heap_destruir();
 
