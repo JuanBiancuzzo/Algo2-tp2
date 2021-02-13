@@ -156,7 +156,43 @@ Primer leemos el archivo, y creamos un gimnasio. En este caso no podemos evitar 
 
 Para guardar los entrenadores usamos la funcion (nombrada de forma muy original) como guardar_entrenadores. Esta primero lee usando la funcion que habiamos mencionado para leer entrenadores (archivo_2_entrenador) el lider del gimnasio, en caso de que no este sale, pero si hay entonces vamos a empezar a leer entrenadores y agregandolos a la pila de entrenadores que tiene el gimnasio
 
+#### Gimnasio al mapa
+Se encarga de agregar un gimnasio al heap que tiene el mapa, y si el mapa que se da no existe, si el gimnasio que se da no existe, si el mapa no tiene un heap de gimnasios o al insertar hay un error, en todos los casos devuelve error sino exito
+
+#### Devolver estructura (gimnasio_del_mapa, lider_del_gimnasio, entrenador_del_gimnasio)
+Para conseguir el gimnasio del mapa es bastante facil ya que en el heap tenemos una funcion que nos devuelve el gimnasio que queremos conseguir. 
+
+En el caso de conseguir el lider o el primer entrenador, es un poco mas dificil porque recordemos que es una pila por lo que no podemos usar lista_elemento_en_posicion porque no podemos recorrer una pila, pero si podemos usar un iterador interno.
+
+Para encontrar el lider creamos una funcion bool que si el entrenador que estamos mirando es el lider, entonces copia el entrenador a la variable extra, y devuelve false para parar de iterar.
+
+Para encontrar el primer entrenador, simplemente copia el primer entrenador a la variable extra y devuelve false
+
+#### Sacar estructuras (sacar_entrenador y sacar_gimnasio)
+Para los dos casos en simple, en el caso de sacar al entrenador, usamos la funcion lista_desapilar, y para el caso del gimnasio usamos heap_eliminar_raiz
+
+#### Mover pokemones (reordenar_pokemones y tomar_prestado)
+Estas dos funciones tiene en comun, sorpresa sorpresa, el hecho de mover un pokemon, ya sea en el mismo personaje principal o entre el lider y el personaje principal. 
+
+Cuando tomamos prestado un pokemon (porque robar es malo), conseguimos el pokemon del usuario quiere tener, y creamos un pokemon para el usuario y copiamos todos los datos del pokemon prestado, despues lo agregamos a la lista de pokemones dle personaje principal pero si hay un error, destruimos ese pokemon y devolvemos error; en el caso que no haya un error eliminamos del enemigo el pokemon prestado, que no es estrictamente necesario ya que no se va a ver a ese entrenador pero es bueno por si hay alguna futura modificacion del programa
+
+Cuando reordenamos pokemones simplemente buscamos los pokemon a intercambiar, si alguno que se eligio no esta se devuelve error, y despues se hace un cambio en los datos
+
+#### Batalla pokemon
+Para la batalla hay que tener algunas cosas en cuenta, primero que solo puede luchar 6 pokemones para la batalla, que es facil forzar para un entrenador porque solo puede tener 6 pokemones, para el personaje principal tenemos que forzarlo asegurandonos que no se haya pasado de 6 pokemones.
+
+Tambien hay que asegurarnos que si uno de los dos no tiene pokemones para jugar, significa que gano el otro, en esto la forma es la misma para los dos. 
+
+Esto lo hacemos con la funcion condicion_pelea, que se asegura de que no haya usado mas de 6 pokemones y que le queden pokemones para pelear, en caso de que alguna de estas condiciones no se cumpla devuelve false
+
+Si los dos tiene pokemones para pelear, entonces usamos el estilo de pelea para determinar que pokemon es mejor en este gimnasio, si gana el del personaje principal el pokemon sube de nivel (todas sus propiedades suben 1, mientras que tengan un valor menor a 63), y se le descuenta un pokemon al enemigo; si gana el entrenador/lider se le descuenta un pokemon al personaje principal
+
+Esto se repite hasta que uno de los dos no cumpla las condiciones para pelear, y tendremos un ganado;
+
 ### Menús
+El concepto general es usar una matriz de caracteres, y despues mostrarla por pantalla. Esto puede representar la pantallas como el menu.
+
+#### 
 
 ### Batallas
 Principalmente se encarga de definir los estilos de pelea, que puede usar gimnasio
