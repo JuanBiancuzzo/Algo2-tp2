@@ -426,14 +426,6 @@ pokemon_t* elegir_pokemon(entrenador_t* principal, int posicion) {
 }
 
 /*
- * Dados dos pokemones y un tipo de pelea, devuelve 1 si gana
- * el primero, -1 si gana el segundo
- */
-int pelea_pokemon(pokemon_t* pokemon_uno, pokemon_t* pokemon_dos, funcion_batalla estilo) {
-    return estilo(pokemon_uno, pokemon_dos);
-}
-
-/*
  * Aumenta las caracteristicas del pokemon +1 en cada caracteristica
  * hasta llegar a 63
  */
@@ -466,9 +458,8 @@ int batalla_pokemon(entrenador_t* principal, entrenador_t* enemigo, funcion_bata
     while (condicion_pelea(contador_principal, lista_elementos(principal->pokemones)) \
            && condicion_pelea(contador_enemigo, lista_elementos(enemigo->pokemones))) {
 
-        int resultado = pelea_pokemon(elegir_pokemon(principal, (int) contador_principal), \
-                                      elegir_pokemon(enemigo, (int) contador_enemigo), \
-                                      estilo);
+        int resultado = estilo(elegir_pokemon(principal, (int) contador_principal), \
+                                      elegir_pokemon(enemigo, (int) contador_enemigo));
 
         if (resultado == GANO_PRINCIPAL) {
             level_up(elegir_pokemon(principal, (int) contador_principal));
