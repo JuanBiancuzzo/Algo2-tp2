@@ -20,7 +20,7 @@ typedef void (*heap_liberar_elemento)(void*);
 
 typedef struct heap {
     void* elementos[MAX_ELEMENTOS];
-    int cantidad;
+    size_t cantidad;
     heap_comparador comparador;
     heap_liberar_elemento destructor;
 } heap_t;
