@@ -111,9 +111,9 @@ void sacar_gimnasio(mapa_t* mapa);
 
 /*
  * Dado la posicion de un pokemon, devuelve el pokemon de la lista
- * de pokemones del personaje principal
+ * de pokemones
  */
-pokemon_t* elegir_pokemon(entrenador_t* principal, int posicion);
+pokemon_t* elegir_pokemon(lista_t* pokemones, int posicion);
 
 /*
  * Dados el personaje principal y entrenador o lider, se hace la

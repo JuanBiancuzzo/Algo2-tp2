@@ -292,7 +292,7 @@ void cambiar_pokemones(entrenador_t* principal) {
         mostrar_intercambiar_pokemones(pkm[0], pkm[1], "Estos son los pokemones que elegiste");
 
         printf("Contando de arriba a abajo, y de izquierda a derecha, ");
-        printf("el primero es %s y el segundo %s\n", elegir_pokemon(principal, 0)->nombre,  elegir_pokemon(principal, 1)->nombre);
+        printf("el primero es %s y el segundo %s\n", elegir_pokemon(principal->pokemones, 0)->nombre,  elegir_pokemon(principal->pokemones, 1)->nombre);
         printf("Elegi un numero de 1 al %i: ", (int) lista_elementos(principal->pokemones));
         scanf("%i", posicion+i);
         posicion[i]--;
@@ -303,13 +303,13 @@ void cambiar_pokemones(entrenador_t* principal) {
             mostrar_intercambiar_pokemones(pkm[0], pkm[1], "Estos son los pokemones que elegiste");
 
             printf("Elegiste un numero no valido, contando de arriba a abajo, y de izquierda a derecha\n");
-            printf("El primero es %s y el segundo %s\n", elegir_pokemon(principal, 0)->nombre,  elegir_pokemon(principal, 1)->nombre);
+            printf("El primero es %s y el segundo %s\n", elegir_pokemon(principal->pokemones, 0)->nombre,  elegir_pokemon(principal->pokemones, 1)->nombre);
             printf("Elegi un numero de 1 al %i: ", (int) lista_elementos(principal->pokemones));
             scanf("%i", posicion+i);
             posicion[i]--;
         }
 
-        pkm[i] = elegir_pokemon(principal, posicion[i]);
+        pkm[i] = elegir_pokemon(principal->pokemones, posicion[i]);
     }
     CLEAR;
         mostrar_principal(principal);

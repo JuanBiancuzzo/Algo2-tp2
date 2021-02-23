@@ -395,7 +395,7 @@ gimnasio_t* gimnasio_del_mapa(mapa_t* mapa) {
 
 entrenador_t* entrenador_del_gimnasio(gimnasio_t* gimnasio) {
     if (!gimnasio) return NULL;
-    return lista_elemento_en_posicion(gimnasio->entrenadores, 0);
+    return lista_tope(gimnasio->entrenadores);
 }
 
 void sacar_entrenador(gimnasio_t* gimnasio) {
@@ -408,14 +408,28 @@ void sacar_gimnasio(mapa_t* mapa) {
     heap_eliminar_raiz(mapa->gimnasios);
 }
 
-pokemon_t* pokemon_en_lista(lista_t* pokemones, int posicion) {
-    if (!pokemones || posicion < 0) return NULL;
-    return lista_elemento_en_posicion(pokemones, (size_t) posicion);
-}
+pokemon_t* elegir_pokemon(lista_t* pokemones, int posicion) {
+    if (!pokemones) return NULL;
 
-pokemon_t* elegir_pokemon(entrenador_t* principal, int posicion) {
-    if (!principal) return NULL;
-    return pokemon_en_lista(principal->pokemones, posicion);
+    bool seguir = true;
+    int contador = 0;
+
+    pokemon_t* pokemon = NULL;
+    lista_iterador_t* it = lista_iterador_crear(pokemones);
+
+    while (seguir && lista_iterador_tiene_siguiente(it)) {
+
+        if (contador == posicion) {
+            pokemon = lista_iterador_elemento_actual(it);
+            seguir = false;
+        } else {
+            lista_iterador_avanzar(it);
+            contador++;
+        } 
+    }
+
+    lista_iterador_destruir(it);
+    return pokemon;
 }
 
 /*
@@ -451,11 +465,11 @@ int batalla_pokemon(entrenador_t* principal, entrenador_t* enemigo, funcion_bata
     while (condicion_pelea(contador_principal, lista_elementos(principal->pokemones)) \
            && condicion_pelea(contador_enemigo, lista_elementos(enemigo->pokemones))) {
 
-        int resultado = estilo(elegir_pokemon(principal, (int) contador_principal), \
-                                      elegir_pokemon(enemigo, (int) contador_enemigo));
+        int resultado = estilo(elegir_pokemon(principal->pokemones, (int) contador_principal), \
+                                      elegir_pokemon(enemigo->pokemones, (int) contador_enemigo));
 
         if (resultado == GANO_PRINCIPAL) {
-            level_up(elegir_pokemon(principal, (int) contador_principal));
+            level_up(elegir_pokemon(principal->pokemones, (int) contador_principal));
             contador_enemigo++;
         } else {
             contador_principal++;
@@ -469,7 +483,7 @@ int tomar_prestado(entrenador_t* principal, entrenador_t* enemigo, int id_pokemo
     if (!principal || !enemigo)
         return ERROR;
 
-    pokemon_t* pokemon_prestado = elegir_pokemon(enemigo, id_pokemon);
+    pokemon_t* pokemon_prestado = elegir_pokemon(enemigo->pokemones, id_pokemon);
     if (!pokemon_prestado)
         return ERROR;
 
@@ -491,11 +505,11 @@ int reordenar_pokemones(lista_t* pokemones, int pkm_uno, int pkm_dos) {
     if (!pokemones)
         return ERROR;
 
-    pokemon_t* pokemon_uno = pokemon_en_lista(pokemones, pkm_uno);
+    pokemon_t* pokemon_uno = elegir_pokemon(pokemones, pkm_uno);
     if (!pokemon_uno)
         return ERROR;
 
-    pokemon_t* pokemon_dos = pokemon_en_lista(pokemones, pkm_dos);
+    pokemon_t* pokemon_dos = elegir_pokemon(pokemones, pkm_dos);
     if (!pokemon_dos)
         return ERROR;
 
