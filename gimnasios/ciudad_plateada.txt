@@ -1,0 +1,7 @@
+G;Gimnasio de Ciudad Plateada;10;1
+L;Brock
+P;Geodude;20;20;70
+P;Onix;40;40;70
+E;Campista
+P;Geodude;20;20;70
+P;Sandshrew;25;15;50

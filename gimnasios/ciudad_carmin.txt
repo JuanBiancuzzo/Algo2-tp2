@@ -1,0 +1,6 @@
+G;Gimnasio de Ciudad Camarin;20;5
+L;Caballero Tito
+P;Pikachu;45;60;20
+E;Mecanico Monolo
+P;Voltorb;40;35;10
+P;Magnemite;35;40;20
