@@ -92,12 +92,6 @@ int gimnasio_2_mapa(mapa_t* mapa, gimnasio_t* gimnasio);
 gimnasio_t* gimnasio_del_mapa(mapa_t* mapa);
 
 /*
- * Dado un gimnasio, devuelve al lider del gimnasio, si no hay
- * devuelve NULL
- */
-entrenador_t* lider_del_gimnasio(gimnasio_t* gimnasio);
-
-/*
  * Dado un gimnasio, devuelve el entrenador que tenga este primero
  * en la lista, en caso de error devuelve NULL
  */

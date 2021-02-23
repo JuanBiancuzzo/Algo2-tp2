@@ -393,15 +393,8 @@ gimnasio_t* gimnasio_del_mapa(mapa_t* mapa) {
     return heap_raiz(mapa->gimnasios);
 }
 
-entrenador_t* lider_del_gimnasio(gimnasio_t* gimnasio) {
-    if (!gimnasio) return NULL;
-
-    return lista_elemento_en_posicion(gimnasio->entrenadores, (size_t) ((int) lista_elementos(gimnasio->entrenadores) - 1));
-}
-
 entrenador_t* entrenador_del_gimnasio(gimnasio_t* gimnasio) {
     if (!gimnasio) return NULL;
-
     return lista_elemento_en_posicion(gimnasio->entrenadores, 0);
 }
 

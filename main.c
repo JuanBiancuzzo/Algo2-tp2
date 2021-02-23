@@ -327,35 +327,19 @@ void cambiar_pokemones(entrenador_t* principal) {
 }
 
 /*
- * Muestra al usuario el lider del gimnasio dado
+ * Muestra al usuario al entrenador principal que es el 
+ * personaje principal
  */
-void mostrar_entrenador_principal(gimnasio_t* gimnasio) {
+void mostrar_entrenador_principal(entrenador_t* principal) {
 
-    entrenador_t* lider = lider_del_gimnasio(gimnasio);
-    char instrucciones[MAX_INSTRUC], respuesta;
+    char respuesta;
     bool quedarse = true;
-    int contador = 0;
 
-    while (quedarse) {
+    while(quedarse) {
         CLEAR;
-        if (contador >= (int) lista_elementos(lider->pokemones)) contador--;
-        if (contador < 0) contador = 0;
-
-        mostrar_entrenador(*lider, true, contador);
-        menu_avanzar_retroceder(instrucciones, NULL);
-        scanf(" %c", &respuesta);
-
-        while (!responder_opciones(instrucciones, respuesta)) {
-            CLEAR;
-            mostrar_entrenador(*lider, true, contador);
-            menu_avanzar_retroceder(instrucciones, NULL);
-            printf("Tenes que elegir una de las opciones\n");
-            scanf(" %c", &respuesta);
-        }
-
-        if (responder_caracter(VOLVER, respuesta))
+        respuesta = mostrar_menu(mostrar_principal, principal, menu_confirmacion, "Queres salir?");
+        if (responder_caracter(AFIRMAR, respuesta))
             quedarse = false;
-        contador += (responder_caracter(SIGUIENTE, respuesta)) ? 1 : - 1;
     }
 
 }
@@ -408,8 +392,8 @@ char hub_gimnasio (entrenador_t* principal, gimnasio_t* gimnasio) {
     do {
         CLEAR;
         respuesta = mostrar_menu(pantalla_titulo, NULL, menu_gimnasio, NULL);
-        if (responder_caracter(MOSTRAR_ENTRENADOR, respuesta))
-            mostrar_entrenador_principal(gimnasio);
+        if (responder_caracter(MOSTRAR_ENTRENADOR, respuesta)) 
+            mostrar_entrenador_principal(principal);
         else if (responder_caracter(MOSTRAR_GIMNASIO, respuesta))
             mostrar_gimnasio_actual(gimnasio);
         else if (responder_caracter(CAMBIAR_POKEMONES, respuesta))
